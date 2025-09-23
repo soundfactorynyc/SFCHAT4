@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMS Auth Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            font-size: 24px;
+        }
+        .form-group {
+            margin: 20px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #555;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        input:focus {
+            outline: none;
+            border-color: #2196F3;
+        }
+        button {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background: #1976D2;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .output {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            min-height: 60px;
+            white-space: pre-wrap;
+        }
+        .success {
+            color: #4CAF50;
+        }
+        .error {
+            color: #f44336;
+        }
+        .info {
+            color: #2196F3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📱 SMS Authentication Test</h1>
+        
+        <div class="form-group">
+            <label for="phone">Phone Number:</label>
+            <input 
+                id="phone" 
+                data-sf-phone 
+                type="tel" 
+                placeholder="+1 (555) 123-4567"
+                value=""
+            />
+        </div>
+        
+        <div class="form-group">
+            <button data-sf-send id="sendBtn">Send Verification Code</button>
+        </div>
+        
+        <div class="form-group">
+            <label for="code">Verification Code:</label>
+            <input 
+                id="code" 
+                data-sf-code 
+                type="text" 
+                placeholder="123456"
+                maxlength="6"
+            />
+        </div>
+        
+        <div class="form-group">
+            <button data-sf-verify id="verifyBtn">Verify Code</button>
+        </div>
+        
+        <div class="form-group">
+            <label>Output:</label>
+            <div class="output" data-sf-out id="output">Ready to test...</div>
+        </div>
+
+        <hr style="margin: 30px 0; border: none; border-top: 1px solid #eee;">
+        
+        <div>
+            <h3>Quick Test Endpoints:</h3>
+            <button onclick="testHello()">Test Hello Function</button>
+            <button onclick="checkCORS()">Check CORS</button>
+        </div>
+    </div>
+
+    <script>
+        // Set the API base for local testing
+        window.SMS_API_BASE = '';
+        
+        // Test functions
+        async function testHello() {
+            const output = document.getElementById('output');
+            try {
+                const response = await fetch('/.netlify/functions/hello');
+                const text = await response.text();
+                output.innerHTML = `<span class="success">Hello function works!\n${text}</span>`;
+            } catch (error) {
+                output.innerHTML = `<span class="error">Error: ${error.message}</span>`;
+            }
+        }
+        
+        async function checkCORS() {
+            const output = document.getElementById('output');
+            try {
+                const response = await fetch('/api/send-code', {
+                    method: 'OPTIONS',
+                    headers: {
+                        'Origin': window.location.origin,
+                        'Access-Control-Request-Method': 'POST',
+                        'Access-Control-Request-Headers': 'Content-Type'
+                    }
+                });
+                
+                const corsHeaders = {
+                    'Access-Control-Allow-Origin': response.headers.get('Access-Control-Allow-Origin'),
+                    'Access-Control-Allow-Methods': response.headers.get('Access-Control-Allow-Methods'),
+                    'Access-Control-Allow-Headers': response.headers.get('Access-Control-Allow-Headers')
+                };
+                
+                output.innerHTML = `<span class="info">CORS Headers:\n${JSON.stringify(corsHeaders, null, 2)}</span>`;
+            } catch (error) {
+                output.innerHTML = `<span class="error">CORS Error: ${error.message}</span>`;
+            }
+        }
+        
+        // Enhanced error handling
+        document.getElementById('sendBtn').addEventListener('click', function() {
+            const output = document.getElementById('output');
+            output.innerHTML = '<span class="info">Sending code...</span>';
+        });
+        
+        document.getElementById('verifyBtn').addEventListener('click', function() {
+            const output = document.getElementById('output');
+            output.innerHTML = '<span class="info">Verifying code...</span>';
+        });
+        
+        // Listen for auth events
+        window.addEventListener('sf:auth', function(e) {
+            console.log('Authentication successful:', e.detail);
+            const output = document.getElementById('output');
+            output.innerHTML = `<span class="success">✅ Authentication successful!\nToken: ${e.detail.token.substring(0, 20)}...\nPhone: ${e.detail.phone}</span>`;
+        });
+    </script>
+    
+    <!-- Load the SMS login script -->
+    <script src="/public/sf-sms-login.js"></script>
+</body>
+</html>

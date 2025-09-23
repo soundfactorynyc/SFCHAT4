@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SMS Login Test - Sound Factory</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      padding: 2rem;
+      max-width: 400px;
+      margin: 0 auto;
+      background: #0a0a0a;
+      color: #f0f0f0;
+    }
+    h1 { 
+      color: #fff;
+      border-bottom: 2px solid #333;
+      padding-bottom: 1rem;
+    }
+    label { 
+      display: block; 
+      margin-top: 1.5rem;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+    }
+    input { 
+      padding: 0.75rem; 
+      width: 100%;
+      box-sizing: border-box;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      color: #fff;
+      border-radius: 4px;
+    }
+    button { 
+      margin-top: 0.5rem;
+      padding: 0.75rem 1.5rem;
+      background: #646cff;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    button:hover {
+      background: #5157e8;
+    }
+    pre { 
+      margin-top: 2rem;
+      background: #1a1a1a;
+      padding: 1rem;
+      color: #0f0;
+      border: 1px solid #333;
+      border-radius: 4px;
+      overflow-x: auto;
+      font-size: 0.875rem;
+    }
+    .section {
+      margin-top: 2rem;
+      padding-top: 2rem;
+      border-top: 1px solid #333;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎭 Sound Factory SMS Login</h1>
+  
+  <div>
+    <label>Phone Number</label>
+    <input data-sf-phone placeholder="+16464664925" type="tel" />
+    <button data-sf-send>Send Code</button>
+  </div>
+
+  <div class="section">
+    <label>Verification Code</label>
+    <input data-sf-code placeholder="123456" maxlength="6" />
+    <button data-sf-verify>Verify</button>
+  </div>
+
+  <pre data-sf-out>Ready to test SMS login...</pre>
+
+  <!-- Widget script - will use same origin by default -->
+  <script src="/public/sf-sms-login.js" defer></script>
+</body>
+</html>

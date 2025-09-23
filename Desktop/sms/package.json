@@ -1,0 +1,14 @@
+{
+  "name": "sms",
+  "private": true,
+  "scripts": {
+    "dev": "netlify dev --port 8888 --dir=. --functions=netlify/functions --live=false"
+  },
+  "devDependencies": {
+    "netlify-cli": "^23.5.0"
+  },
+  "dependencies": {
+    "@netlify/blobs": "^6.5.0",
+    "twilio": "^5.9.0"
+  }
+}

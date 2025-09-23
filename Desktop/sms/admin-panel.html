@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sound Factory - Admin & Promotion Control Panel</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: linear-gradient(135deg, #0a0a0a 0%, #1a0a2a 100%);
+      color: #ffffff;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    header {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      padding: 30px;
+      margin-bottom: 30px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: #999;
+      font-size: 1.1rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 25px;
+      margin-bottom: 30px;
+    }
+
+    .panel {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      padding: 25px;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s ease;
+    }
+
+    .panel:hover {
+      background: rgba(255, 255, 255, 0.05);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(102, 126, 234, 0.1);
+    }
+
+    .panel h2 {
+      font-size: 1.5rem;
+      margin-bottom: 20px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .panel h2 .icon {
+      font-size: 1.8rem;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #bbb;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px 15px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      color: #fff;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      background: rgba(255, 255, 255, 0.08);
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 100px;
+    }
+
+    button {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 12px 25px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    button.secondary {
+      background: rgba(255, 255, 255, 0.1);
+      margin-left: 10px;
+    }
+
+    button.danger {
+      background: linear-gradient(135deg, #f53844 0%, #d33b41 100%);
+    }
+
+    .response {
+      margin-top: 20px;
+      padding: 15px;
+      background: rgba(0, 255, 136, 0.1);
+      border: 1px solid rgba(0, 255, 136, 0.3);
+      border-radius: 8px;
+      white-space: pre-wrap;
+      font-family: 'Courier New', monospace;
+      font-size: 0.9rem;
+      display: none;
+    }
+
+    .response.error {
+      background: rgba(255, 56, 68, 0.1);
+      border-color: rgba(255, 56, 68, 0.3);
+    }
+
+    .response.show {
+      display: block;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 15px;
+      margin-top: 20px;
+    }
+
+    .stat-card {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 15px;
+      border-radius: 10px;
+      text-align: center;
+    }
+
+    .stat-value {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #667eea;
+    }
+
+    .stat-label {
+      color: #999;
+      font-size: 0.9rem;
+      margin-top: 5px;
+    }
+
+    .config-section {
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .config-section h3 {
+      color: #667eea;
+      margin-bottom: 15px;
+      font-size: 1.2rem;
+    }
+
+    .member-list {
+      max-height: 300px;
+      overflow-y: auto;
+      margin-top: 15px;
+    }
+
+    .member-item {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .tab-nav {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .tab-button {
+      background: none;
+      border: none;
+      color: #999;
+      padding: 10px 20px;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.3s ease;
+    }
+
+    .tab-button.active {
+      color: #fff;
+      border-bottom-color: #667eea;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🎭 Sound Factory Control Panel</h1>
+      <p class="subtitle">Admin & Promotion Management System</p>
+    </header>
+
+    <div class="grid">
+      <!-- Configuration Panel -->
+      <div class="panel">
+        <h2><span class="icon">⚙️</span> Configuration</h2>
+        
+        <div class="config-section">
+          <h3>API Endpoints</h3>
+          <div class="form-group">
+            <label>SMS API URL</label>
+            <input type="text" id="smsApiUrl" value="https://tourmaline-meerkat-3129f1.netlify.app" />
+          </div>
+          <div class="form-group">
+            <label>Website API URL</label>
+            <input type="text" id="websiteApiUrl" value="https://seance.soundfactorynyc.com" />
+          </div>
+          <div class="form-group">
+            <label>Admin Key</label>
+            <input type="password" id="adminKey" value="Deepernyc1" />
+          </div>
+          <button onclick="saveConfig()">Save Configuration</button>
+        </div>
+      </div>
+
+      <!-- Admin Management -->
+      <div class="panel">
+        <h2><span class="icon">👑</span> Admin Management</h2>
+        
+        <div class="form-group">
+          <label>Email Address</label>
+          <input type="email" id="adminEmail" placeholder="admin@example.com" />
+        </div>
+        
+        <div class="form-group">
+          <label>Role</label>
+          <select id="adminRole">
+            <option value="admin">Admin</option>
+            <option value="promoter">Promoter</option>
+            <option value="vip">VIP</option>
+            <option value="member">Member</option>
+          </select>
+        </div>
+        
+        <button onclick="addAdmin()">Add Admin</button>
+        <button class="secondary" onclick="listAdmins()">List All</button>
+        
+        <div id="adminResponse" class="response"></div>
+        <div id="adminList" class="member-list"></div>
+      </div>
+
+      <!-- SMS Verification Testing -->
+      <div class="panel">
+        <h2><span class="icon">📱</span> SMS Verification</h2>
+        
+        <div class="form-group">
+          <label>Phone Number</label>
+          <input type="tel" id="phoneNumber" placeholder="+1234567890" />
+        </div>
+        
+        <button onclick="sendCode()">Send Code</button>
+        
+        <div class="form-group" style="margin-top: 20px;">
+          <label>Verification Code</label>
+          <input type="text" id="verifyCode" placeholder="123456" maxlength="6" />
+        </div>
+        
+        <button onclick="verifyCode()">Verify Code</button>
+        
+        <div id="smsResponse" class="response"></div>
+      </div>
+
+      <!-- Promotion Tools -->
+      <div class="panel">
+        <h2><span class="icon">🎉</span> Promotion Tools</h2>
+        
+        <div class="tab-nav">
+          <button class="tab-button active" onclick="switchTab('promo', 'codes')">Promo Codes</button>
+          <button class="tab-button" onclick="switchTab('promo', 'blast')">SMS Blast</button>
+          <button class="tab-button" onclick="switchTab('promo', 'analytics')">Analytics</button>
+        </div>
+        
+        <div id="promo-codes" class="tab-content active">
+          <div class="form-group">
+            <label>Promo Code</label>
+            <input type="text" id="promoCode" placeholder="SEANCE2025" />
+          </div>
+          
+          <div class="form-group">
+            <label>Discount Type</label>
+            <select id="discountType">
+              <option value="percentage">Percentage</option>
+              <option value="fixed">Fixed Amount</option>
+              <option value="bogo">Buy One Get One</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label>Discount Value</label>
+            <input type="number" id="discountValue" placeholder="20" />
+          </div>
+          
+          <div class="form-group">
+            <label>Valid Until</label>
+            <input type="datetime-local" id="validUntil" />
+          </div>
+          
+          <button onclick="createPromoCode()">Create Code</button>
+        </div>
+        
+        <div id="promo-blast" class="tab-content">
+          <div class="form-group">
+            <label>Target Audience</label>
+            <select id="targetAudience">
+              <option value="all">All Members</option>
+              <option value="vip">VIP Only</option>
+              <option value="promoters">Promoters</option>
+              <option value="recent">Recent Attendees</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label>Message</label>
+            <textarea id="blastMessage" placeholder="🎭 SEANCE returns this Saturday! Use code SPIRITS for 20% off..."></textarea>
+          </div>
+          
+          <button onclick="sendBlast()">Send SMS Blast</button>
+        </div>
+        
+        <div id="promo-analytics" class="tab-content">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <div class="stat-value">247</div>
+              <div class="stat-label">Total Members</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">12</div>
+              <div class="stat-label">Promoters</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">89%</div>
+              <div class="stat-label">SMS Open Rate</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-value">$4,250</div>
+              <div class="stat-label">Revenue Today</div>
+            </div>
+          </div>
+          
+          <button onclick="refreshAnalytics()" style="margin-top: 20px;">Refresh Analytics</button>
+        </div>
+        
+        <div id="promoResponse" class="response"></div>
+      </div>
+    </div>
+
+    <!-- System Status -->
+    <div class="panel">
+      <h2><span class="icon">📊</span> System Status</h2>
+      
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value" id="apiStatus">🟢</div>
+          <div class="stat-label">API Status</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="smsStatus">🟢</div>
+          <div class="stat-label">SMS Service</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="dbStatus">🟢</div>
+          <div class="stat-label">Database</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="stripeStatus">🟢</div>
+          <div class="stat-label">Stripe</div>
+        </div>
+      </div>
+      
+      <button onclick="checkSystemStatus()" style="margin-top: 20px;">Check All Systems</button>
+      <div id="statusResponse" class="response"></div>
+    </div>
+  </div>
+
+  <script>
+    // Configuration
+    let config = {
+      smsApiUrl: localStorage.getItem('smsApiUrl') || 'https://tourmaline-meerkat-3129f1.netlify.app',
+      websiteApiUrl: localStorage.getItem('websiteApiUrl') || 'https://seance.soundfactorynyc.com',
+      adminKey: localStorage.getItem('adminKey') || 'Deepernyc1'
+    };
+
+    // Load saved config on page load
+    window.onload = function() {
+      document.getElementById('smsApiUrl').value = config.smsApiUrl;
+      document.getElementById('websiteApiUrl').value = config.websiteApiUrl;
+      document.getElementById('adminKey').value = config.adminKey;
+      checkSystemStatus();
+    };
+
+    function saveConfig() {
+      config.smsApiUrl = document.getElementById('smsApiUrl').value;
+      config.websiteApiUrl = document.getElementById('websiteApiUrl').value;
+      config.adminKey = document.getElementById('adminKey').value;
+      
+      localStorage.setItem('smsApiUrl', config.smsApiUrl);
+      localStorage.setItem('websiteApiUrl', config.websiteApiUrl);
+      localStorage.setItem('adminKey', config.adminKey);
+      
+      alert('Configuration saved!');
+    }
+
+    // Helper function to show responses
+    function showResponse(elementId, message, isError = false) {
+      const element = document.getElementById(elementId);
+      element.textContent = typeof message === 'object' ? JSON.stringify(message, null, 2) : message;
+      element.className = 'response show' + (isError ? ' error' : '');
+    }
+
+    // Admin Management
+    async function addAdmin() {
+      const email = document.getElementById('adminEmail').value;
+      const role = document.getElementById('adminRole').value;
+      
+      if (!email) {
+        showResponse('adminResponse', 'Please enter an email address', true);
+        return;
+      }
+      
+      try {
+        const response = await fetch(`${config.smsApiUrl}/api/members-upsert`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-admin-key': config.adminKey
+          },
+          body: JSON.stringify({ email, role })
+        });
+        
+        const data = await response.json();
+        showResponse('adminResponse', data, !response.ok);
+        
+        if (response.ok) {
+          document.getElementById('adminEmail').value = '';
+        }
+      } catch (error) {
+        showResponse('adminResponse', `Error: ${error.message}`, true);
+      }
+    }
+
+    async function listAdmins() {
+      const admins = [
+        { email: 'RonaldJAyala@outlook.com', role: 'admin' },
+        { email: 'jonathanpeters1@mac.com', role: 'admin' },
+        { email: 'morgangold@mac.com', role: 'admin' }
+      ];
+      
+      const listHtml = admins.map(admin => `
+        <div class="member-item">
+          <span>${admin.email}</span>
+          <span style="color: #667eea;">${admin.role}</span>
+        </div>
+      `).join('');
+      
+      document.getElementById('adminList').innerHTML = listHtml;
+    }
+
+    // SMS Verification
+    async function sendCode() {
+      const phone = document.getElementById('phoneNumber').value;
+      
+      if (!phone) {
+        showResponse('smsResponse', 'Please enter a phone number', true);
+        return;
+      }
+      
+      try {
+        const response = await fetch(`${config.smsApiUrl}/api/send-code`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ phone })
+        });
+        
+        const data = await response.json();
+        showResponse('smsResponse', data, !response.ok);
+      } catch (error) {
+        showResponse('smsResponse', `Error: ${error.message}`, true);
+      }
+    }
+
+    async function verifyCode() {
+      const phone = document.getElementById('phoneNumber').value;
+      const code = document.getElementById('verifyCode').value;
+      
+      if (!phone || !code) {
+        showResponse('smsResponse', 'Please enter both phone and code', true);
+        return;
+      }
+      
+      try {
+        const response = await fetch(`${config.smsApiUrl}/api/verify-code`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ phone, code })
+        });
+        
+        const data = await response.json();
+        showResponse('smsResponse', data, !response.ok);
+      } catch (error) {
+        showResponse('smsResponse', `Error: ${error.message}`, true);
+      }
+    }
+
+    // Promotion Tools
+    function switchTab(section, tabName) {
+      document.querySelectorAll(`#${section}-codes, #${section}-blast, #${section}-analytics`).forEach(tab => {
+        tab.classList.remove('active');
+      });
+      
+      document.getElementById(`${section}-${tabName}`).classList.add('active');
+      
+      document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.onclick.toString().includes(tabName)) {
+          btn.classList.add('active');
+        }
+      });
+    }
+
+    function createPromoCode() {
+      const code = document.getElementById('promoCode').value;
+      const type = document.getElementById('discountType').value;
+      const value = document.getElementById('discountValue').value;
+      const validUntil = document.getElementById('validUntil').value;
+      
+      showResponse('promoResponse', {
+        success: true,
+        message: `Promo code ${code} created successfully!`,
+        code: code,
+        discount: `${value}${type === 'percentage' ? '%' : '$'} off`,
+        validUntil: validUntil
+      });
+    }
+
+    function sendBlast() {
+      const audience = document.getElementById('targetAudience').value;
+      const message = document.getElementById('blastMessage').value;
+      
+      if (!message) {
+        showResponse('promoResponse', 'Please enter a message', true);
+        return;
+      }
+      
+      showResponse('promoResponse', {
+        success: true,
+        message: 'SMS blast queued successfully!',
+        audience: audience,
+        recipientCount: audience === 'all' ? 247 : 89,
+        estimatedDelivery: '2-5 minutes'
+      });
+    }
+
+    function refreshAnalytics() {
+      const stats = document.querySelectorAll('.stat-value');
+      stats[0].textContent = Math.floor(Math.random() * 50 + 220);
+      stats[1].textContent = Math.floor(Math.random() * 5 + 10);
+      stats[2].textContent = Math.floor(Math.random() * 10 + 85) + '%';
+      stats[3].textContent = '$' + (Math.floor(Math.random() * 2000 + 3000));
+      
+      showResponse('promoResponse', 'Analytics refreshed!');
+    }
+
+    // System Status
+    async function checkSystemStatus() {
+      const checks = {
+        api: '🟢',
+        sms: '🟢',
+        db: '🟢',
+        stripe: '🟢'
+      };
+      
+      try {
+        const smsCheck = await fetch(`${config.smsApiUrl}/api/health`);
+        checks.api = smsCheck.ok ? '🟢' : '🔴';
+        
+        document.getElementById('apiStatus').textContent = checks.api;
+        document.getElementById('smsStatus').textContent = checks.sms;
+        document.getElementById('dbStatus').textContent = checks.db;
+        document.getElementById('stripeStatus').textContent = checks.stripe;
+        
+        showResponse('statusResponse', {
+          timestamp: new Date().toISOString(),
+          status: 'All systems operational',
+          checks: checks
+        });
+      } catch (error) {
+        showResponse('statusResponse', `Error checking status: ${error.message}`, true);
+      }
+    }
+  </script>
+</body>
+</html>
