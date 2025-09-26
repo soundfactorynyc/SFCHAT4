@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SoundFactory Pins Demo - Pins Overlay Test</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="demo-container">
+        <h1>SoundFactory Pins Overlay Demo</h1>
+        <p>This page is for testing the pins overlay functionality.</p>
+        
+        <div class="demo-controls">
+            <button id="showPinsBtn">Show Pins</button>
+            <button id="hidePinsBtn">Hide Pins</button>
+            <button id="addPinBtn">Add Sample Pin</button>
+            <button id="clearPinsBtn">Clear All Pins</button>
+        </div>
+        
+        <div class="content">
+            <h2>Interactive Area</h2>
+            <p>Click anywhere in this area to add a pin when pins are enabled.</p>
+            <div class="interactive-area" id="interactiveArea">
+                <p>This is the interactive area where pins can be placed.</p>
+                <p>Try clicking different locations to see how pins work.</p>
+                <div class="sample-content">
+                    <h3>Sample Content Block</h3>
+                    <p>You can pin comments or notes to specific parts of the content.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pins overlay will be injected here by the script -->
+    <script src="js/soundfactory-pins.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize pins overlay
+            const pinsOverlay = new SoundFactoryPins();
+            
+            // Demo controls
+            document.getElementById('showPinsBtn').addEventListener('click', () => {
+                pinsOverlay.show();
+            });
+            
+            document.getElementById('hidePinsBtn').addEventListener('click', () => {
+                pinsOverlay.hide();
+            });
+            
+            document.getElementById('addPinBtn').addEventListener('click', () => {
+                // Add a sample pin at a random location
+                const area = document.getElementById('interactiveArea');
+                const rect = area.getBoundingClientRect();
+                const x = Math.random() * (rect.width - 50) + 25;
+                const y = Math.random() * (rect.height - 50) + 25;
+                
+                pinsOverlay.addPin(x, y, 'Sample pin message', 'demo');
+            });
+            
+            document.getElementById('clearPinsBtn').addEventListener('click', () => {
+                pinsOverlay.clearAllPins();
+            });
+        });
+    </script>
+</body>
+</html>

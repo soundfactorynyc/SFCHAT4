@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SF Chat Demo - Chat Overlay Test</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="demo-container">
+        <h1>SF Chat Overlay Demo</h1>
+        <p>This page is for testing the chat overlay functionality.</p>
+        
+        <div class="demo-controls">
+            <button id="openChatBtn">Open Chat</button>
+            <button id="closeChatBtn">Close Chat</button>
+        </div>
+        
+        <div class="content">
+            <h2>Sample Content</h2>
+            <p>This is sample content to demonstrate how the chat overlay works with existing page content.</p>
+            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        </div>
+    </div>
+
+    <!-- Chat overlay will be injected here by the script -->
+    <script src="js/sf-chat-overlay.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize chat overlay
+            const chatOverlay = new SFChatOverlay();
+            
+            // Demo controls
+            document.getElementById('openChatBtn').addEventListener('click', () => {
+                chatOverlay.open();
+            });
+            
+            document.getElementById('closeChatBtn').addEventListener('click', () => {
+                chatOverlay.close();
+            });
+        });
+    </script>
+</body>
+</html>
