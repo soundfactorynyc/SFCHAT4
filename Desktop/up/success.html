@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Successful - Sound Factory Séance</title>
+    <link rel="stylesheet" href="css/main.css">
+    <style>
+        .success-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0033 50%, #330066 100%);
+        }
+        
+        .success-content {
+            text-align: center;
+            padding: 3rem;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 20px;
+            border: 2px solid var(--primary-color);
+            box-shadow: 0 20px 60px rgba(255, 0, 255, 0.3);
+            max-width: 500px;
+            animation: successScale 0.5s ease;
+        }
+        
+        @keyframes successScale {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .success-icon {
+            width: 100px;
+            height: 100px;
+            border: 3px solid #00ff88;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 2rem;
+            font-size: 3rem;
+            color: #00ff88;
+            animation: successPulse 1s ease infinite;
+        }
+        
+        @keyframes successPulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 40px rgba(0, 255, 136, 0.8);
+            }
+        }
+        
+        .success-title {
+            font-size: 2.5rem;
+            color: var(--light-text);
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .success-message {
+            color: var(--muted-text);
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+        
+        .booking-details {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            text-align: left;
+        }
+        
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            color: var(--light-text);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+        
+        .detail-label {
+            color: var(--muted-text);
+        }
+        
+        .detail-value {
+            font-weight: 600;
+            color: var(--accent-color);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+        
+        .success-btn {
+            padding: 0.75rem 2rem;
+            border-radius: 25px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            border: none;
+        }
+        
+        .primary-btn {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+        }
+        
+        .primary-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 0, 255, 0.5);
+        }
+        
+        .secondary-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--light-text);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .secondary-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .loading-details {
+            color: var(--muted-text);
+            padding: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="success-container">
+        <div class="success-content">
+            <div class="success-icon">✓</div>
+            <h1 class="success-title">Payment Successful!</h1>
+            <p class="success-message">
+                Your table has been reserved for Sound Factory Séance Halloween Party
+            </p>
+            
+            <div class="booking-details" id="bookingDetails">
+                <div class="loading-details">Loading booking details...</div>
+            </div>
+            
+            <div class="action-buttons">
+                <a href="/dashboard.html" class="success-btn primary-btn">View Dashboard</a>
+                <a href="/" class="success-btn secondary-btn">Return Home</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get session ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const sessionId = urlParams.get('session_id');
+        
+        async function loadBookingDetails() {
+            if (!sessionId) {
+                document.getElementById('bookingDetails').innerHTML = `
+                    <div class="detail-row">
+                        <span class="detail-label">Status</span>
+                        <span class="detail-value">Confirmed</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Event</span>
+                        <span class="detail-value">Halloween Party</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Date</span>
+                        <span class="detail-value">October 31, 2025</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Time</span>
+                        <span class="detail-value">10PM - Late</span>
+                    </div>
+                `;
+                return;
+            }
+            
+            try {
+                // Fetch session details from backend
+                const response = await fetch(`/.netlify/functions/get-booking-details?session_id=${sessionId}`);
+                const data = await response.json();
+                
+                document.getElementById('bookingDetails').innerHTML = `
+                    <div class="detail-row">
+                        <span class="detail-label">Booking ID</span>
+                        <span class="detail-value">${data.bookingId || sessionId.substring(0, 10).toUpperCase()}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Table Type</span>
+                        <span class="detail-value">${data.tableType || 'Premium Table'}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Event</span>
+                        <span class="detail-value">Halloween Séance</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Date</span>
+                        <span class="detail-value">October 31, 2025</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Time</span>
+                        <span class="detail-value">10PM - Late</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Email Receipt</span>
+                        <span class="detail-value">Sent to your email</span>
+                    </div>
+                `;
+                
+                // Store booking in local storage
+                const bookings = JSON.parse(localStorage.getItem('sf_bookings') || '[]');
+                bookings.push({
+                    sessionId: sessionId,
+                    tableType: data.tableType,
+                    timestamp: Date.now(),
+                    eventDate: '2025-10-31'
+                });
+                localStorage.setItem('sf_bookings', JSON.stringify(bookings));
+                
+            } catch (error) {
+                console.error('Error loading booking details:', error);
+                document.getElementById('bookingDetails').innerHTML = `
+                    <div class="detail-row">
+                        <span class="detail-label">Booking</span>
+                        <span class="detail-value">Confirmed</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Event</span>
+                        <span class="detail-value">Halloween Séance</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Date</span>
+                        <span class="detail-value">October 31, 2025</span>
+                    </div>
+                    <p style="color: var(--muted-text); margin-top: 1rem; text-align: center;">
+                        Check your email for complete details
+                    </p>
+                `;
+            }
+        }
+        
+        // Load details on page load
+        loadBookingDetails();
+        
+        // Confetti effect
+        function createConfetti() {
+            const colors = ['#FF00FF', '#00FFFF', '#FFD700', '#00FF88'];
+            for (let i = 0; i < 50; i++) {
+                const confetti = document.createElement('div');
+                confetti.style.cssText = `
+                    position: fixed;
+                    width: 10px;
+                    height: 10px;
+                    background: ${colors[Math.floor(Math.random() * colors.length)]};
+                    left: ${Math.random() * 100}%;
+                    top: -10px;
+                    opacity: ${Math.random() * 0.8 + 0.2};
+                    transform: rotate(${Math.random() * 360}deg);
+                    animation: confettiFall ${3 + Math.random() * 2}s linear;
+                `;
+                document.body.appendChild(confetti);
+                
+                setTimeout(() => confetti.remove(), 5000);
+            }
+        }
+        
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes confettiFall {
+                to {
+                    transform: translateY(100vh) rotate(720deg);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Trigger confetti on load
+        setTimeout(createConfetti, 500);
+    </script>
+</body>
+</html>

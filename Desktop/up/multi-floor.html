@@ -1,0 +1,1915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sound Factory - Multi Floor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: radial-gradient(ellipse at center, #0a0a0a 0%, #000000 70%, #000000 100%);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            height: 100vh;
+            height: 100dvh;
+            overflow: hidden;
+            position: relative;
+            touch-action: none;
+        }
+
+        /* Hypnotic background effects */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(255, 0, 102, 0.03) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0, 255, 255, 0.02) 0%, transparent 50%),
+                radial-gradient(circle at 40% 60%, rgba(255, 255, 0, 0.01) 0%, transparent 50%);
+            animation: hypnoticPulse 8s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(45deg, transparent 48%, rgba(255, 255, 255, 0.005) 49%, rgba(255, 255, 255, 0.005) 51%, transparent 52%),
+                linear-gradient(-45deg, transparent 48%, rgba(255, 255, 255, 0.003) 49%, rgba(255, 255, 255, 0.003) 51%, transparent 52%);
+            background-size: 60px 60px;
+            animation: hypnoticGrid 12s linear infinite;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        @keyframes hypnoticPulse {
+            0%, 100% { 
+                opacity: 0.3;
+                transform: scale(1);
+            }
+            50% { 
+                opacity: 0.6;
+                transform: scale(1.05);
+            }
+        }
+
+        @keyframes hypnoticGrid {
+            0% { transform: translateX(0) translateY(0); }
+            100% { transform: translateX(60px) translateY(60px); }
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            background: rgba(0,0,0,0.95);
+            border-bottom: 1px solid rgba(255,0,102,0.3);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 20px rgba(255,0,102,0.1);
+            animation: headerGlow 5s ease-in-out infinite;
+        }
+
+        @keyframes headerGlow {
+            0%, 100% { 
+                box-shadow: 0 0 20px rgba(255,0,102,0.1);
+            }
+            50% { 
+                box-shadow: 0 0 30px rgba(255,0,102,0.2);
+            }
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 16px;
+            letter-spacing: 1px;
+            background: linear-gradient(135deg, #FFD700, #FF6B35, #ff1a78);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(255,26,120,0.5);
+            animation: logoGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes logoGlow {
+            0%, 100% { 
+                text-shadow: 0 0 20px rgba(255,26,120,0.5);
+            }
+            50% { 
+                text-shadow: 0 0 30px rgba(255,26,120,0.8);
+            }
+        }
+
+        .floor-indicator {
+            background: rgba(255,255,255,0.1);
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 12px;
+            color: #00ff88;
+            font-weight: 700;
+        }
+
+        /* Navigation to main floor */
+
+        /* Main content */
+        .main-content {
+            position: absolute;
+            top: 50px;
+            left: 0;
+            width: 100%;
+            height: calc(100% - 50px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .floor-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .floor {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .floor.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* Full screen SVG */
+        svg {
+            width: 100%;
+            height: 100%;
+            max-width: 90vw;
+            max-height: 90vh;
+            filter: drop-shadow(0 0 25px rgba(0,0,0,0.8)) drop-shadow(0 0 50px rgba(255,0,102,0.1));
+            animation: svgGlow 6s ease-in-out infinite;
+        }
+
+        @keyframes svgGlow {
+            0%, 100% { 
+                filter: drop-shadow(0 0 25px rgba(0,0,0,0.8)) drop-shadow(0 0 50px rgba(255,0,102,0.1));
+            }
+            50% { 
+                filter: drop-shadow(0 0 35px rgba(0,0,0,0.9)) drop-shadow(0 0 70px rgba(255,0,102,0.2));
+            }
+        }
+
+
+        /* Navigation Controls - Side positioning */
+        .nav-controls {
+            position: fixed;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            color: #fff;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-btn:hover {
+            background: #ff1a78;
+            border-color: #ff1a78;
+            transform: scale(1.1);
+        }
+
+        .nav-btn:active {
+            transform: scale(0.95);
+        }
+
+        .floor-indicator-nav {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            min-width: 120px;
+        }
+
+        .current-floor {
+            color: #fff;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .floor-counter {
+            color: rgba(255,255,255,0.6);
+            font-size: 11px;
+        }
+
+        /* Swipe instructions */
+        .swipe-instructions {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: rgba(255,255,255,0.6);
+            font-size: 12px;
+            text-align: center;
+            z-index: 1000;
+        }
+
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            .header {
+                height: 45px;
+            }
+
+            .main-content {
+                top: 45px;
+                height: calc(100% - 45px);
+            }
+
+            .nav-controls {
+                display: none; /* Hide side buttons on mobile - use swipe only */
+            }
+
+            .swipe-instructions {
+                bottom: 30px;
+            }
+
+            svg {
+                max-width: 95vw;
+                max-height: 95vh;
+            }
+        }
+
+        /* Desktop - show buttons */
+        @media (min-width: 769px) {
+            .swipe-instructions {
+                display: none; /* Hide swipe instructions on desktop */
+            }
+        }
+
+        /* Character System - Overlay on all floors */
+        .character-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2000;
+        }
+
+        /* Character container - SMALLER */
+        .person {
+            position: fixed;
+            width: 24px;
+            height: 36px;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 100;
+        }
+
+
+
+        /* Boundary indicator */
+        .boundary-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .boundary-indicator.active {
+            opacity: 1;
+        }
+
+        .boundary-indicator::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: 2px solid rgba(255, 0, 102, 0.5);
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(255, 0, 102, 0.3);
+            animation: boundaryPulse 1s ease-in-out infinite;
+        }
+
+        @keyframes boundaryPulse {
+            0%, 100% { 
+                border-color: rgba(255, 0, 102, 0.5);
+                box-shadow: 0 0 20px rgba(255, 0, 102, 0.3);
+            }
+            50% { 
+                border-color: rgba(255, 0, 102, 0.8);
+                box-shadow: 0 0 30px rgba(255, 0, 102, 0.5);
+            }
+        }
+
+        /* Head - smaller */
+        .head {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: radial-gradient(circle at 40% 40%, #f4d1ae, #c4936d);
+            border-radius: 50%;
+            left: 8px;
+            top: 2px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.4);
+            z-index: 20;
+        }
+
+        .person.walking .head {
+            animation: headRotate 0.8s ease-in-out infinite;
+        }
+
+        @keyframes headRotate {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-2deg); }
+            75% { transform: rotate(2deg); }
+        }
+
+        /* Torso - smaller */
+        .torso {
+            position: absolute;
+            width: 14px;
+            height: 11px;
+            background: linear-gradient(180deg, #333, #222);
+            border-radius: 30% 30% 50% 50%;
+            left: 5px;
+            top: 9px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+            z-index: 10;
+        }
+
+        .person.walking .torso {
+            animation: torsoPulse 0.8s ease-in-out infinite;
+        }
+
+        @keyframes torsoPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Arms with two segments each - smaller */
+        .arm-left-upper {
+            position: absolute;
+            width: 3px;
+            height: 5px;
+            background: linear-gradient(180deg, #333, #2a2a2a);
+            left: 2px;
+            top: 10px;
+            transform-origin: center top;
+            border-radius: 1px;
+            z-index: 9;
+        }
+
+        .arm-left-lower {
+            position: absolute;
+            width: 2px;
+            height: 5px;
+            background: linear-gradient(180deg, #2a2a2a, #222);
+            left: 0px;
+            top: 4px;
+            transform-origin: center top;
+            border-radius: 0 0 1px 1px;
+        }
+
+        .arm-right-upper {
+            position: absolute;
+            width: 3px;
+            height: 5px;
+            background: linear-gradient(180deg, #333, #2a2a2a);
+            right: 2px;
+            top: 10px;
+            transform-origin: center top;
+            border-radius: 1px;
+            z-index: 9;
+        }
+
+        .arm-right-lower {
+            position: absolute;
+            width: 2px;
+            height: 5px;
+            background: linear-gradient(180deg, #2a2a2a, #222);
+            right: 0px;
+            top: 4px;
+            transform-origin: center top;
+            border-radius: 0 0 1px 1px;
+        }
+
+
+
+        /* Legs with two segments each - smaller */
+        .leg-left-upper {
+            position: absolute;
+            width: 3px;
+            height: 6px;
+            background: linear-gradient(180deg, #222, #1a1a1a);
+            left: 6px;
+            top: 19px;
+            transform-origin: center top;
+            border-radius: 1px;
+            z-index: 8;
+        }
+
+        .leg-left-lower {
+            position: absolute;
+            width: 2px;
+            height: 6px;
+            background: linear-gradient(180deg, #1a1a1a, #111);
+            left: 0.5px;
+            top: 5px;
+            transform-origin: center top;
+            border-radius: 0 0 2px 2px;
+        }
+
+        .leg-right-upper {
+            position: absolute;
+            width: 3px;
+            height: 6px;
+            background: linear-gradient(180deg, #222, #1a1a1a);
+            right: 6px;
+            top: 19px;
+            transform-origin: center top;
+            border-radius: 1px;
+            z-index: 8;
+        }
+
+        .leg-right-lower {
+            position: absolute;
+            width: 2px;
+            height: 6px;
+            background: linear-gradient(180deg, #1a1a1a, #111);
+            right: 0.5px;
+            top: 5px;
+            transform-origin: center top;
+            border-radius: 0 0 2px 2px;
+        }
+
+        /* Shadow - smaller */
+        .shadow {
+            position: absolute;
+            width: 18px;
+            height: 7px;
+            background: radial-gradient(ellipse, rgba(0,0,0,0.5), transparent);
+            left: 3px;
+            top: 29px;
+            border-radius: 50%;
+            z-index: -1;
+        }
+
+        .person.walking .shadow {
+            animation: shadowBounce 0.8s ease-in-out infinite;
+        }
+
+        @keyframes shadowBounce {
+            0%, 100% { 
+                transform: scale(1);
+                opacity: 0.6;
+            }
+            50% { 
+                transform: scale(1.1);
+                opacity: 0.8;
+            }
+        }
+
+        /* Realistic Human Walking Animations */
+        .person.walking .shoulder-left {
+            animation: shoulderSwayLeft 0.8s ease-in-out infinite;
+        }
+        .person.walking .shoulder-right {
+            animation: shoulderSwayRight 0.8s ease-in-out infinite;
+        }
+        .person.walking .arm-left-upper {
+            animation: armSwingLeft 0.8s ease-in-out infinite;
+        }
+        .person.walking .arm-left-lower {
+            animation: armLowerSwingLeft 0.8s ease-in-out infinite;
+        }
+        .person.walking .arm-right-upper {
+            animation: armSwingRight 0.8s ease-in-out infinite;
+        }
+        .person.walking .arm-right-lower {
+            animation: armLowerSwingRight 0.8s ease-in-out infinite;
+        }
+        .person.walking .hand-left {
+            animation: handSwingLeft 0.8s ease-in-out infinite;
+        }
+        .person.walking .hand-right {
+            animation: handSwingRight 0.8s ease-in-out infinite;
+        }
+        .person.walking .hip-left {
+            animation: hipSwayLeft 0.8s ease-in-out infinite;
+        }
+        .person.walking .hip-right {
+            animation: hipSwayRight 0.8s ease-in-out infinite;
+        }
+        .person.walking .leg-left-upper {
+            animation: legStepLeft 0.8s ease-in-out infinite;
+        }
+        .person.walking .leg-left-lower {
+            animation: legLowerStepLeft 0.8s ease-in-out infinite;
+        }
+        .person.walking .leg-right-upper {
+            animation: legStepRight 0.8s ease-in-out infinite;
+        }
+        .person.walking .leg-right-lower {
+            animation: legLowerStepRight 0.8s ease-in-out infinite;
+        }
+        .person.walking .foot-left {
+            animation: footStepLeft 0.8s ease-in-out infinite;
+        }
+        .person.walking .foot-right {
+            animation: footStepRight 0.8s ease-in-out infinite;
+        }
+
+        /* Enhanced body movement */
+        .person.walking .torso {
+            animation: torsoBounce 0.8s ease-in-out infinite;
+        }
+
+        @keyframes torsoBounce {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-1px); }
+        }
+
+        /* Realistic Human Animation Keyframes */
+        @keyframes shoulderSwayLeft {
+            0%, 100% { transform: translateX(0px) rotate(0deg); }
+            50% { transform: translateX(-1px) rotate(-3deg); }
+        }
+        @keyframes shoulderSwayRight {
+            0%, 100% { transform: translateX(0px) rotate(0deg); }
+            50% { transform: translateX(1px) rotate(3deg); }
+        }
+        @keyframes armSwingLeft {
+            0%, 100% { transform: rotate(-15deg); }
+            50% { transform: rotate(20deg); }
+        }
+        @keyframes armSwingRight {
+            0%, 100% { transform: rotate(15deg); }
+            50% { transform: rotate(-20deg); }
+        }
+        @keyframes armLowerSwingLeft {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(15deg); }
+        }
+        @keyframes armLowerSwingRight {
+            0%, 100% { transform: rotate(5deg); }
+            50% { transform: rotate(-15deg); }
+        }
+        @keyframes handSwingLeft {
+            0%, 100% { transform: rotate(0deg) translateX(0px); }
+            50% { transform: rotate(10deg) translateX(-1px); }
+        }
+        @keyframes handSwingRight {
+            0%, 100% { transform: rotate(0deg) translateX(0px); }
+            50% { transform: rotate(-10deg) translateX(1px); }
+        }
+        @keyframes hipSwayLeft {
+            0%, 100% { transform: translateX(0px) rotate(0deg); }
+            50% { transform: translateX(-0.5px) rotate(-2deg); }
+        }
+        @keyframes hipSwayRight {
+            0%, 100% { transform: translateX(0px) rotate(0deg); }
+            50% { transform: translateX(0.5px) rotate(2deg); }
+        }
+        @keyframes legStepLeft {
+            0%, 100% { transform: rotate(-10deg) translateY(0px); }
+            25% { transform: rotate(15deg) translateY(-2px); }
+            50% { transform: rotate(-10deg) translateY(0px); }
+        }
+        @keyframes legStepRight {
+            0%, 100% { transform: rotate(-10deg) translateY(0px); }
+            50% { transform: rotate(-10deg) translateY(0px); }
+            75% { transform: rotate(15deg) translateY(-2px); }
+        }
+        @keyframes legLowerStepLeft {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-20deg); }
+            50% { transform: rotate(0deg); }
+        }
+        @keyframes legLowerStepRight {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(0deg); }
+            75% { transform: rotate(-20deg); }
+        }
+        @keyframes footStepLeft {
+            0%, 100% { transform: rotate(0deg) translateY(0px); }
+            25% { transform: rotate(-5deg) translateY(-1px); }
+            50% { transform: rotate(0deg) translateY(0px); }
+        }
+        @keyframes footStepRight {
+            0%, 100% { transform: rotate(0deg) translateY(0px); }
+            50% { transform: rotate(0deg) translateY(0px); }
+            75% { transform: rotate(-5deg) translateY(-1px); }
+        }
+
+        /* AMAZING RUNWAY ANIMATIONS */
+        .person.runway .shoulder-left {
+            animation: runwayShoulderLeft 1.2s ease-in-out infinite;
+        }
+        .person.runway .shoulder-right {
+            animation: runwayShoulderRight 1.2s ease-in-out infinite;
+        }
+        .person.runway .arm-left-upper {
+            animation: runwayArmLeft 1.2s ease-in-out infinite;
+        }
+        .person.runway .arm-left-lower {
+            animation: runwayArmLowerLeft 1.2s ease-in-out infinite;
+        }
+        .person.runway .arm-right-upper {
+            animation: runwayArmRight 1.2s ease-in-out infinite;
+        }
+        .person.runway .arm-right-lower {
+            animation: runwayArmLowerRight 1.2s ease-in-out infinite;
+        }
+        .person.runway .hand-left {
+            animation: runwayHandLeft 1.2s ease-in-out infinite;
+        }
+        .person.runway .hand-right {
+            animation: runwayHandRight 1.2s ease-in-out infinite;
+        }
+        .person.runway .hip-left {
+            animation: runwayHipLeft 1.2s ease-in-out infinite;
+        }
+        .person.runway .hip-right {
+            animation: runwayHipRight 1.2s ease-in-out infinite;
+        }
+        .person.runway .leg-left-upper {
+            animation: runwayLegLeft 1.2s ease-in-out infinite;
+        }
+        .person.runway .leg-left-lower {
+            animation: runwayLegLowerLeft 1.2s ease-in-out infinite;
+        }
+        .person.runway .leg-right-upper {
+            animation: runwayLegRight 1.2s ease-in-out infinite;
+        }
+        .person.runway .leg-right-lower {
+            animation: runwayLegLowerRight 1.2s ease-in-out infinite;
+        }
+        .person.runway .foot-left {
+            animation: runwayFootLeft 1.2s ease-in-out infinite;
+        }
+        .person.runway .foot-right {
+            animation: runwayFootRight 1.2s ease-in-out infinite;
+        }
+        .person.runway .torso {
+            animation: runwayTorso 1.2s ease-in-out infinite;
+        }
+        .person.runway .head {
+            animation: runwayHead 1.2s ease-in-out infinite;
+        }
+
+        /* INCREDIBLE BREAKDANCE ANIMATIONS */
+        .person.breakdance {
+            animation: breakdanceSpin 2s linear infinite;
+        }
+        .person.breakdance .shoulder-left {
+            animation: breakShoulderLeft 0.3s ease-in-out infinite;
+        }
+        .person.breakdance .shoulder-right {
+            animation: breakShoulderRight 0.3s ease-in-out infinite;
+        }
+        .person.breakdance .arm-left-upper {
+            animation: breakArmLeft 0.4s ease-in-out infinite;
+        }
+        .person.breakdance .arm-left-lower {
+            animation: breakArmLowerLeft 0.4s ease-in-out infinite;
+        }
+        .person.breakdance .arm-right-upper {
+            animation: breakArmRight 0.4s ease-in-out infinite;
+        }
+        .person.breakdance .arm-right-lower {
+            animation: breakArmLowerRight 0.4s ease-in-out infinite;
+        }
+        .person.breakdance .hand-left {
+            animation: breakHandLeft 0.3s ease-in-out infinite;
+        }
+        .person.breakdance .hand-right {
+            animation: breakHandRight 0.3s ease-in-out infinite;
+        }
+        .person.breakdance .hip-left {
+            animation: breakHipLeft 0.5s ease-in-out infinite;
+        }
+        .person.breakdance .hip-right {
+            animation: breakHipRight 0.5s ease-in-out infinite;
+        }
+        .person.breakdance .leg-left-upper {
+            animation: breakLegLeft 0.4s ease-in-out infinite;
+        }
+        .person.breakdance .leg-left-lower {
+            animation: breakLegLowerLeft 0.4s ease-in-out infinite;
+        }
+        .person.breakdance .leg-right-upper {
+            animation: breakLegRight 0.4s ease-in-out infinite;
+        }
+        .person.breakdance .leg-right-lower {
+            animation: breakLegLowerRight 0.4s ease-in-out infinite;
+        }
+        .person.breakdance .foot-left {
+            animation: breakFootLeft 0.3s ease-in-out infinite;
+        }
+        .person.breakdance .foot-right {
+            animation: breakFootRight 0.3s ease-in-out infinite;
+        }
+        .person.breakdance .torso {
+            animation: breakTorso 0.6s ease-in-out infinite;
+        }
+        .person.breakdance .head {
+            animation: breakHead 0.4s ease-in-out infinite;
+        }
+
+        /* Animation keyframes */
+        @keyframes armUpperSwingLeft {
+            0%, 100% { transform: rotate(-25deg); }
+            50% { transform: rotate(25deg); }
+        }
+        @keyframes armLowerSwingLeft {
+            0%, 100% { transform: rotate(-10deg); }
+            50% { transform: rotate(15deg); }
+        }
+        @keyframes armUpperSwingRight {
+            0%, 100% { transform: rotate(25deg); }
+            50% { transform: rotate(-25deg); }
+        }
+        @keyframes armLowerSwingRight {
+            0%, 100% { transform: rotate(15deg); }
+            50% { transform: rotate(-10deg); }
+        }
+        @keyframes legUpperStepLeft {
+            0%, 100% { transform: rotate(-15deg); }
+            25% { transform: rotate(20deg) translateY(-2px); }
+            50% { transform: rotate(-15deg); }
+        }
+        @keyframes legLowerStepLeft {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-30deg); }
+            50% { transform: rotate(0deg); }
+        }
+        @keyframes legUpperStepRight {
+            0%, 100% { transform: rotate(-15deg); }
+            50% { transform: rotate(-15deg); }
+            75% { transform: rotate(20deg) translateY(-2px); }
+        }
+        @keyframes legLowerStepRight {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(0deg); }
+            75% { transform: rotate(-30deg); }
+        }
+
+        /* Controls - Bottom Left */
+        .controls {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            z-index: 3000;
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 30px rgba(255,0,102,0.2);
+            animation: controlsGlow 4s ease-in-out infinite;
+        }
+
+        @keyframes controlsGlow {
+            0%, 100% { 
+                box-shadow: 0 0 30px rgba(255,0,102,0.2);
+            }
+            50% { 
+                box-shadow: 0 0 50px rgba(255,0,102,0.4);
+            }
+        }
+
+        /* Joystick */
+        .joystick {
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            position: relative;
+            touch-action: none;
+            box-shadow: 0 0 20px rgba(255,0,102,0.3);
+            animation: joystickPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes joystickPulse {
+            0%, 100% { 
+                box-shadow: 0 0 20px rgba(255,0,102,0.3);
+            }
+            50% { 
+                box-shadow: 0 0 30px rgba(255,0,102,0.5);
+            }
+        }
+
+        .joystick-knob {
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle, #666, #333);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            transition: none;
+        }
+
+        /* Mode buttons */
+        .mode-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .mode-btn {
+            padding: 6px 12px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: #fff;
+            border-radius: 15px;
+            font-size: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 0 10px rgba(255,255,255,0.1);
+        }
+
+        .mode-btn:hover {
+            background: rgba(255,255,255,0.2);
+            box-shadow: 0 0 15px rgba(255,255,255,0.3);
+            transform: scale(1.05);
+        }
+
+        .mode-btn.active {
+            background: linear-gradient(135deg, #ff1a78, #ff6b9d);
+            border-color: #ff1a78;
+            box-shadow: 0 0 20px rgba(255,26,120,0.6);
+            animation: buttonGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes buttonGlow {
+            0%, 100% { 
+                box-shadow: 0 0 20px rgba(255,26,120,0.6);
+            }
+            50% { 
+                box-shadow: 0 0 30px rgba(255,26,120,0.8);
+            }
+        }
+
+        /* Gender selection modal */
+        .gender-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 5000;
+        }
+
+        .gender-content {
+            background: rgba(0,0,0,0.8);
+            border: 1px solid #333;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .gender-title {
+            font-size: 18px;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        .gender-options {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .gender-btn {
+            padding: 15px 25px;
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: #fff;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .gender-btn:hover {
+            background: #ff1a78;
+            border-color: #ff1a78;
+        }
+
+        /* Enhanced Gender-specific character styles */
+        .person.female .torso {
+            background: linear-gradient(180deg, #ff69b4, #ff1493);
+            width: 12px;
+            height: 13px;
+            border-radius: 40% 40% 60% 60%;
+        }
+
+        .person.male .torso {
+            background: linear-gradient(180deg, #333, #222);
+            width: 16px;
+            height: 12px;
+            border-radius: 25% 25% 45% 45%;
+        }
+
+        .person.transgender .torso {
+            background: linear-gradient(180deg, #ff69b4, #333);
+            width: 14px;
+            height: 12px;
+            border-radius: 35% 35% 50% 50%;
+            animation: transgenderGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes transgenderGlow {
+            0%, 100% { 
+                box-shadow: 0 0 5px rgba(255, 105, 180, 0.3);
+            }
+            50% { 
+                box-shadow: 0 0 10px rgba(255, 105, 180, 0.6);
+            }
+        }
+
+        .person.female .head {
+            background: radial-gradient(circle at 40% 40%, #f4d1ae, #c4936d);
+            width: 7px;
+            height: 7px;
+        }
+
+        .person.male .head {
+            background: radial-gradient(circle at 40% 40%, #d4a574, #8b7355);
+            width: 9px;
+            height: 9px;
+        }
+
+        .person.transgender .head {
+            background: radial-gradient(circle at 40% 40%, #f4d1ae, #d4a574);
+            width: 8px;
+            height: 8px;
+            animation: transgenderHeadGlow 2s ease-in-out infinite;
+        }
+
+        @keyframes transgenderHeadGlow {
+            0%, 100% { 
+                box-shadow: 0 0 3px rgba(255, 105, 180, 0.4);
+            }
+            50% { 
+                box-shadow: 0 0 6px rgba(255, 105, 180, 0.7);
+            }
+        }
+
+        /* Enhanced arm styles for transgender */
+        .person.transgender .arm-left-upper,
+        .person.transgender .arm-right-upper {
+            background: linear-gradient(180deg, #ff69b4, #333);
+            animation: transgenderArmSway 4s ease-in-out infinite;
+        }
+
+        @keyframes transgenderArmSway {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-5deg); }
+            75% { transform: rotate(5deg); }
+        }
+
+        /* Enhanced leg styles for transgender */
+        .person.transgender .leg-left-upper,
+        .person.transgender .leg-right-upper {
+            background: linear-gradient(180deg, #ff69b4, #1a1a1a);
+            animation: transgenderLegSway 3s ease-in-out infinite;
+        }
+
+        @keyframes transgenderLegSway {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(-3deg); }
+        }
+
+        /* Enhanced walking animations */
+        .person.walking.transgender .arm-left-upper {
+            animation: transgenderArmSwingLeft 0.8s ease-in-out infinite;
+        }
+        .person.walking.transgender .arm-right-upper {
+            animation: transgenderArmSwingRight 0.8s ease-in-out infinite;
+        }
+        .person.walking.transgender .leg-left-upper {
+            animation: transgenderLegSwingLeft 0.8s ease-in-out infinite;
+        }
+        .person.walking.transgender .leg-right-upper {
+            animation: transgenderLegSwingRight 0.8s ease-in-out infinite;
+        }
+
+        @keyframes transgenderArmSwingLeft {
+            0%, 100% { transform: rotate(-20deg) translateX(2px); }
+            50% { transform: rotate(25deg) translateX(-2px); }
+        }
+        @keyframes transgenderArmSwingRight {
+            0%, 100% { transform: rotate(20deg) translateX(-2px); }
+            50% { transform: rotate(-25deg) translateX(2px); }
+        }
+        @keyframes transgenderLegSwingLeft {
+            0%, 100% { transform: rotate(-10deg) translateX(1px); }
+            50% { transform: rotate(15deg) translateX(-1px); }
+        }
+        @keyframes transgenderLegSwingRight {
+            0%, 100% { transform: rotate(-10deg) translateX(-1px); }
+            50% { transform: rotate(15deg) translateX(1px); }
+        }
+
+        /* RUNWAY KEYFRAMES - Fierce and Flamboyant */
+        @keyframes runwayShoulderLeft {
+            0%, 100% { transform: translateX(0px) rotate(-5deg); }
+            50% { transform: translateX(-2px) rotate(-15deg); }
+        }
+        @keyframes runwayShoulderRight {
+            0%, 100% { transform: translateX(0px) rotate(5deg); }
+            50% { transform: translateX(2px) rotate(15deg); }
+        }
+        @keyframes runwayArmLeft {
+            0%, 100% { transform: rotate(-30deg) translateX(3px); }
+            50% { transform: rotate(45deg) translateX(-2px); }
+        }
+        @keyframes runwayArmRight {
+            0%, 100% { transform: rotate(30deg) translateX(-3px); }
+            50% { transform: rotate(-45deg) translateX(2px); }
+        }
+        @keyframes runwayArmLowerLeft {
+            0%, 100% { transform: rotate(-20deg); }
+            50% { transform: rotate(35deg); }
+        }
+        @keyframes runwayArmLowerRight {
+            0%, 100% { transform: rotate(20deg); }
+            50% { transform: rotate(-35deg); }
+        }
+        @keyframes runwayHandLeft {
+            0%, 100% { transform: rotate(0deg) translateX(0px); }
+            50% { transform: rotate(25deg) translateX(-3px); }
+        }
+        @keyframes runwayHandRight {
+            0%, 100% { transform: rotate(0deg) translateX(0px); }
+            50% { transform: rotate(-25deg) translateX(3px); }
+        }
+        @keyframes runwayHipLeft {
+            0%, 100% { transform: translateX(0px) rotate(-3deg); }
+            50% { transform: translateX(-1px) rotate(-8deg); }
+        }
+        @keyframes runwayHipRight {
+            0%, 100% { transform: translateX(0px) rotate(3deg); }
+            50% { transform: translateX(1px) rotate(8deg); }
+        }
+        @keyframes runwayLegLeft {
+            0%, 100% { transform: rotate(-5deg) translateY(0px); }
+            25% { transform: rotate(20deg) translateY(-3px); }
+            50% { transform: rotate(-5deg) translateY(0px); }
+        }
+        @keyframes runwayLegRight {
+            0%, 100% { transform: rotate(-5deg) translateY(0px); }
+            50% { transform: rotate(-5deg) translateY(0px); }
+            75% { transform: rotate(20deg) translateY(-3px); }
+        }
+        @keyframes runwayLegLowerLeft {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-25deg); }
+            50% { transform: rotate(0deg); }
+        }
+        @keyframes runwayLegLowerRight {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(0deg); }
+            75% { transform: rotate(-25deg); }
+        }
+        @keyframes runwayFootLeft {
+            0%, 100% { transform: rotate(0deg) translateY(0px); }
+            25% { transform: rotate(-10deg) translateY(-2px); }
+            50% { transform: rotate(0deg) translateY(0px); }
+        }
+        @keyframes runwayFootRight {
+            0%, 100% { transform: rotate(0deg) translateY(0px); }
+            50% { transform: rotate(0deg) translateY(0px); }
+            75% { transform: rotate(-10deg) translateY(-2px); }
+        }
+        @keyframes runwayTorso {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(2deg) scale(1.05); }
+        }
+        @keyframes runwayHead {
+            0%, 100% { transform: rotate(0deg) translateX(0px); }
+            50% { transform: rotate(-3deg) translateX(-1px); }
+        }
+
+        /* BREAKDANCE KEYFRAMES - Spinning and Circling */
+        @keyframes breakdanceSpin {
+            0% { transform: translate(-50%, -50%) rotate(0deg); }
+            25% { transform: translate(-50%, -50%) rotate(90deg) scale(0.9); }
+            50% { transform: translate(-50%, -50%) rotate(180deg) scale(1); }
+            75% { transform: translate(-50%, -50%) rotate(270deg) scale(0.9); }
+            100% { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+        @keyframes breakShoulderLeft {
+            0%, 100% { transform: rotate(-45deg) translateX(-2px); }
+            50% { transform: rotate(45deg) translateX(2px); }
+        }
+        @keyframes breakShoulderRight {
+            0%, 100% { transform: rotate(45deg) translateX(2px); }
+            50% { transform: rotate(-45deg) translateX(-2px); }
+        }
+        @keyframes breakArmLeft {
+            0%, 100% { transform: rotate(-60deg) translateX(-3px); }
+            50% { transform: rotate(60deg) translateX(3px); }
+        }
+        @keyframes breakArmRight {
+            0%, 100% { transform: rotate(60deg) translateX(3px); }
+            50% { transform: rotate(-60deg) translateX(-3px); }
+        }
+        @keyframes breakArmLowerLeft {
+            0%, 100% { transform: rotate(-30deg); }
+            50% { transform: rotate(30deg); }
+        }
+        @keyframes breakArmLowerRight {
+            0%, 100% { transform: rotate(30deg); }
+            50% { transform: rotate(-30deg); }
+        }
+        @keyframes breakHandLeft {
+            0%, 100% { transform: rotate(0deg) translateX(0px); }
+            50% { transform: rotate(45deg) translateX(-2px); }
+        }
+        @keyframes breakHandRight {
+            0%, 100% { transform: rotate(0deg) translateX(0px); }
+            50% { transform: rotate(-45deg) translateX(2px); }
+        }
+        @keyframes breakHipLeft {
+            0%, 100% { transform: rotate(-20deg) translateX(-1px); }
+            50% { transform: rotate(20deg) translateX(1px); }
+        }
+        @keyframes breakHipRight {
+            0%, 100% { transform: rotate(20deg) translateX(1px); }
+            50% { transform: rotate(-20deg) translateX(-1px); }
+        }
+        @keyframes breakLegLeft {
+            0%, 100% { transform: rotate(-30deg) translateY(0px); }
+            50% { transform: rotate(30deg) translateY(-2px); }
+        }
+        @keyframes breakLegRight {
+            0%, 100% { transform: rotate(30deg) translateY(0px); }
+            50% { transform: rotate(-30deg) translateY(-2px); }
+        }
+        @keyframes breakLegLowerLeft {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(-45deg); }
+        }
+        @keyframes breakLegLowerRight {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(45deg); }
+        }
+        @keyframes breakFootLeft {
+            0%, 100% { transform: rotate(0deg) translateY(0px); }
+            50% { transform: rotate(-20deg) translateY(-1px); }
+        }
+        @keyframes breakFootRight {
+            0%, 100% { transform: rotate(0deg) translateY(0px); }
+            50% { transform: rotate(20deg) translateY(-1px); }
+        }
+        @keyframes breakTorso {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(5deg) scale(1.1); }
+        }
+        @keyframes breakHead {
+            0%, 100% { transform: rotate(0deg); }
+            50% { transform: rotate(10deg); }
+        }
+
+        /* Prevent text selection */
+        * {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">SOUND FACTORY</div>
+        <div class="floor-indicator" id="currentFloor">Mezzanine (2/5)</div>
+    </div>
+
+
+        <!-- Main Content Area -->
+    <div class="main-content">
+        <div class="floor-container">
+            <!-- Main Floor -->
+            <div class="floor" id="floor-mf">
+                <svg viewBox="0 0 400 520" preserveAspectRatio="xMidYMid meet">
+                    <defs>
+                        <filter id="glow">
+                            <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                            <feMerge>
+                                <feMergeNode in="coloredBlur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+                    </defs>
+                    
+                    <!-- Floor base -->
+                    <rect width="400" height="520" fill="#000"/>
+                    <rect x="5" y="5" width="390" height="510" fill="none" stroke="#333" stroke-width="2"/>
+                    <rect x="10" y="10" width="380" height="500" fill="#050505"/>
+                    
+                    <!-- Stairs (Top) -->
+                    <g opacity="0.6">
+                        <rect x="170" y="20" width="60" height="35" fill="#0a0a0a" stroke="#555" stroke-width="2"/>
+                        <path d="M175 25 L225 25 M175 30 L225 30 M175 35 L225 35 M175 40 L225 40 M175 45 L225 45 M175 50 L225 50" stroke="#444"/>
+                        <text x="200" y="40" font-family="Arial" font-size="8" fill="#888" text-anchor="middle">STAIRS</text>
+                    </g>
+                    
+                    <!-- Columns (3x4 grid) -->
+                    <g filter="url(#glow)">
+                        <!-- Row 1 -->
+                        <rect x="80" y="100" width="30" height="30" fill="#000" stroke="#666" stroke-width="2" rx="2"/>
+                        <rect x="185" y="100" width="30" height="30" fill="#000" stroke="#666" stroke-width="2" rx="2"/>
+                        <rect x="290" y="100" width="30" height="30" fill="#000" stroke="#666" stroke-width="2" rx="2"/>
+                        
+                        <!-- Row 2 -->
+                        <rect x="80" y="200" width="30" height="30" fill="#000" stroke="#666" stroke-width="2" rx="2"/>
+                        <rect x="185" y="200" width="30" height="30" fill="#000" stroke="#666" stroke-width="2" rx="2"/>
+                        <rect x="290" y="200" width="30" height="30" fill="#000" stroke="#666" stroke-width="2" rx="2"/>
+                        
+                        <!-- Row 3 -->
+                        <rect x="80" y="300" width="30" height="30" fill="#000" stroke="#666" stroke-width="2" rx="2"/>
+                        <rect x="185" y="300" width="30" height="30" fill="#000" stroke="#666" stroke-width="2" rx="2"/>
+                        <rect x="290" y="300" width="30" height="30" fill="#000" stroke="#666" stroke-width="2" rx="2"/>
+                        
+                        <!-- Row 4 -->
+                        <rect x="80" y="400" width="30" height="30" fill="#000" stroke="#666" stroke-width="2" rx="2"/>
+                        <rect x="185" y="400" width="30" height="30" fill="#000" stroke="#666" stroke-width="2" rx="2"/>
+                        <rect x="290" y="400" width="30" height="30" fill="#000" stroke="#666" stroke-width="2" rx="2"/>
+                    </g>
+                    
+                    <!-- Bar (Left) -->
+                    <rect x="20" y="100" width="40" height="330" fill="#0f0f1f" stroke="#004e92" stroke-width="2" opacity="0.3"/>
+                    <text x="40" y="265" font-family="Arial" font-size="9" fill="#4a7fb9" text-anchor="middle" transform="rotate(-90 40 265)">BAR</text>
+                    
+                    <!-- Dance floor grid -->
+                    <g opacity="0.05">
+                        <path d="M60 150 L340 150 M60 230 L340 230 M60 310 L340 310 M60 390 L340 390" stroke="#222"/>
+                        <path d="M130 80 L130 450 M200 80 L200 450 M270 80 L270 450" stroke="#222"/>
+                    </g>
+                    
+                    <!-- Exit (Bottom) -->
+                    <g opacity="0.6">
+                        <rect x="170" y="475" width="60" height="25" fill="none" stroke="#555" stroke-width="2"/>
+                        <text x="200" y="492" font-family="Arial" font-size="8" fill="#888" text-anchor="middle">EXIT</text>
+                    </g>
+                </svg>
+            </div>
+
+            <!-- Basement -->
+            <div class="floor active" id="floor-b">
+                <svg viewBox="0 0 400 520" preserveAspectRatio="xMidYMid meet">
+                    <defs>
+                        <filter id="basementGlow">
+                            <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                            <feMerge>
+                                <feMergeNode in="coloredBlur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+                    </defs>
+                    
+                    <rect width="400" height="520" fill="#000"/>
+                    <rect x="5" y="5" width="390" height="510" fill="none" stroke="#333" stroke-width="2" filter="url(#basementGlow)"/>
+                    <rect x="10" y="10" width="380" height="500" fill="#050505" stroke="#222" stroke-width="1"/>
+                    <rect x="30" y="30" width="340" height="460" fill="none" stroke="#444" stroke-width="2"/>
+                    
+                    <rect x="180" y="35" width="140" height="45" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="185" y="40" width="130" height="35" fill="none" stroke="#333" stroke-width="1"/>
+                    
+                    <rect x="35" y="35" width="60" height="80" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="40" y="40" width="50" height="70" fill="none" stroke="#333" stroke-width="1"/>
+                    
+                    <rect x="35" y="120" width="60" height="60" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="35" y="320" width="60" height="60" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="35" y="385" width="60" height="100" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="40" y="390" width="50" height="90" fill="none" stroke="#333" stroke-width="1"/>
+                    
+                    <rect x="110" y="100" width="180" height="320" fill="none" stroke="#333" stroke-width="1" stroke-dasharray="5,5" opacity="0.5"/>
+                    
+                    <rect x="140" y="140" width="20" height="20" fill="#000" stroke="#444" stroke-width="2"/>
+                    <rect x="240" y="140" width="20" height="20" fill="#000" stroke="#444" stroke-width="2"/>
+                    <rect x="140" y="240" width="20" height="20" fill="#000" stroke="#444" stroke-width="2"/>
+                    <rect x="240" y="240" width="20" height="20" fill="#000" stroke="#444" stroke-width="2"/>
+                    <rect x="140" y="340" width="20" height="20" fill="#000" stroke="#444" stroke-width="2"/>
+                    <rect x="240" y="340" width="20" height="20" fill="#000" stroke="#444" stroke-width="2"/>
+                    
+                    <rect x="305" y="120" width="60" height="60" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="310" y="125" width="50" height="50" fill="none" stroke="#333" stroke-width="1"/>
+                    
+                    <rect x="305" y="185" width="60" height="60" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="305" y="250" width="60" height="60" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="310" y="255" width="50" height="50" fill="none" stroke="#333" stroke-width="1"/>
+                    
+                    <rect x="305" y="315" width="60" height="60" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="305" y="380" width="60" height="60" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="310" y="385" width="50" height="50" fill="none" stroke="#333" stroke-width="1"/>
+                    
+                    <rect x="120" y="440" width="160" height="45" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="125" y="445" width="150" height="35" fill="none" stroke="#333" stroke-width="1"/>
+                    
+                    <path d="M180,485 L180,475 L220,475 L220,485" stroke="#666" stroke-width="2" fill="none" stroke-dasharray="2,2"/>
+                </svg>
+            </div>
+
+            <!-- Mezzanine -->
+            <div class="floor" id="floor-mz">
+                <svg viewBox="0 0 400 520" preserveAspectRatio="xMidYMid meet">
+                    <rect width="400" height="520" fill="#000"/>
+                    
+                    <rect x="5" y="5" width="390" height="510" fill="none" stroke="#555" stroke-width="3"/>
+                    <rect x="10" y="10" width="380" height="500" fill="#050505" stroke="#555" stroke-width="2"/>
+                    
+                    <rect x="35" y="35" width="330" height="450" fill="#0a0a0a" stroke="#666" stroke-width="3"/>
+                    
+                    <rect x="100" y="100" width="200" height="250" fill="#000" stroke="#444" stroke-width="2"/>
+                    <text x="200" y="225" font-family="Arial" font-size="11" fill="#666" text-anchor="middle" opacity="0.8">
+                        OPEN TO BELOW
+                    </text>
+                    
+                    <rect x="175" y="45" width="50" height="50" fill="#0f0f0f" stroke="#777" stroke-width="2"/>
+                    <rect x="175" y="425" width="50" height="50" fill="#0f0f0f" stroke="#777" stroke-width="2"/>
+                    <rect x="250" y="170" width="50" height="70" fill="#0f0f0f" stroke="#666" stroke-width="2"/>
+                    <rect x="320" y="45" width="35" height="35" fill="#1a0000" stroke="#aa3333" stroke-width="2" opacity="0.8"/>
+                    
+                    <rect x="45" y="130" width="45" height="30" fill="none" stroke="#555" stroke-width="2" rx="2"/>
+                    <rect x="45" y="170" width="45" height="30" fill="none" stroke="#555" stroke-width="2" rx="2"/>
+                    <rect x="45" y="210" width="45" height="30" fill="none" stroke="#555" stroke-width="2" rx="2"/>
+                    <rect x="45" y="250" width="45" height="30" fill="none" stroke="#555" stroke-width="2" rx="2"/>
+                    <rect x="45" y="290" width="45" height="30" fill="none" stroke="#555" stroke-width="2" rx="2"/>
+                    
+                    <rect x="310" y="130" width="45" height="30" fill="none" stroke="#555" stroke-width="2" rx="2"/>
+                    <rect x="310" y="170" width="45" height="30" fill="none" stroke="#555" stroke-width="2" rx="2"/>
+                    <rect x="310" y="210" width="45" height="30" fill="none" stroke="#555" stroke-width="2" rx="2"/>
+                    <rect x="310" y="250" width="45" height="30" fill="none" stroke="#555" stroke-width="2" rx="2"/>
+                    <rect x="310" y="290" width="45" height="30" fill="none" stroke="#555" stroke-width="2" rx="2"/>
+                    
+                    <circle cx="75" cy="95" r="6" fill="#000" stroke="#666" stroke-width="2"/>
+                    <circle cx="325" cy="95" r="6" fill="#000" stroke="#666" stroke-width="2"/>
+                    <circle cx="75" cy="355" r="6" fill="#000" stroke="#666" stroke-width="2"/>
+                    <circle cx="325" cy="355" r="6" fill="#000" stroke="#666" stroke-width="2"/>
+                </svg>
+            </div>
+
+            <!-- Second Floor -->
+            <div class="floor" id="floor-2">
+                <svg viewBox="0 0 400 520" preserveAspectRatio="xMidYMid meet">
+                    <rect width="400" height="520" fill="#000"/>
+                    
+                    <rect x="5" y="5" width="390" height="510" fill="none" stroke="#888" stroke-width="4"/>
+                    <rect x="10" y="10" width="380" height="500" fill="#000" stroke="#666" stroke-width="3"/>
+                    
+                    <rect x="30" y="30" width="140" height="100" fill="#000" stroke="#666" stroke-width="2"/>
+                    <rect x="30" y="30" width="140" height="35" fill="#0a0a0a" stroke="#555" stroke-width="1"/>
+                    <rect x="30" y="65" width="70" height="65" fill="none" stroke="#444" stroke-width="1"/>
+                    <rect x="100" y="65" width="70" height="65" fill="none" stroke="#444" stroke-width="1"/>
+                    
+                    <rect x="170" y="50" width="60" height="80" fill="#0a0a0a" stroke="#777" stroke-width="2"/>
+                    <rect x="230" y="50" width="60" height="80" fill="#0a0a0a" stroke="#777" stroke-width="2"/>
+                    
+                    <rect x="290" y="30" width="80" height="100" fill="#000" stroke="#666" stroke-width="2"/>
+                    <line x1="290" y1="60" x2="370" y2="60" stroke="#444" stroke-width="1"/>
+                    <line x1="290" y1="90" x2="370" y2="90" stroke="#444" stroke-width="1"/>
+                    <line x1="330" y1="30" x2="330" y2="130" stroke="#444" stroke-width="1"/>
+                    
+                    <rect x="30" y="150" width="60" height="300" fill="#000" stroke="#666" stroke-width="2"/>
+                    
+                    <rect x="120" y="180" width="160" height="160" fill="none" stroke="#555" stroke-width="2" stroke-dasharray="4,4"/>
+                    <text x="200" y="260" font-family="Arial" font-size="11" fill="#666" text-anchor="middle" opacity="0.8">
+                        OPEN SPACE
+                    </text>
+                    
+                    <circle cx="105" cy="165" r="8" fill="#000" stroke="#666" stroke-width="2"/>
+                    <circle cx="105" cy="220" r="8" fill="#000" stroke="#666" stroke-width="2"/>
+                    <circle cx="105" cy="275" r="8" fill="#000" stroke="#666" stroke-width="2"/>
+                    <circle cx="105" cy="330" r="8" fill="#000" stroke="#666" stroke-width="2"/>
+                    
+                    <circle cx="295" cy="165" r="8" fill="#000" stroke="#666" stroke-width="2"/>
+                    <circle cx="295" cy="220" r="8" fill="#000" stroke="#666" stroke-width="2"/>
+                    <circle cx="295" cy="275" r="8" fill="#000" stroke="#666" stroke-width="2"/>
+                    <circle cx="295" cy="330" r="8" fill="#000" stroke="#666" stroke-width="2"/>
+                    
+                    <rect x="310" y="180" width="60" height="160" fill="#000" stroke="#666" stroke-width="2"/>
+                    <rect x="320" y="190" width="40" height="30" fill="none" stroke="#444" stroke-width="1" rx="2"/>
+                    <rect x="320" y="230" width="40" height="30" fill="none" stroke="#444" stroke-width="1" rx="2"/>
+                    <rect x="320" y="270" width="40" height="30" fill="none" stroke="#444" stroke-width="1" rx="2"/>
+                    <rect x="320" y="310" width="40" height="30" fill="none" stroke="#444" stroke-width="1" rx="2"/>
+                    
+                    <rect x="120" y="390" width="160" height="80" fill="#0a0a0a" stroke="#777" stroke-width="2"/>
+                    
+                    <rect x="310" y="410" width="60" height="60" fill="#000" stroke="#666" stroke-width="2"/>
+                    <line x1="325" y1="425" x2="355" y2="455" stroke="#555" stroke-width="2"/>
+                    <line x1="355" y1="425" x2="325" y2="455" stroke="#555" stroke-width="2"/>
+                    
+                    <rect x="310" y="480" width="20" height="10" fill="none" stroke="#777" stroke-width="2" stroke-dasharray="2,2"/>
+                    <rect x="350" y="480" width="20" height="10" fill="none" stroke="#777" stroke-width="2" stroke-dasharray="2,2"/>
+                </svg>
+            </div>
+
+            <!-- Third Floor -->
+            <div class="floor" id="floor-3">
+                <svg viewBox="0 0 400 520" preserveAspectRatio="xMidYMid meet">
+                    <rect width="400" height="520" fill="#000"/>
+                    
+                    <rect x="5" y="5" width="390" height="510" fill="none" stroke="#555" stroke-width="3"/>
+                    <rect x="10" y="10" width="380" height="500" fill="#050505" stroke="#444" stroke-width="2"/>
+                    
+                    <rect x="30" y="30" width="340" height="460" fill="none" stroke="#666" stroke-width="2"/>
+                    
+                    <rect x="100" y="140" width="200" height="180" fill="#000" stroke="#555" stroke-width="2"/>
+                    
+                    <rect x="150" y="35" width="100" height="80" fill="#000" stroke="#666" stroke-width="2"/>
+                    <path d="M170,70 Q200,60 230,70" fill="none" stroke="#555" stroke-width="2"/>
+                    <path d="M170,90 Q200,80 230,90" fill="none" stroke="#555" stroke-width="2"/>
+                    
+                    <rect x="35" y="35" width="60" height="80" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="35" y="180" width="60" height="80" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="35" y="350" width="60" height="80" fill="#000" stroke="#555" stroke-width="2"/>
+                    
+                    <rect x="305" y="35" width="60" height="80" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="305" y="180" width="60" height="80" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="305" y="350" width="60" height="80" fill="#000" stroke="#555" stroke-width="2"/>
+                    
+                    <rect x="120" y="390" width="160" height="80" fill="#000" stroke="#666" stroke-width="2"/>
+                    
+                    <rect x="35" y="440" width="40" height="40" fill="#000" stroke="#555" stroke-width="2"/>
+                    <line x1="45" y1="450" x2="65" y2="470" stroke="#444" stroke-width="2"/>
+                    <line x1="65" y1="450" x2="45" y2="470" stroke="#444" stroke-width="2"/>
+                    
+                    <rect x="325" y="440" width="40" height="40" fill="#000" stroke="#555" stroke-width="2"/>
+                    
+                    <path d="M180,485 L180,475 L220,475 L220,485" stroke="#666" stroke-width="2" fill="none" stroke-dasharray="2,2"/>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+        <!-- Character Overlay -->
+        <div class="character-overlay">
+            <div class="person" id="character">
+                <div class="shadow"></div>
+                
+                <!-- Head -->
+                <div class="head"></div>
+                
+                <!-- Torso -->
+                <div class="torso"></div>
+                
+                <!-- Arms - Simple -->
+                <div class="arm-left-upper">
+                    <div class="arm-left-lower"></div>
+                </div>
+                <div class="arm-right-upper">
+                    <div class="arm-right-lower"></div>
+                </div>
+                
+                <!-- Legs - Simple -->
+                <div class="leg-left-upper">
+                    <div class="leg-left-lower"></div>
+                </div>
+                <div class="leg-right-upper">
+                    <div class="leg-right-lower"></div>
+                </div>
+            </div>
+        </div>
+
+    <!-- Boundary Indicator -->
+    <div class="boundary-indicator" id="boundaryIndicator"></div>
+
+    <!-- Controls -->
+    <div class="controls">
+        <div class="joystick" id="joystick">
+            <div class="joystick-knob" id="knob"></div>
+        </div>
+        <div class="mode-buttons">
+            <button class="mode-btn active" data-mode="walking">WALK</button>
+            <button class="mode-btn" data-mode="runway">RUNWAY</button>
+            <button class="mode-btn" data-mode="breakdance">BREAK</button>
+        </div>
+    </div>
+
+    <!-- Gender Selection Modal -->
+    <div class="gender-modal" id="genderModal">
+        <div class="gender-content">
+            <h2 class="gender-title">Choose Your Avatar</h2>
+            <div class="gender-options">
+                <button class="gender-btn" data-gender="female">👩 Female</button>
+                <button class="gender-btn" data-gender="male">👨 Male</button>
+                <button class="gender-btn" data-gender="transgender">🏳️‍⚧️ Transgender</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Controls -->
+    <div class="nav-controls">
+        <button class="nav-btn next-btn" id="nextBtn">↑</button>
+        <button class="nav-btn prev-btn" id="prevBtn">↓</button>
+    </div>
+
+    <!-- Swipe Instructions -->
+    <div class="swipe-instructions">
+        Swipe up/down or use buttons to change floors
+    </div>
+
+    <script>
+        // Floor data
+        const floors = [
+            { id: 'floor-b', name: 'Basement' },
+            { id: 'floor-mz', name: 'Mezzanine' },
+            { id: 'floor-2', name: 'Second Floor' },
+            { id: 'floor-mf', name: 'Main Floor' },
+            { id: 'floor-3', name: 'Third Floor' }
+        ];
+
+        let currentFloorIndex = 3; // Start with Main Floor (index 3)
+        const floorElements = document.querySelectorAll('.floor');
+        const currentFloorIndicator = document.getElementById('currentFloor');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+
+        // Touch/swipe handling
+        let touchStartY = 0;
+        let touchEndY = 0;
+        let isAnimating = false;
+
+        document.addEventListener('touchstart', function(e) {
+            touchStartY = e.changedTouches[0].screenY;
+        }, false);
+
+        document.addEventListener('touchend', function(e) {
+            if (isAnimating) return;
+            
+            touchEndY = e.changedTouches[0].screenY;
+            handleSwipe();
+        }, false);
+
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            const diff = touchStartY - touchEndY;
+
+            if (Math.abs(diff) > swipeThreshold) {
+                if (diff > 0) {
+                    // Swiped up - go to next floor
+                    nextFloor();
+                } else {
+                    // Swiped down - go to previous floor
+                    previousFloor();
+                }
+            }
+        }
+
+        function nextFloor() {
+            if (isAnimating) return;
+            
+            currentFloorIndex = (currentFloorIndex + 1) % floors.length;
+            showFloor(currentFloorIndex);
+        }
+
+        function previousFloor() {
+            if (isAnimating) return;
+            
+            currentFloorIndex = (currentFloorIndex - 1 + floors.length) % floors.length;
+            showFloor(currentFloorIndex);
+        }
+
+        function showFloor(index) {
+            if (isAnimating) return;
+            
+            isAnimating = true;
+            
+            // Hide all floors
+            floorElements.forEach(floor => floor.classList.remove('active'));
+            
+            // Show selected floor
+            const selectedFloor = document.getElementById(floors[index].id);
+            if (selectedFloor) {
+                selectedFloor.classList.add('active');
+            }
+            
+            // No indicators to update - pure swipe navigation
+            
+            currentFloorIndicator.textContent = `${floors[index].name} (${index + 1}/5)`;
+            
+            // Reset animation flag after transition
+            setTimeout(() => {
+                isAnimating = false;
+            }, 500);
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (isAnimating) return;
+            
+            if (e.key === 'ArrowUp') {
+                nextFloor();
+            } else if (e.key === 'ArrowDown') {
+                previousFloor();
+            }
+        });
+
+        // Button navigation
+        prevBtn.addEventListener('click', () => {
+            if (isAnimating) return;
+            previousFloor();
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (isAnimating) return;
+            nextFloor();
+        });
+
+        // Prevent pinch zoom on iOS
+        document.addEventListener('gesturestart', function(e) {
+            e.preventDefault();
+        });
+
+        // Mouse wheel navigation
+        document.addEventListener('wheel', function(e) {
+            if (isAnimating) return;
+            
+            e.preventDefault();
+            if (e.deltaY < 0) {
+                nextFloor();
+            } else {
+                previousFloor();
+            }
+        });
+
+        // Character System JavaScript
+        const character = document.getElementById('character');
+        const joystick = document.getElementById('joystick');
+        const knob = document.getElementById('knob');
+        const modeButtons = document.querySelectorAll('.mode-btn');
+        const genderModal = document.getElementById('genderModal');
+        const genderButtons = document.querySelectorAll('.gender-btn');
+        const boundaryIndicator = document.getElementById('boundaryIndicator');
+        
+        let posX = window.innerWidth / 2;
+        let posY = window.innerHeight / 2;
+        let velocityX = 0;
+        let velocityY = 0;
+        let currentMode = 'walking';
+        let isDragging = false;
+        let joystickX = 0;
+        let joystickY = 0;
+        let userGender = null;
+        let isAtBoundary = false;
+        
+        // Gender selection
+        genderButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                userGender = btn.dataset.gender;
+                character.classList.add(userGender);
+                genderModal.style.display = 'none';
+            });
+        });
+        
+        // Mode switching
+        modeButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                modeButtons.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                // Remove all mode classes
+                character.classList.remove('walking', 'runway', 'breakdance');
+                
+                currentMode = btn.dataset.mode;
+                
+                // Add new mode class if moving
+                if (velocityX !== 0 || velocityY !== 0) {
+                    character.classList.add(currentMode);
+                }
+            });
+        });
+        
+        // Joystick controls
+        function handleJoystickStart(e) {
+            isDragging = true;
+            handleJoystickMove(e);
+        }
+        
+        function handleJoystickMove(e) {
+            if (!isDragging) return;
+            
+            const rect = joystick.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            let clientX, clientY;
+            if (e.touches) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
+            
+            let deltaX = clientX - centerX;
+            let deltaY = clientY - centerY;
+            
+            // Limit to circle
+            const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+            const maxDistance = rect.width / 2 - 20;
+            
+            if (distance > maxDistance) {
+                deltaX = (deltaX / distance) * maxDistance;
+                deltaY = (deltaY / distance) * maxDistance;
+            }
+            
+            // Update knob position
+            knob.style.transform = `translate(calc(-50% + ${deltaX}px), calc(-50% + ${deltaY}px))`;
+            
+            // Set velocity based on joystick position
+            joystickX = deltaX / maxDistance;
+            joystickY = deltaY / maxDistance;
+            
+            // Add or remove animation class
+            if (Math.abs(joystickX) > 0.1 || Math.abs(joystickY) > 0.1) {
+                if (!character.classList.contains(currentMode)) {
+                    character.classList.add(currentMode);
+                }
+            } else {
+                character.classList.remove('walking', 'runway', 'breakdance');
+            }
+        }
+        
+        function handleJoystickEnd() {
+            isDragging = false;
+            knob.style.transform = 'translate(-50%, -50%)';
+            joystickX = 0;
+            joystickY = 0;
+            character.classList.remove('walking', 'runway', 'breakdance');
+        }
+        
+        // Touch events
+        joystick.addEventListener('touchstart', handleJoystickStart);
+        joystick.addEventListener('touchmove', handleJoystickMove);
+        joystick.addEventListener('touchend', handleJoystickEnd);
+        
+        // Mouse events
+        joystick.addEventListener('mousedown', handleJoystickStart);
+        document.addEventListener('mousemove', handleJoystickMove);
+        document.addEventListener('mouseup', handleJoystickEnd);
+        
+        // Character animation loop
+        function animateCharacter() {
+            // Update velocity based on joystick - SLOWER
+            const speed = currentMode === 'runway' ? 1 : currentMode === 'breakdance' ? 0.8 : 1.5;
+            velocityX = joystickX * speed;
+            velocityY = joystickY * speed;
+            
+            // Calculate new position
+            let newX = posX + velocityX;
+            let newY = posY + velocityY;
+            
+            // Get current floor boundaries
+            const currentFloor = document.querySelector('.floor.active');
+            let hitBoundary = false;
+            
+            if (currentFloor) {
+                const floorRect = currentFloor.getBoundingClientRect();
+                const svg = currentFloor.querySelector('svg');
+                if (svg) {
+                    const svgRect = svg.getBoundingClientRect();
+                    
+                    // Calculate boundaries based on SVG position
+                    const minX = svgRect.left + 20; // 20px margin from left edge
+                    const maxX = svgRect.right - 20; // 20px margin from right edge
+                    const minY = svgRect.top + 20; // 20px margin from top edge
+                    const maxY = svgRect.bottom - 20; // 20px margin from bottom edge
+                    
+                    // Check if character would hit boundary
+                    if (newX < minX || newX > maxX || newY < minY || newY > maxY) {
+                        hitBoundary = true;
+                    }
+                    
+                    // Keep character within floor boundaries
+                    newX = Math.max(minX, Math.min(maxX, newX));
+                    newY = Math.max(minY, Math.min(maxY, newY));
+                }
+            } else {
+                // Fallback to screen boundaries
+                const minX = 20;
+                const maxX = window.innerWidth - 20;
+                const minY = 60;
+                const maxY = window.innerHeight - 30;
+                
+                // Check if character would hit boundary
+                if (newX < minX || newX > maxX || newY < minY || newY > maxY) {
+                    hitBoundary = true;
+                }
+                
+                newX = Math.max(minX, Math.min(maxX, newX));
+                newY = Math.max(minY, Math.min(maxY, newY));
+            }
+            
+            // Show/hide boundary indicator
+            if (hitBoundary && !isAtBoundary) {
+                isAtBoundary = true;
+                boundaryIndicator.classList.add('active');
+                setTimeout(() => {
+                    boundaryIndicator.classList.remove('active');
+                    isAtBoundary = false;
+                }, 1000);
+            }
+            
+            // Update position
+            posX = newX;
+            posY = newY;
+            
+            // Update character position
+            character.style.left = posX + 'px';
+            character.style.top = posY + 'px';
+            
+            // Rotate character based on movement direction
+            if (Math.abs(velocityX) > 0.1 || Math.abs(velocityY) > 0.1) {
+                const angle = Math.atan2(velocityY, velocityX) * (180 / Math.PI) + 90;
+                if (currentMode !== 'breakdance') {
+                    character.style.transform = `translate(-50%, -50%) rotate(${angle}deg)`;
+                }
+            }
+            
+            requestAnimationFrame(animateCharacter);
+        }
+        
+        // Start character animation
+        animateCharacter();
+        
+        // Show gender modal on load
+        window.addEventListener('load', () => {
+            genderModal.style.display = 'flex';
+        });
+    </script>
+</body>
+</html>

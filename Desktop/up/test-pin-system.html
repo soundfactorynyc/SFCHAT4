@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pin System Test</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .test-floor {
+            width: 100%;
+            height: 100vh;
+            background: radial-gradient(ellipse at center, #1a0033 0%, #000 100%);
+            position: relative;
+            cursor: crosshair;
+        }
+        
+        .test-floor::before {
+            content: "Click anywhere to drop a pin";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #666;
+            font-size: 18px;
+            pointer-events: none;
+        }
+        
+        .pin {
+            position: absolute;
+            width: 30px;
+            height: 40px;
+            cursor: pointer;
+            transform: translate(-50%, -100%);
+            animation: pinDrop 0.5s ease;
+            z-index: 50;
+        }
+        
+        @keyframes pinDrop {
+            0% {
+                transform: translate(-50%, -200%) scale(0);
+                opacity: 0;
+            }
+            100% {
+                transform: translate(-50%, -100%) scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .pin-marker {
+            width: 30px;
+            height: 40px;
+            background: linear-gradient(135deg, #FFD700, #FF6B35);
+            border-radius: 50% 50% 50% 0;
+            transform: rotate(-45deg);
+            box-shadow: 0 0 10px rgba(255,215,0,0.5);
+        }
+        
+        .pin-initials {
+            position: absolute;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%) rotate(45deg);
+            font-size: 10px;
+            font-weight: 700;
+            color: #000;
+        }
+        
+        .hover-card {
+            position: fixed;
+            background: rgba(0,0,0,0.95);
+            border: 1px solid #ff6b00;
+            border-radius: 12px;
+            padding: 15px;
+            min-width: 250px;
+            z-index: 500;
+            display: none;
+            pointer-events: none;
+        }
+        
+        .hover-card.active {
+            display: block;
+            pointer-events: auto;
+        }
+        
+        .hover-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .hover-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #ff6b00;
+            border: 2px solid #ff6b00;
+        }
+        
+        .hover-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #ff6b00;
+        }
+        
+        .hover-story {
+            color: #aaa;
+            font-size: 13px;
+            line-height: 1.5;
+            margin-bottom: 10px;
+        }
+        
+        .hover-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .hover-btn {
+            flex: 1;
+            padding: 6px 12px;
+            background: rgba(255,107,0,0.2);
+            border: 1px solid rgba(255,107,0,0.3);
+            border-radius: 6px;
+            color: #ff6b00;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .hover-btn:hover {
+            background: rgba(255,107,0,0.3);
+        }
+        
+        .status {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(0,0,0,0.8);
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-floor" id="testFloor">
+        <!-- Pins will be created here -->
+    </div>
+    
+    <div class="status" id="status">
+        <div>Pins: <span id="pinCount">0</span></div>
+        <div>Mode: <span id="mode">DROP</span></div>
+    </div>
+    
+    <!-- Hover Card -->
+    <div class="hover-card" id="hoverCard">
+        <div class="hover-header">
+            <div class="hover-avatar" id="hoverAvatar"></div>
+            <div>
+                <div class="hover-name" id="hoverName">-</div>
+            </div>
+        </div>
+        <div class="hover-story" id="hoverStory">-</div>
+        <div class="hover-actions">
+            <button class="hover-btn" onclick="likePin()">❤️ Like</button>
+            <button class="hover-btn" onclick="sharePin()">📤 Share</button>
+            <button class="hover-btn" onclick="commentPin()">💬 Comment</button>
+        </div>
+    </div>
+    
+    <script>
+        let pinCount = 0;
+        let currentMode = 'drop';
+        
+        // Initialize
+        document.getElementById('testFloor').addEventListener('click', handleFloorClick);
+        
+        function handleFloorClick(event) {
+            if (currentMode !== 'drop') return;
+            
+            const story = prompt('Tell your story for this pin:');
+            if (!story) return;
+            
+            createPin(event.clientX, event.clientY, story);
+        }
+        
+        function createPin(x, y, story) {
+            const pin = document.createElement('div');
+            pin.className = 'pin';
+            pin.style.left = x + 'px';
+            pin.style.top = y + 'px';
+            pin.setAttribute('data-story', story);
+            pin.setAttribute('data-name', 'Test User');
+            pin.setAttribute('data-initials', 'TU');
+            
+            const marker = document.createElement('div');
+            marker.className = 'pin-marker';
+            
+            const initials = document.createElement('div');
+            initials.className = 'pin-initials';
+            initials.textContent = 'TU';
+            
+            marker.appendChild(initials);
+            pin.appendChild(marker);
+            
+            document.getElementById('testFloor').appendChild(pin);
+            
+            // Add hover events
+            pin.addEventListener('mouseenter', showPinHover);
+            pin.addEventListener('mouseleave', hidePinHover);
+            
+            pinCount++;
+            document.getElementById('pinCount').textContent = pinCount;
+        }
+        
+        function showPinHover(event) {
+            const pin = event.currentTarget;
+            const card = document.getElementById('hoverCard');
+            
+            const story = pin.getAttribute('data-story');
+            const name = pin.getAttribute('data-name');
+            
+            document.getElementById('hoverName').textContent = name;
+            document.getElementById('hoverStory').textContent = story;
+            
+            // Position card above pin
+            const rect = pin.getBoundingClientRect();
+            card.style.left = rect.left + 'px';
+            card.style.top = (rect.top - 10) + 'px';
+            card.classList.add('active');
+        }
+        
+        function hidePinHover() {
+            document.getElementById('hoverCard').classList.remove('active');
+        }
+        
+        function likePin() {
+            alert('Pin liked! ❤️');
+            hidePinHover();
+        }
+        
+        function sharePin() {
+            alert('Pin shared! 📤');
+            hidePinHover();
+        }
+        
+        function commentPin() {
+            const comment = prompt('Add your comment:');
+            if (comment) {
+                alert('Comment added! 💬');
+            }
+            hidePinHover();
+        }
+    </script>
+</body>
+</html>
+
+

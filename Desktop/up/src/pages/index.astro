@@ -1,0 +1,371 @@
+---
+import GridInterface from '../components/GridInterface.astro';
+import InvisibleGrid from '../components/InvisibleGrid.astro';
+
+// You can fetch data from your backend here
+// const response = await fetch('https://your-api.com/grid-config');
+// const gridConfig = await response.json();
+
+// Or use Astro's built-in API routes
+// const gridData = await fetch(`${Astro.url.origin}/api/grid-data`);
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sound Factory NYC - Multi Floor</title>
+    <link rel="stylesheet" href="/styles/global.css">
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">SOUND FACTORY</div>
+        <div class="floor-indicator" id="currentFloor">Main Floor (4/5)</div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div class="main-content">
+        <div class="floor-container">
+            <!-- Basement -->
+            <div class="floor" id="floor-b">
+                <svg viewBox="0 0 400 520" preserveAspectRatio="xMidYMid meet">
+                    <defs>
+                        <filter id="basementGlow">
+                            <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                            <feMerge>
+                                <feMergeNode in="coloredBlur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+                    </defs>
+                    
+                    <rect width="400" height="520" fill="#000"/>
+                    <rect x="5" y="5" width="390" height="510" fill="none" stroke="#333" stroke-width="2" filter="url(#basementGlow)"/>
+                    <rect x="10" y="10" width="380" height="500" fill="#050505" stroke="#222" stroke-width="1"/>
+                    <rect x="30" y="30" width="340" height="460" fill="none" stroke="#444" stroke-width="2"/>
+                    
+                    <rect x="180" y="35" width="140" height="45" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="185" y="40" width="130" height="35" fill="none" stroke="#333" stroke-width="1"/>
+                    
+                    <rect x="35" y="35" width="60" height="80" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="40" y="40" width="50" height="70" fill="none" stroke="#333" stroke-width="1"/>
+                    
+                    <rect x="35" y="120" width="60" height="60" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="35" y="320" width="60" height="60" fill="#000" stroke="#555" stroke-width="2"/>
+                    
+                    <text x="200" y="60" font-family="Arial" font-size="12" fill="#888" text-anchor="middle">BASEMENT</text>
+                </svg>
+            </div>
+
+            <!-- Mezzanine -->
+            <div class="floor" id="floor-mz">
+                <svg viewBox="0 0 400 520" preserveAspectRatio="xMidYMid meet">
+                    <defs>
+                        <filter id="mezzanineGlow">
+                            <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                            <feMerge>
+                                <feMergeNode in="coloredBlur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+                    </defs>
+                    
+                    <rect width="400" height="520" fill="#000"/>
+                    <rect x="5" y="5" width="390" height="510" fill="none" stroke="#333" stroke-width="2" filter="url(#mezzanineGlow)"/>
+                    <rect x="10" y="10" width="380" height="500" fill="#050505" stroke="#222" stroke-width="1"/>
+                    
+                    <rect x="50" y="50" width="300" height="420" fill="none" stroke="#444" stroke-width="2"/>
+                    <rect x="80" y="80" width="240" height="360" fill="none" stroke="#555" stroke-width="1"/>
+                    
+                    <text x="200" y="30" font-family="Arial" font-size="12" fill="#888" text-anchor="middle">MEZZANINE</text>
+                </svg>
+            </div>
+
+            <!-- Second Floor -->
+            <div class="floor" id="floor-2">
+                <svg viewBox="0 0 400 520" preserveAspectRatio="xMidYMid meet">
+                    <defs>
+                        <filter id="secondGlow">
+                            <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                            <feMerge>
+                                <feMergeNode in="coloredBlur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+                    </defs>
+                    
+                    <rect width="400" height="520" fill="#000"/>
+                    <rect x="5" y="5" width="390" height="510" fill="none" stroke="#333" stroke-width="2" filter="url(#secondGlow)"/>
+                    <rect x="10" y="10" width="380" height="500" fill="#050505" stroke="#222" stroke-width="1"/>
+                    
+                    <rect x="60" y="60" width="280" height="400" fill="none" stroke="#444" stroke-width="2"/>
+                    <rect x="90" y="90" width="220" height="340" fill="none" stroke="#555" stroke-width="1"/>
+                    
+                    <text x="200" y="30" font-family="Arial" font-size="12" fill="#888" text-anchor="middle">SECOND FLOOR</text>
+                </svg>
+            </div>
+
+            <!-- Main Floor -->
+            <div class="floor active" id="floor-mf">
+                <svg viewBox="0 0 400 520" preserveAspectRatio="xMidYMid meet">
+                    <defs>
+                        <filter id="mainGlow">
+                            <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                            <feMerge>
+                                <feMergeNode in="coloredBlur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+                    </defs>
+                    
+                    <rect width="400" height="520" fill="#000"/>
+                    <rect x="5" y="5" width="390" height="510" fill="none" stroke="#333" stroke-width="2" filter="url(#mainGlow)"/>
+                    <rect x="10" y="10" width="380" height="500" fill="#050505" stroke="#222" stroke-width="1"/>
+                    
+                    <!-- Stairs (Top) -->
+                    <g opacity="0.6">
+                        <rect x="170" y="20" width="60" height="35" fill="#0a0a0a" stroke="#555" stroke-width="2"/>
+                        <path d="M175 25 L225 25 M175 30 L225 30 M175 35 L225 35 M175 40 L225 40 M175 45 L225 45 M175 50 L225 50" stroke="#444"/>
+                        <text x="200" y="40" font-family="Arial" font-size="8" fill="#888" text-anchor="middle">STAIRS</text>
+                    </g>
+                    
+                    <!-- Columns (3x4 grid) -->
+                    <g filter="url(#mainGlow)">
+                        <!-- Row 1 -->
+                        <rect x="80" y="100" width="30" height="30" fill="#000" stroke="#666" stroke-width="2" rx="2"/>
+                        <rect x="185" y="100" width="30" height="30" fill="#000" stroke="#666" stroke-width="2" rx="2"/>
+                        <rect x="290" y="100" width="30" height="30" fill="#000" stroke="#666" stroke-width="2" rx="2"/>
+                        
+                        <!-- Row 2 -->
+                        <rect x="80" y="200" width="30" height="30" fill="#000" stroke="#666" stroke-width="2" rx="2"/>
+                        <rect x="185" y="200" width="30" height="30" fill="#000" stroke="#666" stroke-width="2" rx="2"/>
+                        <rect x="290" y="200" width="30" height="30" fill="#000" stroke="#666" stroke-width="2" rx="2"/>
+                        
+                        <!-- Row 3 -->
+                        <rect x="80" y="300" width="30" height="30" fill="#000" stroke="#666" stroke-width="2" rx="2"/>
+                        <rect x="185" y="300" width="30" height="30" fill="#000" stroke="#666" stroke-width="2" rx="2"/>
+                        <rect x="290" y="300" width="30" height="30" fill="#000" stroke="#666" stroke-width="2" rx="2"/>
+                        
+                        <!-- Row 4 -->
+                        <rect x="80" y="400" width="30" height="30" fill="#000" stroke="#666" stroke-width="2" rx="2"/>
+                        <rect x="185" y="400" width="30" height="30" fill="#000" stroke="#666" stroke-width="2" rx="2"/>
+                        <rect x="290" y="400" width="30" height="30" fill="#000" stroke="#666" stroke-width="2" rx="2"/>
+                    </g>
+                    
+                    <!-- Bar (Left) -->
+                    <rect x="20" y="100" width="40" height="330" fill="#0f0f1f" stroke="#004e92" stroke-width="2" opacity="0.3"/>
+                    <text x="40" y="265" font-family="Arial" font-size="9" fill="#4a7fb9" text-anchor="middle" transform="rotate(-90 40 265)">BAR</text>
+                    
+                    <!-- Dance floor grid -->
+                    <g opacity="0.05">
+                        <path d="M60 150 L340 150 M60 230 L340 230 M60 310 L340 310 M60 390 L340 390" stroke="#222"/>
+                        <path d="M130 80 L130 450 M200 80 L200 450 M270 80 L270 450" stroke="#222"/>
+                    </g>
+                    
+                    <!-- Exit (Bottom) -->
+                    <g opacity="0.6">
+                        <rect x="170" y="475" width="60" height="25" fill="none" stroke="#555" stroke-width="2"/>
+                        <text x="200" y="492" font-family="Arial" font-size="8" fill="#888" text-anchor="middle">EXIT</text>
+                    </g>
+                    
+                    <text x="200" y="30" font-family="Arial" font-size="12" fill="#888" text-anchor="middle">MAIN FLOOR</text>
+                </svg>
+            </div>
+
+            <!-- Third Floor -->
+            <div class="floor" id="floor-3">
+                <svg viewBox="0 0 400 520" preserveAspectRatio="xMidYMid meet">
+                    <defs>
+                        <filter id="thirdGlow">
+                            <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                            <feMerge>
+                                <feMergeNode in="coloredBlur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+                    </defs>
+                    
+                    <rect width="400" height="520" fill="#000"/>
+                    <rect x="5" y="5" width="390" height="510" fill="none" stroke="#333" stroke-width="2" filter="url(#thirdGlow)"/>
+                    <rect x="10" y="10" width="380" height="500" fill="#050505" stroke="#222" stroke-width="1"/>
+                    
+                    <rect x="70" y="70" width="260" height="380" fill="none" stroke="#444" stroke-width="2"/>
+                    <rect x="100" y="100" width="200" height="320" fill="none" stroke="#555" stroke-width="1"/>
+                    
+                    <text x="200" y="30" font-family="Arial" font-size="12" fill="#888" text-anchor="middle">THIRD FLOOR</text>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- Character Overlay -->
+    <div class="character-overlay">
+        <div class="person" id="character">
+            <div class="shadow"></div>
+            
+            <!-- Head -->
+            <div class="head"></div>
+            
+            <!-- Torso -->
+            <div class="torso"></div>
+            
+            <!-- Arms - Simple -->
+            <div class="arm-left-upper">
+                <div class="arm-left-lower"></div>
+            </div>
+            <div class="arm-right-upper">
+                <div class="arm-right-lower"></div>
+            </div>
+            
+            <!-- Legs - Simple -->
+            <div class="leg-left-upper">
+                <div class="leg-left-lower"></div>
+            </div>
+            <div class="leg-right-upper">
+                <div class="leg-right-lower"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Boundary Indicator -->
+    <div class="boundary-indicator" id="boundaryIndicator"></div>
+
+    <!-- Controls -->
+    <div class="controls">
+        <div class="joystick" id="joystick">
+            <div class="joystick-knob" id="knob"></div>
+        </div>
+        <div class="mode-buttons">
+            <button class="mode-btn active" data-mode="walking">WALK</button>
+            <button class="mode-btn" data-mode="runway">RUNWAY</button>
+            <button class="mode-btn" data-mode="breakdance">BREAK</button>
+        </div>
+    </div>
+
+    <!-- Gender Selection Modal -->
+    <div class="gender-modal" id="genderModal">
+        <div class="gender-content">
+            <h2 class="gender-title">Choose Your Avatar</h2>
+            <div class="gender-options">
+                <button class="gender-btn" data-gender="female">👩 Female</button>
+                <button class="gender-btn" data-gender="male">👨 Male</button>
+                <button class="gender-btn" data-gender="transgender">🏳️‍⚧️ Transgender</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Controls -->
+    <div class="nav-controls">
+        <button class="nav-btn next-btn" id="nextBtn">↑</button>
+        <button class="nav-btn prev-btn" id="prevBtn">↓</button>
+    </div>
+
+    <!-- Swipe Instructions -->
+    <div class="swipe-instructions">
+        <span>↑ Swipe up/down to change floors ↑</span>
+    </div>
+
+    <!-- Grid Interface - Integrated into building -->
+    <div class="integrated-controls">
+        <GridInterface />
+        <InvisibleGrid />
+        
+        <!-- Floor Navigation Controls -->
+        <div class="floor-controls">
+            <button class="floor-btn" id="floorUp" disabled>↑</button>
+            <button class="floor-btn" id="floorDown">↓</button>
+        </div>
+    </div>
+
+    <script src="/scripts/character.js"></script>
+    <script src="/scripts/navigation.js"></script>
+    
+    <script>
+        // Frontend handler for button clicks
+        window.addEventListener('gridButtonClick', async (event) => {
+            const { position, index, label } = event.detail;
+            
+            // Example: Call different backend endpoints based on button
+            try {
+                const response = await fetch('/api/button-action', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        grid: position,  // 'top', 'middle', or 'bottom'
+                        buttonIndex: index,  // 1-64
+                        label: label
+                    })
+                });
+                
+                const result = await response.json();
+                
+                // Handle the backend response
+                if (result.action === 'navigate') {
+                    window.location.href = result.url;
+                } else if (result.action === 'openModal') {
+                    // Open a modal with content
+                    openModal(result.content);
+                } else if (result.action === 'executeFunction') {
+                    // Execute some function
+                    executeBackendFunction(result.functionName, result.params);
+                }
+                
+            } catch (error) {
+                console.error('Error calling backend:', error);
+            }
+        });
+
+        // Example functions that could be triggered
+        function openModal(content) {
+            // Your modal logic here
+            console.log('Opening modal with:', content);
+        }
+
+        function executeBackendFunction(functionName, params) {
+            // Execute different functions based on backend response
+            const functions = {
+                'startProcess': () => startProcess(params),
+                'loadData': () => loadData(params),
+                'updateStatus': () => updateStatus(params),
+                'changeFloor': () => changeFloor(params),
+                'toggleCharacter': () => toggleCharacter(params),
+                // Add 64 different functions if needed
+            };
+            
+            if (functions[functionName]) {
+                functions[functionName]();
+            }
+        }
+
+        // Sound Factory specific functions
+        function startProcess(params) {
+            console.log('Starting process:', params);
+            // Could start music, lighting, etc.
+        }
+
+        function loadData(params) {
+            console.log('Loading data:', params);
+            // Could load user data, floor data, etc.
+        }
+
+        function updateStatus(params) {
+            console.log('Updating status:', params);
+            // Could update user status, floor status, etc.
+        }
+
+        function changeFloor(params) {
+            console.log('Changing floor:', params);
+            // Could trigger floor navigation
+        }
+
+        function toggleCharacter(params) {
+            console.log('Toggling character:', params);
+            // Could show/hide character, change gender, etc.
+        }
+    </script>
+</body>
+</html>

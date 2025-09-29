@@ -1,0 +1,592 @@
+{
+  "version": 3,
+  "data": [
+    {
+      "campaign": {
+        "name": "Sound Factory - Awareness & Brand Building",
+        "objective": "BRAND_AWARENESS",
+        "status": "ACTIVE",
+        "special_ad_categories": [],
+        "daily_budget": 150,
+        "bid_strategy": "LOWEST_COST_WITHOUT_CAP"
+      },
+      "adsets": [
+        {
+          "name": "Sound Factory - NYC Nightlife Enthusiasts",
+          "optimization_goal": "REACH",
+          "billing_event": "IMPRESSIONS",
+          "bid_amount": 12,
+          "targeting": {
+            "age_min": 21,
+            "age_max": 35,
+            "genders": [
+              1,
+              2
+            ],
+            "geo_locations": {
+              "countries": [
+                "US"
+              ],
+              "regions": [
+                {
+                  "key": "2484",
+                  "name": "New York"
+                },
+                {
+                  "key": "2347",
+                  "name": "New Jersey"
+                },
+                {
+                  "key": "2168",
+                  "name": "Connecticut"
+                }
+              ],
+              "cities": [
+                {
+                  "key": "2490",
+                  "name": "New York, NY"
+                },
+                {
+                  "key": "2484",
+                  "name": "Brooklyn, NY"
+                },
+                {
+                  "key": "2421",
+                  "name": "Queens, NY"
+                }
+              ],
+              "radius": 50,
+              "distance_unit": "mile"
+            },
+            "interests": [
+              {
+                "id": "6003139266461",
+                "name": "Nightlife"
+              },
+              {
+                "id": "6003107902433",
+                "name": "Electronic dance music"
+              },
+              {
+                "id": "6003020834693",
+                "name": "House music"
+              },
+              {
+                "id": "6003055733583",
+                "name": "Clubbing"
+              },
+              {
+                "id": "6003049077433",
+                "name": "Music festivals"
+              }
+            ]
+          },
+          "start_time": "2025-09-30T00:00:00-0400",
+          "end_time": null
+        }
+      ],
+      "ads": [
+        {
+          "name": "Sound Factory - History Video",
+          "status": "ACTIVE",
+          "creative": {
+            "object_story_spec": {
+              "page_id": "123456789012345",
+              "video_data": {
+                "image_url": "https://example.com/sound_factory_thumbnail.jpg",
+                "title": "The Legend Returns: Sound Factory NYC",
+                "message": "Step back into the venue that defined NYC nightlife. Sound Factory returns in 2025 with an experience like no other.",
+                "call_to_action": {
+                  "type": "LEARN_MORE",
+                  "value": {
+                    "link": "https://soundfactorynyc.com/?source=fb_history"
+                  }
+                }
+              }
+            }
+          },
+          "tracking_specs": [
+            {
+              "action.type": [
+                "offsite_conversion"
+              ],
+              "fb_pixel": [
+                "987654321098765"
+              ]
+            }
+          ],
+          "url_tags": "utm_source=facebook&utm_medium=cpc&utm_campaign=awareness&utm_content=history_video"
+        }
+      ]
+    },
+    {
+      "campaign": {
+        "name": "Sound Factory - Immersive Experience",
+        "objective": "ENGAGEMENT",
+        "status": "ACTIVE",
+        "special_ad_categories": [],
+        "daily_budget": 125,
+        "bid_strategy": "LOWEST_COST_WITHOUT_CAP"
+      },
+      "adsets": [
+        {
+          "name": "Sound Factory - Engaged Audiences",
+          "optimization_goal": "LANDING_PAGE_VIEWS",
+          "billing_event": "IMPRESSIONS",
+          "bid_amount": 15,
+          "targeting": {
+            "age_min": 21,
+            "age_max": 45,
+            "genders": [
+              1,
+              2
+            ],
+            "geo_locations": {
+              "countries": [
+                "US"
+              ],
+              "regions": [
+                {
+                  "key": "2484",
+                  "name": "New York"
+                },
+                {
+                  "key": "2347",
+                  "name": "New Jersey"
+                },
+                {
+                  "key": "2168",
+                  "name": "Connecticut"
+                }
+              ],
+              "radius": 50,
+              "distance_unit": "mile"
+            },
+            "interests": [
+              {
+                "id": "6003139266461",
+                "name": "Nightlife"
+              },
+              {
+                "id": "6003107902433",
+                "name": "Electronic dance music"
+              },
+              {
+                "id": "6003020834693",
+                "name": "House music"
+              }
+            ],
+            "custom_audiences": [
+              {
+                "id": "111111111111111",
+                "name": "Website Visitors 30 Days"
+              }
+            ]
+          },
+          "start_time": "2025-09-30T00:00:00-0400",
+          "end_time": null
+        }
+      ],
+      "ads": [
+        {
+          "name": "Sound Factory - Immersive Canvas Experience",
+          "status": "ACTIVE",
+          "creative": {
+            "object_story_spec": {
+              "page_id": "123456789012345",
+              "link_data": {
+                "link": "https://soundfactorynyc.com/?source=fb_immersive",
+                "message": "Step into the legend. Sound Factory returns to NYC with an experience like no other. Tap to immerse yourself in the Sound Factory world.",
+                "name": "Sound Factory NYC",
+                "description": "The legendary club that defined NYC nightlife returns in 2025",
+                "call_to_action": {
+                  "type": "LEARN_MORE",
+                  "value": {
+                    "link": "https://soundfactorynyc.com/?source=fb_immersive"
+                  }
+                }
+              }
+            },
+            "asset_feed_spec": {
+              "videos": [
+                {
+                  "video_id": "555555555555555"
+                },
+                {
+                  "video_id": "666666666666666"
+                }
+              ],
+              "bodies": [
+                {
+                  "text": "Step into the legend. Sound Factory returns to NYC with an experience like no other."
+                },
+                {
+                  "text": "The legendary club that defined NYC nightlife is back. Experience Sound Factory in 2025."
+                }
+              ],
+              "titles": [
+                {
+                  "text": "Sound Factory NYC"
+                },
+                {
+                  "text": "The Legend Returns"
+                }
+              ],
+              "descriptions": [
+                {
+                  "text": "The legendary club that defined NYC nightlife returns in 2025"
+                },
+                {
+                  "text": "Tables, tickets, and unforgettable experiences"
+                }
+              ],
+              "call_to_actions": [
+                {
+                  "type": "LEARN_MORE"
+                },
+                {
+                  "type": "BOOK_TRAVEL"
+                }
+              ]
+            }
+          },
+          "tracking_specs": [
+            {
+              "action.type": [
+                "offsite_conversion"
+              ],
+              "fb_pixel": [
+                "987654321098765"
+              ]
+            }
+          ],
+          "url_tags": "utm_source=facebook&utm_medium=cpc&utm_campaign=immersive&utm_content=canvas_experience"
+        }
+      ]
+    },
+    {
+      "campaign": {
+        "name": "Sound Factory - Event Promotion",
+        "objective": "CONVERSIONS",
+        "status": "ACTIVE",
+        "special_ad_categories": [],
+        "daily_budget": 175,
+        "bid_strategy": "LOWEST_COST_WITH_BID_CAP"
+      },
+      "adsets": [
+        {
+          "name": "Sound Factory - Website Visitors",
+          "optimization_goal": "OFFSITE_CONVERSIONS",
+          "billing_event": "IMPRESSIONS",
+          "bid_amount": 18,
+          "targeting": {
+            "age_min": 21,
+            "age_max": 45,
+            "genders": [
+              1,
+              2
+            ],
+            "geo_locations": {
+              "countries": [
+                "US"
+              ],
+              "regions": [
+                {
+                  "key": "2484",
+                  "name": "New York"
+                },
+                {
+                  "key": "2347",
+                  "name": "New Jersey"
+                },
+                {
+                  "key": "2168",
+                  "name": "Connecticut"
+                }
+              ],
+              "radius": 50,
+              "distance_unit": "mile"
+            },
+            "custom_audiences": [
+              {
+                "id": "222222222222222",
+                "name": "Website Visitors 14 Days"
+              }
+            ]
+          },
+          "promoted_object": {
+            "pixel_id": "987654321098765",
+            "custom_event_type": "PURCHASE"
+          },
+          "start_time": "2025-09-30T00:00:00-0400",
+          "end_time": null
+        }
+      ],
+      "ads": [
+        {
+          "name": "Sound Factory - Dynamic Social Proof",
+          "status": "ACTIVE",
+          "creative": {
+            "object_story_spec": {
+              "page_id": "123456789012345",
+              "link_data": {
+                "link": "https://soundfactorynyc.com/find_my_ticket.html?source=fb_dynamic",
+                "call_to_action": {
+                  "type": "GET_TICKETS"
+                }
+              }
+            },
+            "asset_feed_spec": {
+              "images": [
+                {
+                  "hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+                },
+                {
+                  "hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+                },
+                {
+                  "hash": "cccccccccccccccccccccccccccccccc"
+                }
+              ],
+              "videos": [
+                {
+                  "video_id": "777777777777777"
+                },
+                {
+                  "video_id": "888888888888888"
+                }
+              ],
+              "bodies": [
+                {
+                  "text": "{{active_visitors}} people are viewing Sound Factory right now"
+                },
+                {
+                  "text": "Only {{tables_remaining}} VIP tables remaining!"
+                },
+                {
+                  "text": "Someone just purchased {{recent_purchase}} - secure yours now!"
+                },
+                {
+                  "text": "Only {{tickets_remaining}} tickets left for our next event!"
+                }
+              ],
+              "titles": [
+                {
+                  "text": "Sound Factory Returns to NYC"
+                },
+                {
+                  "text": "The Legend is Back - Sound Factory NYC"
+                },
+                {
+                  "text": "Experience Sound Factory in 2025"
+                }
+              ],
+              "descriptions": [
+                {
+                  "text": "The legendary club that defined NYC nightlife"
+                },
+                {
+                  "text": "Tables, tickets, and unforgettable experiences"
+                },
+                {
+                  "text": "Don't miss the return of a nightlife icon"
+                }
+              ],
+              "call_to_actions": [
+                {
+                  "type": "BOOK_TRAVEL"
+                },
+                {
+                  "type": "GET_TICKETS"
+                },
+                {
+                  "type": "LEARN_MORE"
+                }
+              ]
+            }
+          },
+          "tracking_specs": [
+            {
+              "action.type": [
+                "offsite_conversion"
+              ],
+              "fb_pixel": [
+                "987654321098765"
+              ]
+            }
+          ],
+          "url_tags": "utm_source=facebook&utm_medium=cpc&utm_campaign=event_promotion&utm_content=dynamic_social_proof"
+        }
+      ]
+    },
+    {
+      "campaign": {
+        "name": "Sound Factory - AR Experience",
+        "objective": "APP_INSTALLS",
+        "status": "ACTIVE",
+        "special_ad_categories": [],
+        "daily_budget": 50,
+        "bid_strategy": "LOWEST_COST_WITHOUT_CAP"
+      },
+      "adsets": [
+        {
+          "name": "Sound Factory - AR Target Audience",
+          "optimization_goal": "APP_INSTALLS",
+          "billing_event": "IMPRESSIONS",
+          "bid_amount": 12,
+          "targeting": {
+            "age_min": 21,
+            "age_max": 35,
+            "genders": [
+              1,
+              2
+            ],
+            "geo_locations": {
+              "countries": [
+                "US"
+              ],
+              "regions": [
+                {
+                  "key": "2484",
+                  "name": "New York"
+                },
+                {
+                  "key": "2347",
+                  "name": "New Jersey"
+                },
+                {
+                  "key": "2168",
+                  "name": "Connecticut"
+                }
+              ],
+              "radius": 50,
+              "distance_unit": "mile"
+            },
+            "interests": [
+              {
+                "id": "6003139266461",
+                "name": "Nightlife"
+              },
+              {
+                "id": "6003107902433",
+                "name": "Electronic dance music"
+              },
+              {
+                "id": "6003020834693",
+                "name": "House music"
+              }
+            ],
+            "behaviors": [
+              {
+                "id": "6004854404196",
+                "name": "Technology early adopters"
+              }
+            ]
+          },
+          "start_time": "2025-09-30T00:00:00-0400",
+          "end_time": null
+        }
+      ],
+      "ads": [
+        {
+          "name": "Sound Factory - AR Experience",
+          "status": "ACTIVE",
+          "creative": {
+            "object_story_spec": {
+              "page_id": "123456789012345",
+              "link_data": {
+                "link": "https://soundfactorynyc.com/?source=fb_ar",
+                "message": "Experience Sound Factory in AR! Try our filter to see yourself inside the legendary club, then share with friends.",
+                "name": "Sound Factory AR Experience",
+                "description": "Step inside the legend with our AR filter",
+                "call_to_action": {
+                  "type": "TRY_IT",
+                  "value": {
+                    "link": "fb://camera/ar/123456789012345"
+                  }
+                }
+              }
+            }
+          },
+          "tracking_specs": [
+            {
+              "action.type": [
+                "offsite_conversion"
+              ],
+              "fb_pixel": [
+                "987654321098765"
+              ]
+            }
+          ],
+          "url_tags": "utm_source=facebook&utm_medium=cpc&utm_campaign=ar_experience&utm_content=ar_filter"
+        }
+      ]
+    },
+    {
+      "campaign": {
+        "name": "Sound Factory - Retargeting",
+        "objective": "CONVERSIONS",
+        "status": "ACTIVE",
+        "special_ad_categories": [],
+        "daily_budget": 75,
+        "bid_strategy": "LOWEST_COST_WITH_BID_CAP"
+      },
+      "adsets": [
+        {
+          "name": "Sound Factory - Abandoned Cart",
+          "optimization_goal": "OFFSITE_CONVERSIONS",
+          "billing_event": "IMPRESSIONS",
+          "bid_amount": 22,
+          "targeting": {
+            "custom_audiences": [
+              {
+                "id": "444444444444444",
+                "name": "Initiated Checkout - No Purchase"
+              }
+            ]
+          },
+          "promoted_object": {
+            "pixel_id": "987654321098765",
+            "custom_event_type": "PURCHASE"
+          },
+          "start_time": "2025-09-30T00:00:00-0400",
+          "end_time": null
+        }
+      ],
+      "ads": [
+        {
+          "name": "Sound Factory - Complete Your Purchase",
+          "status": "ACTIVE",
+          "creative": {
+            "object_story_spec": {
+              "page_id": "123456789012345",
+              "link_data": {
+                "link": "https://soundfactorynyc.com/find_my_ticket.html?source=fb_cart",
+                "message": "Your Sound Factory tickets are waiting! Complete your purchase before they sell out.",
+                "name": "Complete Your Sound Factory Reservation",
+                "description": "Limited tickets remaining for our next event",
+                "call_to_action": {
+                  "type": "GET_TICKETS",
+                  "value": {
+                    "link": "https://soundfactorynyc.com/find_my_ticket.html?source=fb_cart"
+                  }
+                }
+              }
+            }
+          },
+          "tracking_specs": [
+            {
+              "action.type": [
+                "offsite_conversion"
+              ],
+              "fb_pixel": [
+                "987654321098765"
+              ]
+            }
+          ],
+          "url_tags": "utm_source=facebook&utm_medium=cpc&utm_campaign=retargeting&utm_content=abandoned_cart"
+        }
+      ]
+    }
+  ]
+}

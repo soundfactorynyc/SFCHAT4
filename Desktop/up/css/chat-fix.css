@@ -1,0 +1,92 @@
+/* Chat Overlap Fix - Add this to your existing CSS or include as separate file */
+
+/* Fix chat input wrapper positioning */
+.chat-input-wrap {
+    position: relative;
+    z-index: 1150;
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    background: rgba(26, 0, 51, 0.95);
+    backdrop-filter: blur(20px);
+    border-top: 1px solid rgba(255, 0, 255, 0.3);
+}
+
+/* Ensure chat container doesn't overlap with other elements */
+.chat-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1100;
+    isolation: isolate; /* Creates new stacking context */
+}
+
+/* Fix message stream positioning to prevent overlap */
+.message-stream {
+    position: absolute;
+    bottom: 60px; /* Adjust based on chat bar height */
+    left: 0;
+    right: 0;
+    height: 40px;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Fix any message bubbles that might overlap */
+.message-bubble {
+    position: relative;
+    z-index: 1;
+}
+
+/* Ensure chat input stays on top when focused */
+.chat-input:focus {
+    position: relative;
+    z-index: 2;
+}
+
+/* Fix for send button if it's causing overlap */
+.chat-send {
+    position: relative;
+    z-index: 2;
+    flex-shrink: 0;
+}
+
+/* Prevent any animations from causing overlap */
+.chat-container * {
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+}
+
+/* Fix for typing indicators if they overlap */
+.typing-indicators {
+    position: absolute;
+    bottom: 100%; /* Position above chat bar */
+    left: 15px;
+    margin-bottom: 5px;
+    z-index: 1;
+}
+
+/* Ensure reactions don't cause overlap */
+.chat-reactions {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    gap: 5px;
+}
+
+/* Fix any floating elements */
+.floating-reaction,
+.celebration-particles,
+.particle {
+    pointer-events: none;
+    z-index: 1500; /* Above chat but below modals */
+}
+
+/* Ensure proper stacking order */
+#mapCanvas { z-index: 100; }
+.pin-popup { z-index: 200; }
+.chat-container { z-index: 1100; }
+.mode-toggle { z-index: 1200; }
+#pinFilters { z-index: 1200; }
+.composer-overlay { z-index: 1600; }

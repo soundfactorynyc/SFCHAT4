@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sound Factory NYC - Live Floor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body {
+            background: #000;
+            color: #fff;
+            font-family: -apple-system, system-ui, sans-serif;
+            overflow: hidden;
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background: rgba(0,0,0,0.9);
+            border-bottom: 1px solid #333;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 14px;
+            letter-spacing: 1px;
+        }
+
+        .user-count {
+            background: rgba(255,255,255,0.1);
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+        }
+
+        .count-num {
+            color: #00ff88;
+            font-weight: 700;
+        }
+
+        /* Main floor container */
+        .floor-wrapper {
+            position: absolute;
+            top: 40px;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .floor-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            height: 100%;
+        }
+
+        /* Floor SVG */
+        .floor-svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Social characters layer */
+        .social-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        /* Tiny character pin */
+        .pin {
+            position: absolute;
+            width: 12px;
+            height: 16px;
+            pointer-events: auto;
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+            transform: translate(-6px, -8px);
+        }
+
+        .pin.idle {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .pin-head {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background: radial-gradient(circle at 40% 40%, #f4d1ae, #c4936d);
+            border-radius: 50%;
+            left: 3.5px;
+            top: 1px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.4);
+        }
+
+        .pin-body {
+            position: absolute;
+            width: 8px;
+            height: 5px;
+            background: var(--color);
+            border-radius: 30% 30% 40% 40%;
+            left: 2px;
+            top: 5px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.4);
+        }
+
+        .pin-legs {
+            position: absolute;
+            width: 6px;
+            height: 4px;
+            background: #1a1a1a;
+            left: 3px;
+            top: 9px;
+            clip-path: polygon(0 0, 40% 0, 30% 100%, 0 100%, 0 0, 100% 0, 100% 100%, 70% 100%, 60% 0);
+        }
+
+        /* Moving animation */
+        .pin.moving .pin-body {
+            animation: bodyBounce 0.3s ease-in-out infinite;
+        }
+
+        .pin.moving .pin-legs {
+            animation: legStep 0.3s ease-in-out infinite;
+        }
+
+        @keyframes bodyBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-0.5px); }
+        }
+
+        @keyframes legStep {
+            0%, 100% { clip-path: polygon(0 0, 40% 0, 30% 100%, 0 100%, 0 0, 100% 0, 100% 100%, 70% 100%, 60% 0); }
+            50% { clip-path: polygon(0 0, 40% 0, 35% 100%, 10% 100%, 0 0, 100% 0, 90% 100%, 65% 100%, 60% 0); }
+        }
+
+        /* Tiny hover profile - STRAIGHT AT BOTTOM */
+        .pin-profile {
+            position: absolute;
+            top: 20px;  /* Changed from bottom to top - appears below character */
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.95);
+            border: 1px solid var(--color);
+            border-radius: 4px;
+            padding: 4px;
+            display: none;
+            z-index: 2000;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.8);
+            width: 80px;  /* Fixed width for consistent small size */
+        }
+
+        .pin:hover .pin-profile {
+            display: block;
+            animation: showProfile 0.1s ease-out;
+        }
+
+        @keyframes showProfile {
+            from { opacity: 0; transform: translateX(-50%) translateY(-2px); }
+            to { opacity: 1; transform: translateX(-50%) translateY(0); }
+        }
+
+        .profile-name {
+            color: #fff;
+            font-size: 9px;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 3px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .profile-actions {
+            display: flex;
+            gap: 2px;
+            justify-content: center;
+        }
+
+        .profile-action {
+            width: 16px;
+            height: 16px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            cursor: pointer;
+            transition: all 0.1s;
+        }
+
+        .profile-action:hover {
+            background: var(--color);
+            transform: scale(1.1);
+        }
+
+        /* Controls */
+        .controls {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 500;
+        }
+
+        .joystick {
+            width: 80px;
+            height: 80px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1), transparent);
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
+            position: relative;
+            touch-action: none;
+        }
+
+        .joystick-knob {
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle, #666, #333);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.9);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 11px;
+            color: #fff;
+            border: 1px solid var(--color, #fff);
+            animation: notifSlide 2s ease forwards;
+            pointer-events: none;
+        }
+
+        @keyframes notifSlide {
+            0% { opacity: 0; transform: translateX(-50%) translateY(10px); }
+            20% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            80% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">SOUND FACTORY</div>
+        <div class="user-count">
+            <span class="count-num" id="userCount">0</span> connected
+        </div>
+    </div>
+
+    <!-- Main Floor -->
+    <div class="floor-wrapper">
+        <div class="floor-container">
+            <!-- Sound Factory Floor Blueprint -->
+            <svg class="floor-svg" viewBox="0 0 400 520" preserveAspectRatio="xMidYMid meet">
+                <defs>
+                    <filter id="glow">
+                        <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                        <feMerge>
+                            <feMergeNode in="coloredBlur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                </defs>
+                
+                <!-- Floor base -->
+                <rect width="400" height="520" fill="#000"/>
+                <rect x="5" y="5" width="390" height="510" fill="none" stroke="#333" stroke-width="2"/>
+                <rect x="10" y="10" width="380" height="500" fill="#050505"/>
+                
+                <!-- Stairs (Top) -->
+                <g opacity="0.6">
+                    <rect x="170" y="20" width="60" height="35" fill="#0a0a0a" stroke="#555" stroke-width="2"/>
+                    <path d="M175 25 L225 25 M175 30 L225 30 M175 35 L225 35 M175 40 L225 40 M175 45 L225 45 M175 50 L225 50" stroke="#444"/>
+                    <text x="200" y="40" font-family="Arial" font-size="8" fill="#888" text-anchor="middle">STAIRS</text>
+                </g>
+                
+                <!-- Columns (3x4 grid) -->
+                <g filter="url(#glow)">
+                    <!-- Row 1 -->
+                    <rect x="80" y="100" width="30" height="30" fill="#000" stroke="#666" stroke-width="2" rx="2"/>
+                    <rect x="185" y="100" width="30" height="30" fill="#000" stroke="#666" stroke-width="2" rx="2"/>
+                    <rect x="290" y="100" width="30" height="30" fill="#000" stroke="#666" stroke-width="2" rx="2"/>
+                    
+                    <!-- Row 2 -->
+                    <rect x="80" y="200" width="30" height="30" fill="#000" stroke="#666" stroke-width="2" rx="2"/>
+                    <rect x="185" y="200" width="30" height="30" fill="#000" stroke="#666" stroke-width="2" rx="2"/>
+                    <rect x="290" y="200" width="30" height="30" fill="#000" stroke="#666" stroke-width="2" rx="2"/>
+                    
+                    <!-- Row 3 -->
+                    <rect x="80" y="300" width="30" height="30" fill="#000" stroke="#666" stroke-width="2" rx="2"/>
+                    <rect x="185" y="300" width="30" height="30" fill="#000" stroke="#666" stroke-width="2" rx="2"/>
+                    <rect x="290" y="300" width="30" height="30" fill="#000" stroke="#666" stroke-width="2" rx="2"/>
+                    
+                    <!-- Row 4 -->
+                    <rect x="80" y="400" width="30" height="30" fill="#000" stroke="#666" stroke-width="2" rx="2"/>
+                    <rect x="185" y="400" width="30" height="30" fill="#000" stroke="#666" stroke-width="2" rx="2"/>
+                    <rect x="290" y="400" width="30" height="30" fill="#000" stroke="#666" stroke-width="2" rx="2"/>
+                </g>
+                
+                <!-- Bar (Left) -->
+                <rect x="20" y="100" width="40" height="330" fill="#0f0f1f" stroke="#004e92" stroke-width="2" opacity="0.3"/>
+                <text x="40" y="265" font-family="Arial" font-size="9" fill="#4a7fb9" text-anchor="middle" transform="rotate(-90 40 265)">BAR</text>
+                
+                <!-- Dance floor grid -->
+                <g opacity="0.05">
+                    <path d="M60 150 L340 150 M60 230 L340 230 M60 310 L340 310 M60 390 L340 390" stroke="#222"/>
+                    <path d="M130 80 L130 450 M200 80 L200 450 M270 80 L270 450" stroke="#222"/>
+                </g>
+                
+                <!-- Exit (Bottom) -->
+                <g opacity="0.6">
+                    <rect x="170" y="475" width="60" height="25" fill="none" stroke="#555" stroke-width="2"/>
+                    <text x="200" y="492" font-family="Arial" font-size="8" fill="#888" text-anchor="middle">EXIT</text>
+                </g>
+            </svg>
+
+            <!-- Social Characters Layer -->
+            <div class="social-layer" id="socialLayer"></div>
+        </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+        <div class="joystick" id="joystick">
+            <div class="joystick-knob" id="knob"></div>
+        </div>
+    </div>
+
+    <script>
+        // Connected users (simulate WebSocket connections)
+        const connectedUsers = {};
+        const socialLayer = document.getElementById('socialLayer');
+        const userCountEl = document.getElementById('userCount');
+        const joystick = document.getElementById('joystick');
+        const knob = document.getElementById('knob');
+        
+        // Your player data
+        let myId = 'user_' + Math.random().toString(36).substr(2, 9);
+        let myX = 200;
+        let myY = 260;
+        let isDragging = false;
+        let joystickX = 0;
+        let joystickY = 0;
+        let lastMoveTime = Date.now();
+        
+        // Create a user pin
+        function createUserPin(userId, userData) {
+            const pin = document.createElement('div');
+            pin.className = 'pin';
+            pin.id = 'pin_' + userId;
+            pin.style.setProperty('--color', userData.color);
+            pin.innerHTML = `
+                <div class="pin-head"></div>
+                <div class="pin-body"></div>
+                <div class="pin-legs"></div>
+                <div class="pin-profile">
+                    <div class="profile-name">${userData.name}</div>
+                    <div class="profile-actions">
+                        <div class="profile-action" onclick="action('like','${userData.name}')">❤️</div>
+                        <div class="profile-action" onclick="action('chat','${userData.name}')">💬</div>
+                        <div class="profile-action" onclick="action('drink','${userData.name}')">🍹</div>
+                    </div>
+                </div>
+            `;
+            socialLayer.appendChild(pin);
+            return pin;
+        }
+        
+        // Add yourself
+        const myPin = createUserPin(myId, {
+            name: 'You',
+            color: '#00ff88'
+        });
+        updatePinPosition(myPin, myX, myY);
+        connectedUsers[myId] = {
+            pin: myPin,
+            lastActive: Date.now(),
+            data: { name: 'You', color: '#00ff88' }
+        };
+        
+        // Update position
+        function updatePinPosition(pin, x, y) {
+            const rect = socialLayer.getBoundingClientRect();
+            const relX = (x / 400) * rect.width;
+            const relY = (y / 520) * rect.height;
+            pin.style.left = relX + 'px';
+            pin.style.top = relY + 'px';
+        }
+        
+        // Simulate other users connecting
+        function simulateUserJoin() {
+            const names = ['Alex', 'Jordan', 'Sam', 'Taylor', 'Chris', 'Morgan', 'Casey', 'Jamie'];
+            const colors = ['#ff1a78', '#00ffff', '#ff9f00', '#9933ff', '#ff3366', '#ffcc00'];
+            
+            if (Object.keys(connectedUsers).length < 8 && Math.random() > 0.7) {
+                const userId = 'user_' + Math.random().toString(36).substr(2, 9);
+                const userData = {
+                    name: names[Math.floor(Math.random() * names.length)],
+                    color: colors[Math.floor(Math.random() * colors.length)]
+                };
+                
+                const pin = createUserPin(userId, userData);
+                const x = Math.random() * 340 + 30;
+                const y = Math.random() * 400 + 60;
+                updatePinPosition(pin, x, y);
+                
+                connectedUsers[userId] = {
+                    pin: pin,
+                    lastActive: Date.now(),
+                    data: userData,
+                    x: x,
+                    y: y
+                };
+                
+                showNotification(`${userData.name} joined`, userData.color);
+            }
+        }
+        
+        // Action handlers
+        window.action = function(type, name) {
+            const messages = {
+                like: `❤️ Liked ${name}`,
+                chat: `💬 Chat with ${name}`,
+                drink: `🍹 Sent drink to ${name}`
+            };
+            showNotification(messages[type], '#ff1a78');
+        };
+        
+        function showNotification(text, color) {
+            const notif = document.createElement('div');
+            notif.className = 'notification';
+            notif.style.setProperty('--color', color);
+            notif.textContent = text;
+            document.body.appendChild(notif);
+            setTimeout(() => notif.remove(), 2000);
+        }
+        
+        // Joystick control
+        function handleJoystickStart(e) {
+            isDragging = true;
+            handleJoystickMove(e);
+        }
+        
+        function handleJoystickMove(e) {
+            if (!isDragging) return;
+            
+            const rect = joystick.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            let clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            let clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            
+            let deltaX = clientX - centerX;
+            let deltaY = clientY - centerY;
+            
+            const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+            const maxDistance = 25;
+            
+            if (distance > maxDistance) {
+                deltaX = (deltaX / distance) * maxDistance;
+                deltaY = (deltaY / distance) * maxDistance;
+            }
+            
+            knob.style.transform = `translate(calc(-50% + ${deltaX}px), calc(-50% + ${deltaY}px))`;
+            
+            joystickX = deltaX / maxDistance;
+            joystickY = deltaY / maxDistance;
+        }
+        
+        function handleJoystickEnd() {
+            isDragging = false;
+            knob.style.transform = 'translate(-50%, -50%)';
+            joystickX = 0;
+            joystickY = 0;
+        }
+        
+        joystick.addEventListener('touchstart', handleJoystickStart);
+        joystick.addEventListener('touchmove', handleJoystickMove);
+        joystick.addEventListener('touchend', handleJoystickEnd);
+        joystick.addEventListener('mousedown', handleJoystickStart);
+        document.addEventListener('mousemove', handleJoystickMove);
+        document.addEventListener('mouseup', handleJoystickEnd);
+        
+        // Main animation loop
+        function animate() {
+            // Move your character
+            if (Math.abs(joystickX) > 0.1 || Math.abs(joystickY) > 0.1) {
+                myX += joystickX * 3;
+                myY += joystickY * 3;
+                myX = Math.max(20, Math.min(380, myX));
+                myY = Math.max(60, Math.min(460, myY));
+                
+                updatePinPosition(myPin, myX, myY);
+                myPin.classList.add('moving');
+                lastMoveTime = Date.now();
+                
+                // Update user activity
+                connectedUsers[myId].lastActive = Date.now();
+            } else {
+                myPin.classList.remove('moving');
+            }
+            
+            // Check for idle users and make them disappear
+            const now = Date.now();
+            Object.keys(connectedUsers).forEach(userId => {
+                const user = connectedUsers[userId];
+                if (now - user.lastActive > 3000) {  // 3 seconds idle
+                    user.pin.classList.add('idle');
+                } else {
+                    user.pin.classList.remove('idle');
+                }
+            });
+            
+            // Update user count
+            const activeCount = Object.values(connectedUsers).filter(u => 
+                Date.now() - u.lastActive < 3000
+            ).length;
+            userCountEl.textContent = activeCount;
+            
+            requestAnimationFrame(animate);
+        }
+        
+        animate();
+        
+        // Simulate users joining
+        setInterval(simulateUserJoin, 3000);
+        
+        // Initial users
+        setTimeout(() => simulateUserJoin(), 500);
+        setTimeout(() => simulateUserJoin(), 1500);
+
+        // =====================
+        // Optional: Local WebSocket presence (broadcast positions)
+        // =====================
+        ;(function setupWebSocket(){
+            try {
+                const ws = new WebSocket('ws://localhost:8080');
+                ws.addEventListener('open', ()=>{
+                    console.log('[ws] connected');
+                });
+                ws.addEventListener('message', (evt)=>{
+                    try {
+                        const msg = JSON.parse(evt.data);
+                        if (msg.type === 'pos' && msg.userId !== myId) {
+                            let rec = connectedUsers[msg.userId];
+                            if (!rec) {
+                                const pin = createUserPin(msg.userId, { name: msg.name || 'Guest', color: msg.color || '#00aaff' });
+                                rec = connectedUsers[msg.userId] = { pin, lastActive: Date.now(), data: { name: msg.name||'Guest', color: msg.color||'#00aaff' } };
+                            }
+                            updatePinPosition(rec.pin, msg.x, msg.y);
+                            rec.lastActive = Date.now();
+                        }
+                    } catch {}
+                });
+                // Send my position periodically
+                setInterval(()=>{
+                    if (ws.readyState === WebSocket.OPEN) {
+                        ws.send(JSON.stringify({ type: 'pos', userId: myId, x: myX, y: myY, name: 'You', color: '#00ff88' }));
+                    }
+                }, 150);
+            } catch (e) { console.warn('[ws] unavailable', e); }
+        })();
+
+        // =====================
+        // Optional: Firebase Realtime Database chat wiring
+        // =====================
+        // Enable by setting window.SF_FIREBASE = { apiKey: '...', authDomain: '...', databaseURL: '...', projectId: '...', appId: '...' }
+        ;(async function setupFirebaseChat(){
+            if (!window.SF_FIREBASE) return;
+            // Load Firebase ESM modules dynamically
+            try {
+                const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js');
+                const { getDatabase, ref, set, onValue } = await import('https://www.gstatic.com/firebasejs/10.12.5/firebase-database.js');
+                const app = initializeApp(window.SF_FIREBASE);
+                const db = getDatabase(app);
+                window.sendChatMessage = function(message){
+                    const id = Date.now().toString();
+                    return set(ref(db, 'chat/'+id), { user: 'You', message, time: Date.now() });
+                }
+                onValue(ref(db, 'chat'), (snapshot)=>{
+                    const messages = snapshot.val() || {};
+                    // TODO: render chat messages in a small overlay if desired
+                    // console.log('[chat]', messages);
+                });
+                console.log('[firebase] chat enabled');
+            } catch (e) {
+                console.warn('[firebase] failed to init', e);
+            }
+        })();
+    </script>
+</body>
+</html>

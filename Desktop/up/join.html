@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Join • Sound Factory</title>
+  <link rel="stylesheet" href="css/main.css">
+  <style>
+    :root { color-scheme: dark; }
+    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background: #0a0a0a; color:#eaeaea; }
+    .wrap { max-width: 720px; margin: 0 auto; padding: 24px; }
+    .card { background:#101010; border:1px solid #222; border-radius:12px; padding:16px; }
+    .muted { color:#9aa0a6; font-size: 13px; }
+    .btn { appearance:none; border:0; padding:10px 14px; border-radius:10px; font-weight:700; cursor:pointer; }
+    .primary { background:#1f6feb; color:#fff; }
+    .row { display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
+    input { width:100%; padding:10px; background:#141414; color:#eee; border:1px solid #222; border-radius:8px; }
+  </style>
+  <script>
+    async function onLoad(){
+      const params = new URLSearchParams(location.search);
+      const inviteCode = params.get('ref') || '';
+      const from = params.get('from') || '';
+      document.getElementById('inviteCode').textContent = inviteCode || '(none)';
+      document.getElementById('source').textContent = from || '(unknown)';
+      // Minimal conversion capture if a user submits their phone/email
+      const form = document.getElementById('joinForm');
+      form.addEventListener('submit', async (e)=>{
+        e.preventDefault();
+        const name = form.name.value.trim();
+        const phone = form.phone.value.trim();
+        const email = form.email.value.trim();
+        try {
+          if (inviteCode) {
+            await fetch('/.netlify/functions/social-invites/track-conversion', {
+              method:'POST', headers:{'Content-Type':'application/json'},
+              body: JSON.stringify({ inviteCode, newUserId: phone || email || name || ('anon_'+Date.now()) })
+            });
+          }
+        } catch {}
+        localStorage.setItem('sf_join_user', JSON.stringify({ name, phone, email, inviteCode, from }));
+        location.href = '/';
+      });
+    }
+    window.addEventListener('DOMContentLoaded', onLoad);
+  </script>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Welcome to Sound Factory</h1>
+    <p class="muted">You were invited<span> via <strong id="source"></strong></span>. Invite code: <strong id="inviteCode"></strong></p>
+    <div class="card" style="margin-top:12px">
+      <form id="joinForm">
+        <div class="row">
+          <div>
+            <label class="muted">Name</label>
+            <input name="name" placeholder="Your name" />
+          </div>
+          <div>
+            <label class="muted">Phone</label>
+            <input name="phone" placeholder="+1..." />
+          </div>
+        </div>
+        <div style="margin-top:12px">
+          <label class="muted">Email</label>
+          <input name="email" type="email" placeholder="you@example.com" />
+        </div>
+        <div style="margin-top:14px">
+          <button class="btn primary" type="submit">Join the list</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</body>
+</html>

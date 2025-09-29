@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Sound Factory">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#000000">
+    <title>Sound Factory - iOS Compatibility Test</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #000;
+            color: #ffd700;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: none;
+            height: 100vh;
+            height: calc(var(--vh, 1vh) * 100);
+        }
+        
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ffd700;
+            border-radius: 10px;
+            background: rgba(255, 215, 0, 0.1);
+        }
+        
+        .test-button {
+            background: linear-gradient(45deg, #ffd700, #ffed4e);
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            margin: 5px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .test-button:hover {
+            transform: scale(1.05);
+        }
+        
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-weight: 600;
+        }
+        
+        .success { background: rgba(0, 255, 0, 0.2); border: 1px solid #00ff00; }
+        .error { background: rgba(255, 0, 0, 0.2); border: 1px solid #ff0000; }
+        .warning { background: rgba(255, 165, 0, 0.2); border: 1px solid #ffa500; }
+        
+        .device-info {
+            background: rgba(255, 215, 0, 0.1);
+            padding: 15px;
+            border-radius: 10px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎵 Sound Factory - iOS Compatibility Test</h1>
+    
+    <div class="device-info">
+        <h3>Device Information</h3>
+        <div id="deviceInfo"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>📱 iOS Features Test</h3>
+        <button class="test-button" onclick="testDeviceMotion()">Test Device Motion</button>
+        <button class="test-button" onclick="testDeviceOrientation()">Test Device Orientation</button>
+        <button class="test-button" onclick="testCamera()">Test Camera Access</button>
+        <button class="test-button" onclick="testMicrophone()">Test Microphone Access</button>
+        <button class="test-button" onclick="testVibration()">Test Vibration</button>
+        <div id="iosResults"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>🎥 Livestream Features Test</h3>
+        <button class="test-button" onclick="testWebRTC()">Test WebRTC</button>
+        <button class="test-button" onclick="testWebXR()">Test WebXR AR</button>
+        <button class="test-button" onclick="testScreenRecording()">Test Screen Recording</button>
+        <div id="livestreamResults"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>🎨 Visual Effects Test</h3>
+        <button class="test-button" onclick="testFireworks()">Test Fireworks</button>
+        <button class="test-button" onclick="testMoneyShower()">Test Money Shower</button>
+        <button class="test-button" onclick="testFaceDetection()">Test Face Detection</button>
+        <div id="effectsResults"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>💳 Payment Integration Test</h3>
+        <button class="test-button" onclick="testStripe()">Test Stripe Integration</button>
+        <button class="test-button" onclick="testSMS()">Test SMS Integration</button>
+        <div id="paymentResults"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>🔧 Performance Test</h3>
+        <button class="test-button" onclick="testPerformance()">Run Performance Test</button>
+        <button class="test-button" onclick="testMemory()">Test Memory Usage</button>
+        <div id="performanceResults"></div>
+    </div>
+
+    <script>
+        // iOS-specific initialization
+        function initIOSFeatures() {
+            // Set viewport height for iOS Safari
+            function setViewportHeight() {
+                const vh = window.innerHeight * 0.01;
+                document.documentElement.style.setProperty('--vh', `${vh}px`);
+            }
+            
+            setViewportHeight();
+            window.addEventListener('resize', setViewportHeight);
+            window.addEventListener('orientationchange', setViewportHeight);
+            
+            // Prevent iOS Safari bounce
+            document.addEventListener('touchmove', function(e) {
+                e.preventDefault();
+            }, { passive: false });
+        }
+        
+        // Display device information
+        function displayDeviceInfo() {
+            const info = {
+                userAgent: navigator.userAgent,
+                platform: navigator.platform,
+                language: navigator.language,
+                cookieEnabled: navigator.cookieEnabled,
+                onLine: navigator.onLine,
+                screenWidth: screen.width,
+                screenHeight: screen.height,
+                windowWidth: window.innerWidth,
+                windowHeight: window.innerHeight,
+                devicePixelRatio: window.devicePixelRatio,
+                touchSupport: 'ontouchstart' in window,
+                orientation: screen.orientation ? screen.orientation.type : 'unknown'
+            };
+            
+            const deviceInfo = document.getElementById('deviceInfo');
+            deviceInfo.innerHTML = Object.entries(info)
+                .map(([key, value]) => `<div><strong>${key}:</strong> ${value}</div>`)
+                .join('');
+        }
+        
+        // Test Device Motion
+        async function testDeviceMotion() {
+            const results = document.getElementById('iosResults');
+            try {
+                if (typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function') {
+                    const response = await DeviceMotionEvent.requestPermission();
+                    if (response === 'granted') {
+                        results.innerHTML += '<div class="status success">✅ Device Motion: Permission granted</div>';
+                        
+                        window.addEventListener('devicemotion', (event) => {
+                            console.log('Device motion:', event.acceleration);
+                        });
+                    } else {
+                        results.innerHTML += '<div class="status error">❌ Device Motion: Permission denied</div>';
+                    }
+                } else {
+                    results.innerHTML += '<div class="status warning">⚠️ Device Motion: Not supported</div>';
+                }
+            } catch (error) {
+                results.innerHTML += '<div class="status error">❌ Device Motion: Error - ' + error.message + '</div>';
+            }
+        }
+        
+        // Test Device Orientation
+        async function testDeviceOrientation() {
+            const results = document.getElementById('iosResults');
+            try {
+                if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+                    const response = await DeviceOrientationEvent.requestPermission();
+                    if (response === 'granted') {
+                        results.innerHTML += '<div class="status success">✅ Device Orientation: Permission granted</div>';
+                        
+                        window.addEventListener('deviceorientation', (event) => {
+                            console.log('Device orientation:', event.alpha, event.beta, event.gamma);
+                        });
+                    } else {
+                        results.innerHTML += '<div class="status error">❌ Device Orientation: Permission denied</div>';
+                    }
+                } else {
+                    results.innerHTML += '<div class="status warning">⚠️ Device Orientation: Not supported</div>';
+                }
+            } catch (error) {
+                results.innerHTML += '<div class="status error">❌ Device Orientation: Error - ' + error.message + '</div>';
+            }
+        }
+        
+        // Test Camera Access
+        async function testCamera() {
+            const results = document.getElementById('iosResults');
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                results.innerHTML += '<div class="status success">✅ Camera: Access granted</div>';
+                stream.getTracks().forEach(track => track.stop());
+            } catch (error) {
+                results.innerHTML += '<div class="status error">❌ Camera: ' + error.message + '</div>';
+            }
+        }
+        
+        // Test Microphone Access
+        async function testMicrophone() {
+            const results = document.getElementById('iosResults');
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                results.innerHTML += '<div class="status success">✅ Microphone: Access granted</div>';
+                stream.getTracks().forEach(track => track.stop());
+            } catch (error) {
+                results.innerHTML += '<div class="status error">❌ Microphone: ' + error.message + '</div>';
+            }
+        }
+        
+        // Test Vibration
+        function testVibration() {
+            const results = document.getElementById('iosResults');
+            if ('vibrate' in navigator) {
+                navigator.vibrate([200, 100, 200]);
+                results.innerHTML += '<div class="status success">✅ Vibration: Supported</div>';
+            } else {
+                results.innerHTML += '<div class="status warning">⚠️ Vibration: Not supported</div>';
+            }
+        }
+        
+        // Test WebRTC
+        async function testWebRTC() {
+            const results = document.getElementById('livestreamResults');
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                results.innerHTML += '<div class="status success">✅ WebRTC: Media capture working</div>';
+                stream.getTracks().forEach(track => track.stop());
+            } catch (error) {
+                results.innerHTML += '<div class="status error">❌ WebRTC: ' + error.message + '</div>';
+            }
+        }
+        
+        // Test WebXR
+        async function testWebXR() {
+            const results = document.getElementById('livestreamResults');
+            if (navigator.xr) {
+                try {
+                    const supported = await navigator.xr.isSessionSupported('immersive-ar');
+                    if (supported) {
+                        results.innerHTML += '<div class="status success">✅ WebXR AR: Supported</div>';
+                    } else {
+                        results.innerHTML += '<div class="status warning">⚠️ WebXR AR: Not supported</div>';
+                    }
+                } catch (error) {
+                    results.innerHTML += '<div class="status error">❌ WebXR AR: ' + error.message + '</div>';
+                }
+            } else {
+                results.innerHTML += '<div class="status warning">⚠️ WebXR: Not supported</div>';
+            }
+        }
+        
+        // Test Screen Recording
+        async function testScreenRecording() {
+            const results = document.getElementById('livestreamResults');
+            try {
+                const stream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
+                results.innerHTML += '<div class="status success">✅ Screen Recording: Supported</div>';
+                stream.getTracks().forEach(track => track.stop());
+            } catch (error) {
+                results.innerHTML += '<div class="status error">❌ Screen Recording: ' + error.message + '</div>';
+            }
+        }
+        
+        // Test Fireworks Effect
+        function testFireworks() {
+            const results = document.getElementById('effectsResults');
+            results.innerHTML += '<div class="status success">✅ Fireworks: Effect triggered</div>';
+            
+            // Create fireworks effect
+            for (let i = 0; i < 10; i++) {
+                const firework = document.createElement('div');
+                firework.style.cssText = `
+                    position: fixed;
+                    width: 4px;
+                    height: 4px;
+                    background: hsl(${Math.random() * 360}, 70%, 50%);
+                    border-radius: 50%;
+                    left: ${Math.random() * window.innerWidth}px;
+                    top: ${Math.random() * window.innerHeight}px;
+                    animation: fireworkExplode 3s ease-out forwards;
+                    z-index: 1000;
+                `;
+                document.body.appendChild(firework);
+                
+                setTimeout(() => firework.remove(), 3000);
+            }
+        }
+        
+        // Test Money Shower Effect
+        function testMoneyShower() {
+            const results = document.getElementById('effectsResults');
+            results.innerHTML += '<div class="status success">✅ Money Shower: Effect triggered</div>';
+            
+            // Create money shower effect
+            for (let i = 0; i < 20; i++) {
+                const bill = document.createElement('div');
+                bill.style.cssText = `
+                    position: fixed;
+                    width: 40px;
+                    height: 20px;
+                    background: linear-gradient(45deg, #4CAF50, #8BC34A);
+                    border-radius: 3px;
+                    left: ${Math.random() * window.innerWidth}px;
+                    top: -20px;
+                    animation: moneyFall 4s ease-out forwards;
+                    z-index: 1000;
+                `;
+                bill.textContent = '$1';
+                document.body.appendChild(bill);
+                
+                setTimeout(() => bill.remove(), 4000);
+            }
+        }
+        
+        // Test Face Detection
+        async function testFaceDetection() {
+            const results = document.getElementById('effectsResults');
+            try {
+                // Load TensorFlow.js dynamically
+                const tf = await import('https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@latest/dist/tf.min.js');
+                results.innerHTML += '<div class="status success">✅ Face Detection: TensorFlow.js loaded</div>';
+            } catch (error) {
+                results.innerHTML += '<div class="status error">❌ Face Detection: ' + error.message + '</div>';
+            }
+        }
+        
+        // Test Stripe Integration
+        async function testStripe() {
+            const results = document.getElementById('paymentResults');
+            try {
+                const response = await fetch('/.netlify/functions/create-checkout-session', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ amount: 100 })
+                });
+                
+                if (response.ok) {
+                    results.innerHTML += '<div class="status success">✅ Stripe: Integration working</div>';
+                } else {
+                    results.innerHTML += '<div class="status error">❌ Stripe: Integration failed</div>';
+                }
+            } catch (error) {
+                results.innerHTML += '<div class="status error">❌ Stripe: ' + error.message + '</div>';
+            }
+        }
+        
+        // Test SMS Integration
+        async function testSMS() {
+            const results = document.getElementById('paymentResults');
+            try {
+                const response = await fetch('/.netlify/functions/send-sms', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone: '+1234567890', message: 'Test message' })
+                });
+                
+                if (response.ok) {
+                    results.innerHTML += '<div class="status success">✅ SMS: Integration working</div>';
+                } else {
+                    results.innerHTML += '<div class="status error">❌ SMS: Integration failed</div>';
+                }
+            } catch (error) {
+                results.innerHTML += '<div class="status error">❌ SMS: ' + error.message + '</div>';
+            }
+        }
+        
+        // Test Performance
+        function testPerformance() {
+            const results = document.getElementById('performanceResults');
+            const start = performance.now();
+            
+            // Simulate heavy computation
+            let sum = 0;
+            for (let i = 0; i < 1000000; i++) {
+                sum += Math.random();
+            }
+            
+            const end = performance.now();
+            const duration = end - start;
+            
+            if (duration < 100) {
+                results.innerHTML += '<div class="status success">✅ Performance: Excellent (' + duration.toFixed(2) + 'ms)</div>';
+            } else if (duration < 500) {
+                results.innerHTML += '<div class="status warning">⚠️ Performance: Good (' + duration.toFixed(2) + 'ms)</div>';
+            } else {
+                results.innerHTML += '<div class="status error">❌ Performance: Poor (' + duration.toFixed(2) + 'ms)</div>';
+            }
+        }
+        
+        // Test Memory Usage
+        function testMemory() {
+            const results = document.getElementById('performanceResults');
+            if ('memory' in performance) {
+                const memory = performance.memory;
+                const used = (memory.usedJSHeapSize / 1024 / 1024).toFixed(2);
+                const total = (memory.totalJSHeapSize / 1024 / 1024).toFixed(2);
+                results.innerHTML += '<div class="status success">✅ Memory: ' + used + 'MB / ' + total + 'MB used</div>';
+            } else {
+                results.innerHTML += '<div class="status warning">⚠️ Memory: Usage not available</div>';
+            }
+        }
+        
+        // Add CSS animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fireworkExplode {
+                0% { transform: scale(0); opacity: 1; }
+                50% { transform: scale(1); opacity: 1; }
+                100% { transform: scale(0); opacity: 0; }
+            }
+            @keyframes moneyFall {
+                0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+                100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Initialize
+        initIOSFeatures();
+        displayDeviceInfo();
+    </script>
+</body>
+</html>
+
+

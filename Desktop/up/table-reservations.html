@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sound Factory - Table Reservations</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #000;
+            color: #fff;
+            font-family: -apple-system, system-ui, sans-serif;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        header {
+            background: #000;
+            border-bottom: 1px solid #222;
+            padding: 20px;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 18px;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .header-right {
+            text-align: right;
+        }
+
+        .date-info {
+            color: #888;
+            font-size: 11px;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Title */
+        .page-header {
+            text-align: center;
+            margin-bottom: 20px;
+            padding-bottom: 30px;
+            border-bottom: 1px solid #222;
+        }
+
+        .page-header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #888;
+            font-size: 14px;
+        }
+
+        /* Important Notice */
+        .notice {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .notice-text {
+            color: #aaa;
+            font-size: 13px;
+        }
+
+        /* Tables Grid */
+        .tables-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        /* Table Card */
+        .table-card {
+            background: #0a0a0a;
+            border: 1px solid #222;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.2s ease;
+        }
+
+        .table-card:hover {
+            border-color: #444;
+            transform: translateY(-2px);
+        }
+
+        .table-card.unavailable {
+            opacity: 0.5;
+        }
+
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+
+        .table-name {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .table-status {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .status-available {
+            background: rgba(0,255,136,0.1);
+            color: #00ff88;
+            border: 1px solid rgba(0,255,136,0.3);
+        }
+
+        .status-reserved {
+            background: rgba(255,26,120,0.1);
+            color: #ff1a78;
+            border: 1px solid rgba(255,26,120,0.3);
+        }
+
+        .table-details {
+            color: #aaa;
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
+
+        .detail-row {
+            padding: 3px 0;
+        }
+
+        .table-price {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .reserve-btn {
+            width: 100%;
+            padding: 10px;
+            background: #fff;
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .reserve-btn:hover {
+            background: #f0f0f0;
+        }
+
+        .reserve-btn:disabled {
+            background: #333;
+            color: #666;
+            cursor: not-allowed;
+        }
+
+        /* Payment Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.95);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #111;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 450px;
+            padding: 30px;
+        }
+
+        .modal-header {
+            margin-bottom: 25px;
+        }
+
+        .modal-title {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .modal-subtitle {
+            color: #888;
+            font-size: 13px;
+        }
+
+        /* Reservation Details */
+        .reservation-details {
+            background: rgba(255,255,255,0.03);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 25px;
+        }
+
+        .detail {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 14px;
+        }
+
+        .detail-label {
+            color: #888;
+        }
+
+        .detail-value {
+            color: #fff;
+            font-weight: 500;
+        }
+
+        .detail.total {
+            padding-top: 12px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        /* Form Fields */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            color: #aaa;
+            font-size: 12px;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px;
+            background: #000;
+            border: 1px solid #333;
+            border-radius: 6px;
+            color: #fff;
+            font-size: 14px;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #666;
+        }
+
+        /* Stripe Element */
+        #card-element {
+            background: #000;
+            padding: 12px;
+            border: 1px solid #333;
+            border-radius: 6px;
+        }
+
+        .StripeElement--focus {
+            border-color: #666;
+        }
+
+        #card-errors {
+            color: #ff1a78;
+            font-size: 12px;
+            margin-top: 8px;
+            min-height: 18px;
+        }
+
+        /* Buttons */
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #00ff88;
+            color: #000;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #00dd77;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #fff;
+            border: 1px solid #333;
+        }
+
+        .btn-secondary:hover {
+            border-color: #666;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Success Message */
+        .success-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #111;
+            border: 2px solid #00ff88;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            display: none;
+            z-index: 2000;
+        }
+
+        .success-message.active {
+            display: block;
+        }
+
+        .success-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .success-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .success-text {
+            color: #888;
+            font-size: 13px;
+        }
+
+        /* Terms */
+        .terms {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid #222;
+            color: #666;
+            font-size: 12px;
+            line-height: 1.8;
+        }
+
+        .terms h3 {
+            color: #888;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo">SOUND FACTORY</div>
+            <div class="header-right">
+                <div class="date-info">Table Reservations</div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>Reserve Your Table</h1>
+            <p class="subtitle">Secure your spot at Sound Factory</p>
+        </div>
+
+        <div class="notice">
+            <p class="notice-text">
+                Table reservation guarantees entry and seating. Bottle service available at venue through your server.
+                All prices are for table reservation only.
+            </p>
+        </div>
+
+        <div class="tables-grid" id="tablesGrid">
+            <!-- Tables will be inserted here -->
+        </div>
+
+        <div class="terms">
+            <h3>Reservation Terms</h3>
+            <p>• Table reservation fee guarantees entry and reserved seating for your party</p>
+            <p>• Maximum party size must not exceed table capacity</p>
+            <p>• Tables are held for 30 minutes past reservation time</p>
+            <p>• Bottle service and additional amenities available through venue staff</p>
+            <p>• Dress code enforced - management reserves right to refuse entry</p>
+            <p>• Refunds available up to 24 hours before event</p>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div class="modal" id="paymentModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Complete Reservation</h2>
+                <p class="modal-subtitle">Secure checkout powered by Stripe</p>
+            </div>
+
+            <div class="reservation-details">
+                <div class="detail">
+                    <span class="detail-label">Table</span>
+                    <span class="detail-value" id="selectedTable">-</span>
+                </div>
+                <div class="detail">
+                    <span class="detail-label">Capacity</span>
+                    <span class="detail-value" id="selectedCapacity">-</span>
+                </div>
+                <div class="detail">
+                    <span class="detail-label">Date</span>
+                    <span class="detail-value">Tonight 11PM</span>
+                </div>
+                <div class="detail total">
+                    <span class="detail-label">Total</span>
+                    <span class="detail-value" id="totalPrice">$0</span>
+                </div>
+            </div>
+
+            <form id="payment-form">
+                <div class="form-group">
+                    <label class="form-label">Name</label>
+                    <input type="text" class="form-input" id="customerName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-input" id="customerEmail" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Phone</label>
+                    <input type="tel" class="form-input" id="customerPhone" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Card Information</label>
+                    <div id="card-element"></div>
+                    <div id="card-errors"></div>
+                </div>
+
+                <div class="button-group">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="submitBtn">
+                        Pay Now
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Success Message -->
+    <div class="success-message" id="successMessage">
+        <div class="success-icon">✓</div>
+        <h3 class="success-title">Reservation Confirmed</h3>
+        <p class="success-text">QR Code and SMS confirmation sent!</p>
+    </div>
+
+    <!-- QR Code Modal -->
+    <div class="modal" id="qrModal">
+        <div class="modal-content" style="text-align: center; max-width: 400px;">
+            <h2 style="margin-bottom: 20px; font-size: 24px;">Your Entry Pass</h2>
+            <div id="qrcode" style="display: flex; justify-content: center; margin-bottom: 20px; background: white; padding: 20px; border-radius: 10px;"></div>
+            <div style="background: rgba(0,255,136,0.1); border: 1px solid rgba(0,255,136,0.3); border-radius: 8px; padding: 15px; margin-bottom: 20px;">
+                <p style="font-size: 12px; color: #888; margin-bottom: 8px;">SMS SENT TO:</p>
+                <p style="font-size: 18px; font-weight: 700; color: #00ff88;" id="smsPhone">-</p>
+                <p style="font-size: 11px; color: #666; margin-top: 8px;">Entry Code: <span id="entryCode" style="color: #fff; font-weight: 600;">-</span></p>
+            </div>
+            <p style="color: #888; font-size: 13px; margin-bottom: 20px;">
+                Screenshot this QR code now!<br>
+                Show at door for express entry
+            </p>
+            <button class="btn btn-primary" style="width: 100%;" onclick="closeQRModal()">Done</button>
+        </div>
+    </div>
+
+    <!-- Stripe Script -->
+    <script src="https://js.stripe.com/v3/"></script>
+    <!-- QR Code Generator -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    
+    <script>
+        // Table configurations
+        const tables = [
+            { id: 'vip1', name: 'VIP Table 1', capacity: '10 people', price: 2000, available: true },
+            { id: 'vip2', name: 'VIP Table 2', capacity: '10 people', price: 2000, available: true },
+            { id: 'main1', name: 'Main Floor 1', capacity: '8 people', price: 1500, available: true },
+            { id: 'main2', name: 'Main Floor 2', capacity: '8 people', price: 1500, available: false },
+            { id: 'main3', name: 'Main Floor 3', capacity: '6 people', price: 1200, available: true },
+            { id: 'main4', name: 'Main Floor 4', capacity: '6 people', price: 1200, available: true },
+            { id: 'lounge1', name: 'Lounge Table 1', capacity: '4 people', price: 800, available: true },
+            { id: 'lounge2', name: 'Lounge Table 2', capacity: '4 people', price: 800, available: false },
+            { id: 'small1', name: 'Intimate Table 1', capacity: '2 people', price: 200, available: true },
+            { id: 'small2', name: 'Intimate Table 2', capacity: '2 people', price: 200, available: true },
+            { id: 'small3', name: 'Intimate Table 3', capacity: '2 people', price: 200, available: true },
+            { id: 'small4', name: 'Intimate Table 4', capacity: '2 people', price: 200, available: false },
+            { id: 'small5', name: 'Bar Table 1', capacity: '2 people', price: 200, available: true },
+            { id: 'small6', name: 'Bar Table 2', capacity: '2 people', price: 200, available: true },
+            { id: 'small7', name: 'Bar Table 3', capacity: '3 people', price: 300, available: true },
+            { id: 'small8', name: 'Bar Table 4', capacity: '3 people', price: 300, available: true }
+        ];
+
+        let stripe = null;
+        let elements = null;
+        let cardElement = null;
+        let selectedTableData = null;
+
+        // Initialize Stripe when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeStripe();
+            renderTables();
+        });
+
+        function initializeStripe() {
+            try {
+                // Use Stripe test key - replace with your actual key
+                stripe = Stripe('pk_test_51234567890abcdefghijklmnop');
+                
+                elements = stripe.elements();
+                
+                const style = {
+                    base: {
+                        color: '#fff',
+                        fontFamily: '-apple-system, system-ui, sans-serif',
+                        fontSize: '14px',
+                        '::placeholder': {
+                            color: '#666'
+                        }
+                    },
+                    invalid: {
+                        color: '#ff1a78',
+                        iconColor: '#ff1a78'
+                    }
+                };
+                
+                cardElement = elements.create('card', { style: style });
+                cardElement.mount('#card-element');
+                
+                cardElement.on('change', function(event) {
+                    const displayError = document.getElementById('card-errors');
+                    if (event.error) {
+                        displayError.textContent = event.error.message;
+                    } else {
+                        displayError.textContent = '';
+                    }
+                });
+                
+            } catch (error) {
+                console.log('Stripe initialization - demo mode active');
+                // Continue in demo mode without Stripe
+            }
+        }
+
+        function renderTables() {
+            const grid = document.getElementById('tablesGrid');
+            
+            tables.forEach(table => {
+                const card = document.createElement('div');
+                card.className = `table-card ${!table.available ? 'unavailable' : ''}`;
+                
+                card.innerHTML = `
+                    <div class="table-header">
+                        <div class="table-name">${table.name}</div>
+                        <div class="table-status ${table.available ? 'status-available' : 'status-reserved'}">
+                            ${table.available ? 'Available' : 'Reserved'}
+                        </div>
+                    </div>
+                    <div class="table-details">
+                        <div class="detail-row">Capacity: ${table.capacity}</div>
+                        <div class="detail-row">Table reservation only</div>
+                    </div>
+                    <div class="table-price">$${table.price.toLocaleString()}</div>
+                    <button class="reserve-btn" 
+                            ${!table.available ? 'disabled' : ''}
+                            onclick="openReservation('${table.id}')">
+                        ${table.available ? 'Reserve Table' : 'Not Available'}
+                    </button>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+
+        function openReservation(tableId) {
+            selectedTableData = tables.find(t => t.id === tableId);
+            if (!selectedTableData || !selectedTableData.available) return;
+            
+            // Update modal with table info
+            document.getElementById('selectedTable').textContent = selectedTableData.name;
+            document.getElementById('selectedCapacity').textContent = selectedTableData.capacity;
+            document.getElementById('totalPrice').textContent = `$${selectedTableData.price.toLocaleString()}`;
+            
+            // Show modal
+            document.getElementById('paymentModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('paymentModal').classList.remove('active');
+            document.getElementById('payment-form').reset();
+            if (cardElement) {
+                cardElement.clear();
+            }
+        }
+
+        // Handle form submission
+        document.getElementById('payment-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Processing...';
+            
+            // Get form data
+            const name = document.getElementById('customerName').value;
+            const email = document.getElementById('customerEmail').value;
+            const phone = document.getElementById('customerPhone').value;
+            
+            if (!name || !email || !phone) {
+                alert('Please fill in all fields');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Pay Now';
+                return;
+            }
+            
+            // If Stripe is loaded, process payment
+            if (stripe && cardElement) {
+                try {
+                    const { error, paymentMethod } = await stripe.createPaymentMethod({
+                        type: 'card',
+                        card: cardElement,
+                        billing_details: {
+                            name: name,
+                            email: email,
+                            phone: phone
+                        }
+                    });
+                    
+                    if (error) {
+                        document.getElementById('card-errors').textContent = error.message;
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = 'Pay Now';
+                        return;
+                    }
+                    
+                    // In production, send paymentMethod.id to your server
+                    console.log('Payment method created:', paymentMethod.id);
+                    
+                    // Simulate success
+                    processReservationSuccess();
+                    
+                } catch (err) {
+                    console.error('Payment error:', err);
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = 'Pay Now';
+                }
+            } else {
+                // Demo mode - simulate success
+                setTimeout(() => {
+                    processReservationSuccess();
+                }, 1500);
+            }
+        });
+
+        function processReservationSuccess() {
+            // Generate unique reservation ID
+            const reservationId = 'SF' + Date.now().toString(36).toUpperCase();
+            
+            // Mark table as reserved
+            const tableIndex = tables.findIndex(t => t.id === selectedTableData.id);
+            if (tableIndex !== -1) {
+                tables[tableIndex].available = false;
+            }
+            
+            // Get customer data
+            const phone = document.getElementById('customerPhone').value;
+            const email = document.getElementById('customerEmail').value;
+            const name = document.getElementById('customerName').value;
+            
+            // Close payment modal
+            closeModal();
+            
+            // Show success message
+            document.getElementById('successMessage').classList.add('active');
+            
+            setTimeout(() => {
+                document.getElementById('successMessage').classList.remove('active');
+                
+                // Generate QR code and show modal
+                generateQRCode(reservationId, phone, name);
+                
+                // Send SMS notification
+                sendSMS(phone, reservationId);
+                
+                // Refresh table display
+                document.getElementById('tablesGrid').innerHTML = '';
+                renderTables();
+            }, 2000);
+            
+            // Reset button
+            document.getElementById('submitBtn').disabled = false;
+            document.getElementById('submitBtn').textContent = 'Pay Now';
+        }
+        
+        function generateQRCode(reservationId, phone, name) {
+            // Clear any existing QR code
+            document.getElementById('qrcode').innerHTML = '';
+            
+            // QR data that door staff will scan
+            const qrData = {
+                id: reservationId,
+                table: selectedTableData.name,
+                name: name,
+                capacity: selectedTableData.capacity,
+                date: new Date().toISOString().split('T')[0],
+                valid: true
+            };
+            
+            // Generate QR code
+            new QRCode(document.getElementById('qrcode'), {
+                text: JSON.stringify(qrData),
+                width: 200,
+                height: 200,
+                colorDark: '#000000',
+                colorLight: '#ffffff',
+                correctLevel: QRCode.CorrectLevel.H
+            });
+            
+            // Update modal with info
+            document.getElementById('smsPhone').textContent = phone;
+            document.getElementById('entryCode').textContent = reservationId;
+            
+            // Show QR modal
+            document.getElementById('qrModal').classList.add('active');
+        }
+        
+        function closeQRModal() {
+            document.getElementById('qrModal').classList.remove('active');
+            document.getElementById('qrcode').innerHTML = '';
+        }
+        
+        function sendSMS(phone, reservationId) {
+            // SMS message content
+            const message = `Sound Factory: Table reserved! Entry code: ${reservationId}. Show this at door. Tonight 11PM. Reply STOP to opt out.`;
+            
+            // In production, call your backend API that uses Twilio
+            const smsPayload = {
+                to: phone,
+                body: message,
+                reservationId: reservationId
+            };
+            
+            // Demo mode - just log
+            console.log('SMS would be sent:', smsPayload);
+            
+            // Production code:
+            /*
+            fetch('/api/send-sms', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(smsPayload)
+            })
+            .then(response => response.json())
+            .then(data => console.log('SMS sent:', data))
+            .catch(error => console.error('SMS error:', error));
+            */
+        }
+    </script>
+</body>
+</html>

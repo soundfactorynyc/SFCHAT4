@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pin Dropping Test - Sound Factory</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            background: #000;
+            color: #fff;
+            font-family: Arial, sans-serif;
+        }
+        
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .test-floor {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(45deg, #1a1a1a, #2a2a2a);
+            border: 2px solid #ff6b00;
+            border-radius: 10px;
+            position: relative;
+            cursor: crosshair;
+            margin: 20px 0;
+        }
+        
+        .test-floor::before {
+            content: "Click anywhere to drop a pin";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #666;
+            font-size: 18px;
+            pointer-events: none;
+        }
+        
+        .pin {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: #ff6b00;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 0 10px #ff6b00;
+            animation: pinDrop 0.5s ease-out;
+        }
+        
+        @keyframes pinDrop {
+            0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+            50% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+            100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+        
+        .debug-info {
+            background: #1a1a1a;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            border-left: 4px solid #ff6b00;
+        }
+        
+        .status {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        
+        .status.success { background: rgba(0, 255, 136, 0.2); color: #00ff88; }
+        .status.error { background: rgba(255, 107, 107, 0.2); color: #ff6b6b; }
+        .status.warning { background: rgba(255, 215, 0, 0.2); color: #ffd700; }
+        
+        .test-buttons {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        
+        .test-btn {
+            padding: 10px 20px;
+            background: #ff6b00;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .test-btn:hover {
+            background: #ff8c00;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Pin Dropping Test</h1>
+        <p>This page tests the basic pin dropping functionality without dependencies.</p>
+        
+        <div class="debug-info">
+            <h3>Debug Information</h3>
+            <div id="debugStatus">
+                <div class="status warning">Initializing...</div>
+            </div>
+        </div>
+        
+        <div class="test-buttons">
+            <button class="test-btn" onclick="testBasicClick()">Test Basic Click</button>
+            <button class="test-btn" onclick="testSupabaseConnection()">Test Supabase</button>
+            <button class="test-btn" onclick="clearPins()">Clear All Pins</button>
+            <button class="test-btn" onclick="runFullDebug()">Run Full Debug</button>
+        </div>
+        
+        <div class="test-floor" id="testFloor">
+            <!-- Pins will be created here -->
+        </div>
+        
+        <div class="debug-info">
+            <h3>Console Output</h3>
+            <div id="consoleOutput" style="background: #000; padding: 10px; border-radius: 5px; font-family: monospace; font-size: 12px; max-height: 200px; overflow-y: auto;"></div>
+        </div>
+    </div>
+
+    <!-- Supabase Test -->
+    <script src="https://cdn.skypack.dev/@supabase/supabase-js@2"></script>
+    <script src="debug-pin-dropping-complete.js"></script>
+    
+    <script>
+        // Test configuration
+        const TEST_CONFIG = {
+            supabaseUrl: 'https://your-project.supabase.co',
+            supabaseKey: 'your-anon-key-here'
+        };
+        
+        let pinCount = 0;
+        let supabase = null;
+        
+        // Initialize test
+        function initTest() {
+            updateStatus('Initializing test...', 'warning');
+            
+            // Test basic click functionality
+            const floor = document.getElementById('testFloor');
+            floor.addEventListener('click', handleFloorClick);
+            
+            updateStatus('Basic click handler attached', 'success');
+            
+            // Test Supabase connection
+            testSupabaseConnection();
+        }
+        
+        // Handle floor clicks
+        function handleFloorClick(e) {
+            const rect = e.currentTarget.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            createPin(x, y);
+            logToConsole(`Pin created at (${x}, ${y})`);
+        }
+        
+        // Create a pin
+        function createPin(x, y) {
+            const pin = document.createElement('div');
+            pin.className = 'pin';
+            pin.style.left = x + 'px';
+            pin.style.top = y + 'px';
+            pin.title = `Pin ${++pinCount} - ${new Date().toLocaleTimeString()}`;
+            
+            document.getElementById('testFloor').appendChild(pin);
+            
+            // Test Supabase save if available
+            if (supabase) {
+                savePinToSupabase(x, y);
+            }
+        }
+        
+        // Test Supabase connection
+        async function testSupabaseConnection() {
+            try {
+                updateStatus('Testing Supabase connection...', 'warning');
+                
+                supabase = window.supabase.createClient(TEST_CONFIG.supabaseUrl, TEST_CONFIG.supabaseKey);
+                
+                // Test connection
+                const { data, error } = await supabase.from('pins').select('*').limit(1);
+                
+                if (error) {
+                    updateStatus(`Supabase error: ${error.message}`, 'error');
+                    logToConsole(`Supabase error: ${error.message}`);
+                } else {
+                    updateStatus('Supabase connection successful!', 'success');
+                    logToConsole('Supabase connection working');
+                }
+            } catch (err) {
+                updateStatus(`Supabase connection failed: ${err.message}`, 'error');
+                logToConsole(`Supabase error: ${err.message}`);
+            }
+        }
+        
+        // Save pin to Supabase
+        async function savePinToSupabase(x, y) {
+            if (!supabase) return;
+            
+            try {
+                const { data, error } = await supabase.from('pins').insert({
+                    user_id: 'test_user',
+                    x_position: Math.round(x),
+                    y_position: Math.round(y),
+                    message: `Test pin ${pinCount}`,
+                    color: '#ff6b00'
+                });
+                
+                if (error) {
+                    logToConsole(`Supabase save error: ${error.message}`);
+                } else {
+                    logToConsole(`Pin saved to Supabase: ${data}`);
+                }
+            } catch (err) {
+                logToConsole(`Supabase save error: ${err.message}`);
+            }
+        }
+        
+        // Test functions
+        function testBasicClick() {
+            logToConsole('Testing basic click functionality...');
+            const floor = document.getElementById('testFloor');
+            const rect = floor.getBoundingClientRect();
+            const x = rect.width / 2;
+            const y = rect.height / 2;
+            createPin(x, y);
+        }
+        
+        function clearPins() {
+            document.querySelectorAll('.pin').forEach(pin => pin.remove());
+            pinCount = 0;
+            logToConsole('All pins cleared');
+        }
+        
+        function runFullDebug() {
+            logToConsole('Running full debug...');
+            if (window.debugPinDropping) {
+                window.debugPinDropping.runCompleteDebug();
+            } else {
+                logToConsole('Debug script not loaded');
+            }
+        }
+        
+        // Utility functions
+        function updateStatus(message, type) {
+            const statusDiv = document.getElementById('debugStatus');
+            statusDiv.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+        
+        function logToConsole(message) {
+            const consoleDiv = document.getElementById('consoleOutput');
+            const timestamp = new Date().toLocaleTimeString();
+            consoleDiv.innerHTML += `[${timestamp}] ${message}\n`;
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+        }
+        
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', initTest);
+    </script>
+</body>
+</html>
+
+

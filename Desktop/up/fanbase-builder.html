@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fanbase Builder</title>
+  <link rel="stylesheet" href="/css/style.css" />
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; margin: 24px; }
+    header { display:flex; align-items:center; gap:12px; margin-bottom:16px; }
+    h1 { margin:0; font-size: 22px; }
+    fieldset { border:1px solid #e5e7eb; padding:16px; border-radius:8px; margin-bottom:16px; }
+    legend { padding:0 8px; color:#374151; }
+    label { display:block; font-weight:600; margin-top:8px; }
+    input[type="text"], input[type="password"], input[type="file"], select, textarea {
+      width: 100%; padding:8px 10px; border:1px solid #cbd5e1; border-radius:6px; box-sizing:border-box;
+    }
+    .row { display:flex; gap:12px; }
+    .row > * { flex:1; }
+    button { background:#111827; border:none; color:white; padding:8px 12px; border-radius:6px; cursor:pointer; }
+    button.secondary { background:#374151; }
+    button:disabled { opacity:.6; cursor:wait; }
+    table { width:100%; border-collapse: collapse; }
+    th, td { border:1px solid #e5e7eb; padding:6px 8px; font-size: 13px; }
+    th { background:#f9fafb; text-align:left; }
+    .muted { color:#6b7280; font-size:12px; }
+    .pill { display:inline-block; padding:2px 6px; border-radius:999px; font-size:11px; }
+    .pill.core { background:#dcfce7; color:#166534; }
+    .pill.probation { background:#fee2e2; color:#991b1b; }
+    .right { text-align:right; }
+    .stack { display:flex; gap:8px; flex-wrap:wrap; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Fanbase Builder</h1>
+    <a href="/site-map.html" class="muted">Site Map</a>
+  </header>
+
+  <fieldset>
+    <legend>Admin Auth</legend>
+    <label>Bearer Token
+      <input id="adminToken" type="password" placeholder="FANS_ADMIN_TOKEN or PROMO_ADMIN_TOKEN" />
+    </label>
+    <div class="muted">This token authorizes bulk import, cleaning, and promotion actions.</div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Import Instagram CSV → Probation</legend>
+    <div class="row">
+      <div>
+        <label>CSV File
+          <input id="csvFile" type="file" accept=".csv,text/csv" />
+        </label>
+      </div>
+      <div>
+        <label>Default Source
+          <input id="defaultSource" type="text" placeholder="instagram_scrape" value="instagram_scrape" />
+        </label>
+      </div>
+      <div>
+        <label>Default Platform
+          <input id="defaultPlatform" type="text" placeholder="instagram" value="instagram" />
+        </label>
+      </div>
+    </div>
+    <div class="row">
+      <div>
+        <label>Invite/Ref code (optional)
+          <input id="defaultRef" type="text" placeholder="ref or invite code" />
+        </label>
+      </div>
+      <div>
+        <label>Chunk Size
+          <input id="chunkSize" type="number" min="50" max="2000" value="500" />
+        </label>
+      </div>
+      <div class="right" style="align-self:end;">
+        <button id="btnImport">Import to Probation</button>
+      </div>
+    </div>
+    <div class="muted">CSV headers accepted: username, name, email, phone, source, platform, invite_code. Unknown columns are ignored.</div>
+    <div id="importStatus" class="muted mono"></div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Email Hygiene</legend>
+    <div class="stack">
+      <button id="btnCleanProbation" class="secondary">Run Cleaner on Probation</button>
+      <button id="btnCleanSelected" class="secondary">Clean Selected (IDs)</button>
+      <input id="cleanIds" type="text" placeholder="id1,id2,id3" />
+    </div>
+    <div class="muted">Cleaner performs syntax + MX checks and records <code>email_status</code>.</div>
+  </fieldset>
+
+  <fieldset>
+    <legend>Review & Promote</legend>
+    <div class="row">
+      <div>
+        <label>Filter
+          <select id="filter">
+            <option value="audience_bucket=probation">Probation</option>
+            <option value="audience_bucket=core">Core</option>
+            <option value="email_status=valid_mx">Email: valid_mx</option>
+            <option value="email_status=invalid_syntax">Email: invalid_syntax</option>
+            <option value="email_status=no_mx">Email: no_mx</option>
+          </select>
+        </label>
+      </div>
+      <div class="right" style="align-self:end;">
+        <button id="btnRefresh">Refresh</button>
+        <button id="btnPromote">Promote Selected → Core</button>
+        <button id="btnExportCore" class="secondary">Export Core Fans CSV</button>
+      </div>
+    </div>
+    <table id="fansTable">
+      <thead>
+        <tr>
+          <th><input type="checkbox" id="chkAll" /></th>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Bucket</th>
+          <th>Email Status</th>
+          <th>Source</th>
+          <th>Updated</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </fieldset>
+
+  <script>
+    const $ = sel => document.querySelector(sel);
+    const fansEndpoint = '/.netlify/functions/fans';
+
+    function parseCSV(text) {
+      const lines = text.split(/\r?\n/).filter(Boolean);
+      if (!lines.length) return [];
+      const headers = lines[0].split(',').map(h => h.trim().toLowerCase());
+      return lines.slice(1).map(line => {
+        const cells = [];
+        let cur = '';
+        let inQ = false;
+        for (let i=0; i<line.length; i++) {
+          const ch = line[i];
+          if (inQ) {
+            if (ch === '"' && line[i+1] === '"') { cur += '"'; i++; continue; }
+            if (ch === '"') { inQ = false; continue; }
+            cur += ch;
+          } else {
+            if (ch === '"') { inQ = true; continue; }
+            if (ch === ',') { cells.push(cur); cur=''; continue; }
+            cur += ch;
+          }
+        }
+        cells.push(cur);
+        const obj = {};
+        headers.forEach((h, idx) => obj[h] = (cells[idx] || '').trim());
+        return obj;
+      });
+    }
+
+    function mapToFan(row, defaults) {
+      return {
+        name: row.name || null,
+        email: row.email || null,
+        phone: row.phone || null,
+        platform: row.platform || defaults.platform,
+        source: row.source || defaults.source,
+        invite_code: row.invite_code || defaults.invite_code || null,
+        audience_bucket: 'probation',
+        consent: false
+      };
+    }
+
+    async function fetchFans(token, params={}) {
+      const usp = new URLSearchParams({ limit: '1000', ...params });
+      const res = await fetch(`${fansEndpoint}?${usp}`, { headers: { Authorization: `Bearer ${token}` } });
+      if (!res.ok) throw new Error(await res.text());
+      const data = await res.json();
+      return data.fans || [];
+    }
+
+    function renderFans(rows) {
+      const tbody = $('#fansTable tbody');
+      tbody.innerHTML = rows.map(r => `
+        <tr>
+          <td><input type="checkbox" data-id="${r.id}" /></td>
+          <td class="mono">${r.id}</td>
+          <td>${r.name||''}</td>
+          <td>${r.email||''}</td>
+          <td>${r.phone||''}</td>
+          <td><span class="pill ${r.audience_bucket||'probation'}">${r.audience_bucket||''}</span></td>
+          <td>${r.email_status||''}</td>
+          <td>${r.source||''}</td>
+          <td class="mono">${r.updated_at||''}</td>
+        </tr>
+      `).join('');
+    }
+
+    async function importCSV() {
+      const token = $('#adminToken').value.trim();
+      if (!token) return alert('Enter admin token.');
+      const file = $('#csvFile').files[0];
+      if (!file) return alert('Choose a CSV file.');
+      const text = await file.text();
+      const rows = parseCSV(text);
+      const defaults = {
+        source: $('#defaultSource').value.trim() || 'instagram_scrape',
+        platform: $('#defaultPlatform').value.trim() || 'instagram',
+        invite_code: $('#defaultRef').value.trim() || null
+      };
+      const items = rows.map(r => mapToFan(r, defaults)).filter(x => x.email || x.phone);
+      const chunk = Math.max(50, Math.min(parseInt($('#chunkSize').value||'500',10), 2000));
+      let done = 0;
+      for (let i=0; i<items.length; i+=chunk) {
+        const slice = items.slice(i, i+chunk);
+        const res = await fetch(fansEndpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+          body: JSON.stringify({ mode: 'bulk', items: slice })
+        });
+        const json = await res.json().catch(()=>({}));
+        if (!res.ok) throw new Error(JSON.stringify(json));
+        done += json.inserted || slice.length;
+        $('#importStatus').textContent = `Imported ${done}/${items.length}...`;
+      }
+      $('#importStatus').textContent = `Done. Imported ${done} records.`;
+    }
+
+    async function runCleaner(bucket, ids) {
+      const token = $('#adminToken').value.trim();
+      if (!token) return alert('Enter admin token.');
+      const body = { mode: 'clean' };
+      if (bucket) body.bucket = bucket;
+      if (ids && ids.length) body.ids = ids;
+      const res = await fetch(fansEndpoint, { method:'POST', headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token}` }, body: JSON.stringify(body) });
+      const json = await res.json();
+      if (!res.ok) throw new Error(JSON.stringify(json));
+      alert(`Checked ${json.checked} emails.`);
+    }
+
+    async function promote(ids) {
+      const token = $('#adminToken').value.trim();
+      if (!token) return alert('Enter admin token.');
+      const res = await fetch(fansEndpoint, { method:'POST', headers:{ 'Content-Type':'application/json', Authorization:`Bearer ${token}` }, body: JSON.stringify({ mode:'promote', ids, bucket:'core' }) });
+      const json = await res.json();
+      if (!res.ok) throw new Error(JSON.stringify(json));
+      alert(`Promoted ${json.updated} to ${json.bucket}.`);
+    }
+
+    $('#btnImport').addEventListener('click', importCSV);
+    $('#btnCleanProbation').addEventListener('click', () => runCleaner('probation'));
+    $('#btnCleanSelected').addEventListener('click', () => {
+      const ids = Array.from(document.querySelectorAll('#fansTable tbody input[type="checkbox"]:checked')).map(cb=>cb.dataset.id);
+      if (!ids.length) return alert('Select some rows in the table below.');
+      runCleaner(undefined, ids);
+    });
+
+    $('#btnRefresh').addEventListener('click', async () => {
+      const token = $('#adminToken').value.trim();
+      if (!token) return alert('Enter admin token.');
+      const [k,v] = ($('#filter').value||'audience_bucket=probation').split('=');
+      const fans = await fetchFans(token, { [k]: v, limit: '1000' });
+      renderFans(fans);
+    });
+
+    $('#btnPromote').addEventListener('click', async () => {
+      const ids = Array.from(document.querySelectorAll('#fansTable tbody input[type="checkbox"]:checked')).map(cb=>cb.dataset.id);
+      if (!ids.length) return alert('Select rows.');
+      await promote(ids);
+      $('#btnRefresh').click();
+    });
+
+    $('#chkAll').addEventListener('change', (e) => {
+      document.querySelectorAll('#fansTable tbody input[type="checkbox"]').forEach(cb => { cb.checked = e.target.checked; });
+    });
+
+    // Export core fans as CSV
+    document.getElementById('btnExportCore').addEventListener('click', async () => {
+      const token = $('#adminToken').value.trim();
+      if (!token) return alert('Enter admin token.');
+      const usp = new URLSearchParams({ format: 'csv', audience_bucket: 'core', consent: 'true', limit: '5000' });
+      const res = await fetch(`${fansEndpoint}?${usp.toString()}`, { headers: { Authorization: `Bearer ${token}` } });
+      if (!res.ok) { const t = await res.text(); alert('Export failed: ' + t); return; }
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `core-fans-${new Date().toISOString().slice(0,10)}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+  </script>
+</body>
+</html>

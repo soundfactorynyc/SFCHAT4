@@ -1,0 +1,46 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Node/JS
+node_modules/
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Build outputs
+dist/
+build/
+.cache/
+.parcel-cache/
+.turbo/
+.next/
+out/
+
+# Netlify/Vercel
+.netlify/
+.vercel/
+
+# Env/Secrets
+.env
+.env.*
+server/.env
+
+# Coverage
+coverage/
+
+# Editor/IDE
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# Server subprojects
+server/node_modules/
+server/dist/
+server/build/
+site-structurer/node_modules/
+
+# Generated archives
+*.zip
+*.tar.gz

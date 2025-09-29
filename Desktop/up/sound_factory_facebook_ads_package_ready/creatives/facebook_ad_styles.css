@@ -1,0 +1,421 @@
+/* Sound Factory Facebook Ad Styles
+ * This CSS file contains styles for various Facebook ad formats
+ * including feed ads, carousel ads, and collection ads.
+ */
+
+/* Base styles */
+:root {
+  --primary-color: #ff3366;
+  --secondary-color: #ff6633;
+  --dark-bg: #0a0a0a;
+  --light-text: #ffffff;
+  --gray-text: #e0e0e0;
+  --gradient: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+  --shadow: 0 10px 20px rgba(255, 51, 102, 0.3);
+  --transition: all 0.3s ease;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  color: var(--light-text);
+  background-color: var(--dark-bg);
+  line-height: 1.6;
+}
+
+/* Feed Ad Styles */
+.sf-feed-ad {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.sf-feed-ad__image {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.sf-feed-ad__overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 20px;
+  background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
+}
+
+.sf-feed-ad__title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+.sf-feed-ad__subtitle {
+  font-size: 16px;
+  font-weight: 400;
+  margin-bottom: 12px;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+.sf-feed-ad__cta {
+  display: inline-block;
+  padding: 8px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 50px;
+  background: var(--gradient);
+  color: white;
+  border: none;
+  transition: var(--transition);
+}
+
+.sf-feed-ad__cta:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+/* Carousel Ad Styles */
+.sf-carousel {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.sf-carousel__slide {
+  position: relative;
+  width: 100%;
+  height: 500px;
+  overflow: hidden;
+  border-radius: 10px;
+}
+
+.sf-carousel__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sf-carousel__content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 20px;
+  background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
+}
+
+.sf-carousel__title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+.sf-carousel__description {
+  font-size: 14px;
+  margin-bottom: 12px;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+.sf-carousel__cta {
+  display: inline-block;
+  padding: 6px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 50px;
+  background: var(--gradient);
+  color: white;
+  border: none;
+  transition: var(--transition);
+}
+
+/* Collection Ad Styles */
+.sf-collection {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.sf-collection__hero {
+  position: relative;
+  width: 100%;
+  height: 250px;
+  overflow: hidden;
+  border-radius: 10px 10px 0 0;
+}
+
+.sf-collection__hero-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sf-collection__hero-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 20px;
+  background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
+}
+
+.sf-collection__hero-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+.sf-collection__items {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  padding: 10px;
+  background-color: #000000;
+  border-radius: 0 0 10px 10px;
+}
+
+.sf-collection__item {
+  position: relative;
+  height: 150px;
+  overflow: hidden;
+  border-radius: 5px;
+}
+
+.sf-collection__item-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sf-collection__item-name {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  background: rgba(0,0,0,0.7);
+  text-align: center;
+}
+
+/* Dynamic Ad Elements */
+.sf-dynamic-element {
+  background: rgba(255, 51, 102, 0.1);
+  border: 1px solid var(--primary-color);
+  border-radius: 5px;
+  padding: 8px 12px;
+  margin: 10px 0;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sf-dynamic-element__icon {
+  margin-right: 8px;
+  color: var(--primary-color);
+}
+
+/* Social Proof Elements */
+.sf-social-proof {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 5px;
+  padding: 8px 12px;
+  margin: 10px 0;
+}
+
+.sf-social-proof__icon {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--primary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+}
+
+.sf-social-proof__text {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Table Card Styles */
+.sf-table-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 15px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: var(--transition);
+  margin-bottom: 15px;
+}
+
+.sf-table-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(255, 51, 102, 0.2);
+  border-color: rgba(255, 51, 102, 0.3);
+}
+
+.sf-table-card__name {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 5px;
+  color: var(--primary-color);
+}
+
+.sf-table-card__price {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.sf-table-card__features {
+  list-style: none;
+  margin-bottom: 15px;
+}
+
+.sf-table-card__features li {
+  margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+}
+
+.sf-table-card__features li:before {
+  content: "✓";
+  color: var(--primary-color);
+  margin-right: 5px;
+}
+
+.sf-table-card__cta {
+  display: inline-block;
+  width: 100%;
+  padding: 8px 0;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 50px;
+  background: var(--gradient);
+  color: white;
+  border: none;
+  transition: var(--transition);
+}
+
+/* Animations */
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+.sf-pulse {
+  animation: pulse 2s infinite;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.sf-fade-in {
+  animation: fadeIn 1s ease-in;
+}
+
+/* Countdown Timer */
+.sf-countdown {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin: 15px 0;
+}
+
+.sf-countdown__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.sf-countdown__number {
+  font-size: 24px;
+  font-weight: 700;
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.sf-countdown__label {
+  font-size: 12px;
+  color: var(--gray-text);
+}
+
+/* Urgency Elements */
+.sf-urgency {
+  background: rgba(255, 51, 102, 0.1);
+  border-left: 4px solid var(--primary-color);
+  padding: 10px 15px;
+  margin: 15px 0;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 500px) {
+  .sf-feed-ad__title {
+    font-size: 20px;
+  }
+  
+  .sf-feed-ad__subtitle {
+    font-size: 14px;
+  }
+  
+  .sf-carousel__slide {
+    height: 400px;
+  }
+  
+  .sf-carousel__title {
+    font-size: 18px;
+  }
+  
+  .sf-collection__hero {
+    height: 200px;
+  }
+  
+  .sf-collection__hero-title {
+    font-size: 20px;
+  }
+  
+  .sf-collection__item {
+    height: 120px;
+  }
+}

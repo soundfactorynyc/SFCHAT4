@@ -1,0 +1,5 @@
+rules:
+  no_deploy_friday: true
+  backup_before_deploy: true  
+  test_coverage_minimum: 80%
+  auto_rollback_on_failure: true

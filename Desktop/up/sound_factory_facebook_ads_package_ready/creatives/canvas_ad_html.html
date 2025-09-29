@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sound Factory Canvas Ad</title>
+    <style>
+        /* Base styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            color: #ffffff;
+            background-color: #000000;
+            line-height: 1.6;
+        }
+        
+        /* Container styles */
+        .canvas-container {
+            width: 100%;
+            max-width: 1080px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+        
+        /* Header section */
+        .header {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
+        
+        .header video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .header-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.7) 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 2rem;
+        }
+        
+        .header-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .header-subtitle {
+            font-size: 1.5rem;
+            font-weight: 400;
+            margin-bottom: 2rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+        
+        /* Content section */
+        .content-section {
+            padding: 2rem;
+            background-color: #0a0a0a;
+        }
+        
+        .section-title {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: #ff3366;
+        }
+        
+        .section-text {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            color: #e0e0e0;
+        }
+        
+        /* Button styles */
+        .button-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .primary-button {
+            background: linear-gradient(90deg, #ff3366, #ff6633);
+            color: white;
+            border: none;
+        }
+        
+        .primary-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(255, 51, 102, 0.3);
+        }
+        
+        .secondary-button {
+            background: transparent;
+            color: white;
+            border: 2px solid #ff3366;
+        }
+        
+        .secondary-button:hover {
+            background: rgba(255, 51, 102, 0.1);
+            transform: translateY(-3px);
+        }
+        
+        /* Image gallery */
+        .image-gallery {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .gallery-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+        }
+        
+        .gallery-image:hover {
+            transform: scale(1.05);
+        }
+        
+        /* Table section */
+        .table-section {
+            padding: 2rem;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+        }
+        
+        .table-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .table-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .table-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(255, 51, 102, 0.2);
+            border-color: rgba(255, 51, 102, 0.3);
+        }
+        
+        .table-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #ff3366;
+        }
+        
+        .table-price {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .table-features {
+            list-style: none;
+            margin-bottom: 1.5rem;
+        }
+        
+        .table-features li {
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .table-features li:before {
+            content: "✓";
+            color: #ff3366;
+            margin-right: 0.5rem;
+        }
+        
+        /* Footer section */
+        .footer {
+            padding: 2rem;
+            background-color: #000000;
+            text-align: center;
+        }
+        
+        .footer-logo {
+            width: 150px;
+            margin-bottom: 1rem;
+        }
+        
+        .social-icons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .social-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        
+        .social-icon:hover {
+            background: #ff3366;
+            transform: translateY(-3px);
+        }
+        
+        /* Animation */
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .header-title {
+                font-size: 2rem;
+            }
+            
+            .header-subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
+            }
+            
+            .button-container {
+                flex-direction: column;
+            }
+            
+            .image-gallery {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+<script src="https://sites.super.myninja.ai/_assets/ninja-daytona-script.js"></script>
+</head>
+<body>
+    <div class="canvas-container">
+        <!-- Header with video background -->
+        <div class="header">
+            <video autoplay muted loop playsinline>
+                <source src="https://example.com/sound_factory_video.mp4" type="video/mp4">
+            </video>
+            <div class="header-overlay">
+                <h1 class="header-title">Experience Sound Factory</h1>
+                <p class="header-subtitle">The legendary club that defined NYC nightlife returns in 2025</p>
+                <div class="button-container">
+                    <a href="https://soundfactorynyc.com/?source=fb_canvas" class="cta-button primary-button pulse-animation">Explore Now</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Experience section -->
+        <div class="content-section">
+            <h2 class="section-title">Step Into The Legend</h2>
+            <p class="section-text">Sound Factory has defined NYC nightlife for a generation. Now, the iconic venue returns with world-class sound, immersive lighting, and the energy that made it legendary.</p>
+            
+            <div class="image-gallery">
+                <img src="https://example.com/sound_factory_image1.jpg" alt="Sound Factory Main Floor" class="gallery-image">
+                <img src="https://example.com/sound_factory_image2.jpg" alt="Sound Factory Lighting" class="gallery-image">
+                <img src="https://example.com/sound_factory_image3.jpg" alt="Sound Factory DJ Booth" class="gallery-image">
+                <img src="https://example.com/sound_factory_image4.jpg" alt="Sound Factory Crowd" class="gallery-image">
+            </div>
+            
+            <div class="button-container">
+                <a href="https://soundfactorynyc.com/video_gallery.html?source=fb_canvas&interaction=video_interest&content_id=memories46" class="cta-button secondary-button">Watch More Videos</a>
+            </div>
+        </div>
+        
+        <!-- Table section -->
+        <div class="table-section">
+            <h2 class="section-title">VIP Table Experience</h2>
+            <p class="section-text">Elevate your night with our premium table service. Limited availability - reserve yours now.</p>
+            
+            <div class="table-container">
+                <div class="table-card" id="table-premium">
+                    <h3 class="table-name">Premium VIP</h3>
+                    <p class="table-price">$1,500</p>
+                    <ul class="table-features">
+                        <li>Prime location near DJ booth</li>
+                        <li>Dedicated server</li>
+                        <li>Skip-the-line entry for 6 guests</li>
+                        <li>2 premium bottles included</li>
+                    </ul>
+                    <a href="https://soundfactorynyc.com/tables_enhanced.html?source=fb_canvas&interaction=table_interest&content_id=premium" class="cta-button primary-button">Reserve Now</a>
+                </div>
+                
+                <div class="table-card">
+                    <h3 class="table-name">Standard VIP</h3>
+                    <p class="table-price">$1,000</p>
+                    <ul class="table-features">
+                        <li>Great dance floor view</li>
+                        <li>Dedicated server</li>
+                        <li>Skip-the-line entry for 4 guests</li>
+                        <li>1 premium bottle included</li>
+                    </ul>
+                    <a href="https://soundfactorynyc.com/tables_enhanced.html?source=fb_canvas&interaction=table_interest&content_id=standard" class="cta-button primary-button">Reserve Now</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tickets section -->
+        <div class="content-section">
+            <h2 class="section-title">Get Your Tickets</h2>
+            <p class="section-text">Don't miss out on the return of a legend. Secure your spot now before tickets sell out.</p>
+            
+            <div class="button-container">
+                <a href="https://soundfactorynyc.com/find_my_ticket.html?source=fb_canvas&interaction=ticket_interest&content_id=general" class="cta-button primary-button">Get Tickets Now</a>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <img src="https://example.com/sound_factory_logo.png" alt="Sound Factory Logo" class="footer-logo">
+            <div class="social-icons">
+                <a href="https://facebook.com/soundfactorynyc" class="social-icon">FB</a>
+                <a href="https://instagram.com/soundfactorynyc" class="social-icon">IG</a>
+                <a href="https://twitter.com/soundfactorynyc" class="social-icon">TW</a>
+            </div>
+            <p>© 2025 Sound Factory NYC. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>

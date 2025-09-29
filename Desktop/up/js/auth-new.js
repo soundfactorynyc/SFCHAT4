@@ -1,0 +1,1 @@
+// Deprecated local SMS auth script. No-op.

@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard • Sound Factory</title>
+  <link rel="stylesheet" href="css/main.css">
+  <style>
+    :root { color-scheme: dark; }
+    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background:#0b0b0b; color:#eaeaea; }
+    .wrap { max-width: 1000px; margin: 0 auto; padding: 24px; }
+    .grid { display:grid; grid-template-columns: 1fr 1fr; gap:16px; }
+    .card { background:#121212; border:1px solid #222; border-radius:12px; padding:16px; }
+    .muted { color:#9aa0a6; font-size: 13px; }
+  </style>
+  <script>
+    window.addEventListener('DOMContentLoaded', async ()=>{
+      const purchases = JSON.parse(localStorage.getItem('sf_purchases')||'[]');
+      document.getElementById('purchases').textContent = purchases.length ? JSON.stringify(purchases, null, 2) : 'No purchases yet.';
+      const joinUser = JSON.parse(localStorage.getItem('sf_join_user')||'null');
+      if (joinUser) document.getElementById('join').textContent = JSON.stringify(joinUser, null, 2);
+    });
+  </script>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Member Dashboard</h1>
+    <p class="muted">This is a lightweight placeholder. We can expand with tickets, tables, invites, and perks.</p>
+    <div class="grid" style="margin-top:12px">
+      <div class="card">
+        <h3>Recent Purchases</h3>
+        <pre id="purchases" class="muted" style="white-space:pre-wrap"></pre>
+      </div>
+      <div class="card">
+        <h3>Invite Info</h3>
+        <pre id="join" class="muted" style="white-space:pre-wrap"></pre>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

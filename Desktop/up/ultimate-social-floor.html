@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sound Factory - Ultimate Social Floor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none;
+            -webkit-touch-callout: none;
+        }
+
+        body {
+            background: #000;
+            overflow: hidden;
+            font-family: -apple-system, system-ui, sans-serif;
+            touch-action: none;
+        }
+
+        .floor {
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(180deg, #0a0a0a, #050505);
+            position: relative;
+        }
+
+        .floor::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none;
+        }
+
+        /* Ultra-tiny character */
+        .person {
+            position: absolute;
+            width: 16px;
+            height: 20px;
+            cursor: pointer;
+            transition: none;
+            z-index: 100;
+        }
+
+        .head {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: radial-gradient(circle at 40% 40%, #f4d1ae, #c4936d);
+            border-radius: 50%;
+            left: 5px;
+            top: 1px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.5);
+            z-index: 20;
+        }
+
+        .torso {
+            position: absolute;
+            width: 10px;
+            height: 7px;
+            background: linear-gradient(180deg, #333, #1a1a1a);
+            border-radius: 30% 30% 40% 40%;
+            left: 3px;
+            top: 6px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.5);
+            z-index: 10;
+        }
+
+        .arms {
+            position: absolute;
+            width: 14px;
+            height: 2px;
+            background: linear-gradient(90deg, #2a2a2a, #333, #2a2a2a);
+            left: 1px;
+            top: 8px;
+            border-radius: 1px;
+            transform-origin: center;
+        }
+
+        .legs {
+            position: absolute;
+            width: 8px;
+            height: 6px;
+            background: linear-gradient(180deg, #222, #111);
+            left: 4px;
+            top: 12px;
+            border-radius: 0 0 2px 2px;
+            clip-path: polygon(0 0, 40% 0, 30% 100%, 0 100%, 0 0, 100% 0, 100% 100%, 70% 100%, 60% 0);
+        }
+
+        .shadow {
+            position: absolute;
+            width: 12px;
+            height: 4px;
+            background: radial-gradient(ellipse, rgba(0,0,0,0.6), transparent);
+            left: 2px;
+            top: 17px;
+            border-radius: 50%;
+            z-index: -1;
+        }
+
+        /* Normal walking */
+        .person.walking .arms {
+            animation: armSwing 0.4s ease-in-out infinite;
+        }
+        .person.walking .legs {
+            animation: legWalk 0.4s ease-in-out infinite;
+        }
+
+        /* Runway mode */
+        .person.runway .head {
+            animation: runwayHead 0.6s ease-in-out infinite;
+        }
+        .person.runway .torso {
+            animation: runwayTorso 0.6s ease-in-out infinite;
+        }
+        .person.runway .arms {
+            animation: runwayArms 0.6s ease-in-out infinite;
+        }
+        .person.runway .legs {
+            animation: runwayLegs 0.6s ease-in-out infinite;
+        }
+
+        /* Breakdance mode */
+        .person.breakdance {
+            animation: breakSpin 1.5s ease-in-out infinite;
+        }
+        .person.breakdance .arms {
+            animation: breakArms 0.3s linear infinite;
+        }
+        .person.breakdance .legs {
+            animation: breakLegs 0.3s linear infinite;
+        }
+
+        /* Animations */
+        @keyframes armSwing {
+            0%, 100% { transform: rotate(-5deg); }
+            50% { transform: rotate(5deg); }
+        }
+        @keyframes legWalk {
+            0%, 100% { clip-path: polygon(0 0, 40% 0, 25% 100%, 0 100%, 0 0, 100% 0, 100% 100%, 75% 100%, 60% 0); }
+            50% { clip-path: polygon(0 0, 40% 0, 35% 100%, 10% 100%, 0 0, 100% 0, 90% 100%, 65% 100%, 60% 0); }
+        }
+        @keyframes runwayHead {
+            0%, 100% { transform: translateX(-1px); }
+            50% { transform: translateX(1px); }
+        }
+        @keyframes runwayTorso {
+            0%, 100% { transform: rotate(-3deg) scaleX(1.1); }
+            50% { transform: rotate(3deg) scaleX(1.1); }
+        }
+        @keyframes runwayArms {
+            0%, 100% { transform: rotate(-15deg) scaleX(1.2); width: 16px; }
+            50% { transform: rotate(15deg) scaleX(1.2); width: 16px; }
+        }
+        @keyframes runwayLegs {
+            0%, 100% { transform: scaleY(1.1); }
+            25% { transform: scaleY(1.2) translateY(-1px); }
+            75% { transform: scaleY(1.2) translateY(-1px); }
+        }
+        @keyframes breakSpin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(720deg); }
+        }
+        @keyframes breakArms {
+            0% { transform: rotate(0deg) scaleX(1.5); }
+            100% { transform: rotate(360deg) scaleX(1.5); }
+        }
+        @keyframes breakLegs {
+            0%, 100% { transform: scaleX(1.3); }
+            50% { transform: scaleX(0.8) scaleY(1.2); }
+        }
+
+        /* Mode indicator on character */
+        .mode-badge {
+            position: absolute;
+            top: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--mode-color, #00ff88);
+            padding: 1px 4px;
+            border-radius: 8px;
+            font-size: 8px;
+            font-weight: 700;
+            color: #000;
+            white-space: nowrap;
+            display: none;
+            z-index: 30;
+        }
+
+        .person.runway .mode-badge,
+        .person.breakdance .mode-badge {
+            display: block;
+        }
+
+        /* Profile hover card */
+        .profile-card {
+            position: absolute;
+            width: 300px;
+            background: rgba(20, 20, 20, 0.98);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 15px;
+            display: none;
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: slideUp 0.3s ease-out;
+        }
+
+        .person:hover .profile-card {
+            display: block;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .profile-pic {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, var(--user-color, #ff1a78), rgba(0,0,0,0.5));
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .profile-name {
+            color: #fff;
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .profile-status {
+            color: #888;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .online-dot {
+            width: 6px;
+            height: 6px;
+            background: #00ff88;
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .profile-actions {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+        }
+
+        .action-btn {
+            padding: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 11px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .action-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .action-btn.primary {
+            background: linear-gradient(135deg, #ff1a78, #ff0066);
+            border: none;
+        }
+
+        /* Group Chat */
+        .chat-panel {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 320px;
+            height: 200px;
+            background: rgba(10, 10, 10, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            z-index: 500;
+            transition: all 0.3s ease;
+        }
+
+        .chat-panel.minimized {
+            height: 40px;
+        }
+
+        .chat-header {
+            padding: 10px 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .chat-title {
+            color: #fff;
+            font-size: 12px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chat-indicator {
+            width: 8px;
+            height: 8px;
+            background: #00ff88;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .chat-panel.minimized .chat-messages,
+        .chat-panel.minimized .chat-input-area {
+            display: none;
+        }
+
+        .chat-message {
+            display: flex;
+            gap: 8px;
+            animation: messageSlide 0.3s ease-out;
+        }
+
+        @keyframes messageSlide {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        .chat-avatar {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--user-color);
+            flex-shrink: 0;
+        }
+
+        .chat-content {
+            flex: 1;
+        }
+
+        .chat-name {
+            color: var(--user-color);
+            font-size: 10px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .chat-text {
+            color: #fff;
+            font-size: 11px;
+            line-height: 1.4;
+        }
+
+        .chat-input-area {
+            padding: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            gap: 8px;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 6px 12px;
+            color: #fff;
+            font-size: 11px;
+            outline: none;
+        }
+
+        .chat-input:focus {
+            border-color: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .chat-send {
+            padding: 6px 12px;
+            background: #ff1a78;
+            border: none;
+            border-radius: 20px;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        /* Share Panel */
+        .share-panel {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            background: rgba(20, 20, 20, 0.98);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 20px;
+            width: 350px;
+            z-index: 2000;
+            transition: all 0.3s ease;
+        }
+
+        .share-panel.active {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        .share-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+
+        .share-title {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .share-close {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .share-options {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .share-option {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .share-option:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .share-icon {
+            font-size: 20px;
+        }
+
+        .share-label {
+            font-size: 10px;
+            color: #888;
+        }
+
+        .share-link {
+            display: flex;
+            gap: 8px;
+        }
+
+        .share-url {
+            flex: 1;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 11px;
+        }
+
+        .copy-btn {
+            padding: 8px 15px;
+            background: #00ff88;
+            border: none;
+            border-radius: 10px;
+            color: #000;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        /* Controls */
+        .controls {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            z-index: 500;
+        }
+
+        .joystick {
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 50%;
+            position: relative;
+            touch-action: none;
+        }
+
+        .joystick-knob {
+            width: 35px;
+            height: 35px;
+            background: radial-gradient(circle, #666, #333);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .mode-buttons {
+            display: flex;
+            gap: 5px;
+        }
+
+        .mode-btn {
+            padding: 6px 12px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 15px;
+            color: #fff;
+            font-size: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .mode-btn.active {
+            background: var(--mode-color);
+            color: #000;
+            border-color: var(--mode-color);
+        }
+
+        /* Top bar */
+        .top-bar {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 500;
+        }
+
+        .stat-card {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stat-label {
+            color: #888;
+            font-size: 11px;
+        }
+
+        .stat-value {
+            color: #fff;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .share-btn {
+            background: #9933ff;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="floor" id="floor"></div>
+    
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="stat-card">
+            <span class="stat-label">People:</span>
+            <span class="stat-value" id="peopleCount">8</span>
+        </div>
+        <div class="stat-card">
+            <span class="stat-label">Mode:</span>
+            <span class="stat-value" id="currentMode">WALK</span>
+        </div>
+        <button class="share-btn" onclick="openShare()">
+            <span>📤</span>
+            <span>Share Floor</span>
+        </button>
+    </div>
+    
+    <!-- Group Chat -->
+    <div class="chat-panel" id="chatPanel">
+        <div class="chat-header" onclick="toggleChat()">
+            <div class="chat-title">
+                <div class="chat-indicator"></div>
+                <span>Floor Chat</span>
+            </div>
+            <span id="chatToggle">▼</span>
+        </div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-input-area">
+            <input type="text" class="chat-input" id="chatInput" placeholder="Say something..." onkeypress="if(event.key==='Enter')sendMessage()">
+            <button class="chat-send" onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+    
+    <!-- Share Panel -->
+    <div class="share-panel" id="sharePanel">
+        <div class="share-header">
+            <div class="share-title">Share This Floor</div>
+            <button class="share-close" onclick="closeShare()">✕</button>
+        </div>
+        <div class="share-options">
+            <div class="share-option" onclick="shareOn('twitter')">
+                <span class="share-icon">🐦</span>
+                <span class="share-label">Twitter</span>
+            </div>
+            <div class="share-option" onclick="shareOn('instagram')">
+                <span class="share-icon">📷</span>
+                <span class="share-label">Instagram</span>
+            </div>
+            <div class="share-option" onclick="shareOn('tiktok')">
+                <span class="share-icon">🎵</span>
+                <span class="share-label">TikTok</span>
+            </div>
+            <div class="share-option" onclick="shareOn('whatsapp')">
+                <span class="share-icon">💬</span>
+                <span class="share-label">WhatsApp</span>
+            </div>
+        </div>
+        <div class="share-link">
+            <input type="text" class="share-url" id="shareUrl" value="soundfactory.nyc/floor/xyz123" readonly>
+            <button class="copy-btn" onclick="copyLink()">Copy</button>
+        </div>
+    </div>
+    
+    <!-- Controls -->
+    <div class="controls">
+        <div class="joystick" id="joystick">
+            <div class="joystick-knob" id="knob"></div>
+        </div>
+        <div class="mode-buttons">
+            <button class="mode-btn active" data-mode="walking" style="--mode-color:#00ff88" onclick="setMode('walking')">WALK</button>
+            <button class="mode-btn" data-mode="runway" style="--mode-color:#ff1a78" onclick="setMode('runway')">RUNWAY</button>
+            <button class="mode-btn" data-mode="breakdance" style="--mode-color:#00ffff" onclick="setMode('breakdance')">BREAK</button>
+        </div>
+    </div>
+
+    <script>
+        // User data with emojis as temporary avatars
+        const users = [
+            { name: 'You', color: '#00ff88', status: 'Dancing', emoji: '🕺' },
+            { name: 'Alex Chen', color: '#ff1a78', status: 'At the bar', emoji: '🎭' },
+            { name: 'Jordan M', color: '#00ffff', status: 'VIP Section', emoji: '👑' },
+            { name: 'Sam Rivera', color: '#ff9f00', status: 'Just arrived', emoji: '🔥' },
+            { name: 'Taylor K', color: '#9933ff', status: 'Breaking it down', emoji: '💜' },
+            { name: 'Chris Wu', color: '#ff3366', status: 'Runway mode', emoji: '✨' },
+            { name: 'Morgan Lee', color: '#00ff99', status: 'Vibing', emoji: '🎵' },
+            { name: 'Casey Park', color: '#ffcc00', status: 'Lost in music', emoji: '🌟' }
+        ];
+
+        const floor = document.getElementById('floor');
+        const chatMessages = document.getElementById('chatMessages');
+        const chatInput = document.getElementById('chatInput');
+        const currentModeDisplay = document.getElementById('currentMode');
+        const peopleCount = document.getElementById('peopleCount');
+        
+        let currentMode = 'walking';
+        const characters = [];
+        
+        // Create characters
+        users.forEach((user, index) => {
+            const person = document.createElement('div');
+            person.className = 'person';
+            person.style.setProperty('--user-color', user.color);
+            person.innerHTML = `
+                <div class="shadow"></div>
+                <div class="legs"></div>
+                <div class="torso"></div>
+                <div class="arms"></div>
+                <div class="head"></div>
+                <div class="mode-badge" style="--mode-color:${user.color}">${index === 0 ? 'WALK' : ''}</div>
+                <div class="profile-card">
+                    <div class="profile-header">
+                        <div class="profile-pic" style="background:${user.color}">
+                            <span>${user.emoji}</span>
+                        </div>
+                        <div class="profile-info">
+                            <div class="profile-name">${user.name}</div>
+                            <div class="profile-status">
+                                <span class="online-dot"></span>
+                                ${user.status}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="profile-actions">
+                        <div class="action-btn" onclick="interact('like','${user.name}')">
+                            <span>❤️</span>
+                            <span>Like</span>
+                        </div>
+                        <div class="action-btn" onclick="interact('chat','${user.name}')">
+                            <span>💬</span>
+                            <span>Chat</span>
+                        </div>
+                        <div class="action-btn" onclick="interact('share','${user.name}')">
+                            <span>📤</span>
+                            <span>Share</span>
+                        </div>
+                        <div class="action-btn primary" onclick="interact('drink','${user.name}')">
+                            <span>🍹</span>
+                            <span>Buy Drink</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            const x = Math.random() * (window.innerWidth - 50) + 25;
+            const y = Math.random() * (window.innerHeight - 150) + 50;
+            person.style.left = x + 'px';
+            person.style.top = y + 'px';
+            
+            floor.appendChild(person);
+            
+            characters.push({
+                element: person,
+                user: user,
+                x: x,
+                y: y,
+                vx: 0,
+                vy: 0,
+                targetX: x,
+                targetY: y,
+                isPlayer: index === 0,
+                mode: index === 0 ? 'walking' : null
+            });
+        });
+        
+        // Mode switching
+        function setMode(mode) {
+            currentMode = mode;
+            currentModeDisplay.textContent = mode.toUpperCase();
+            
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.mode === mode);
+            });
+            
+            const player = characters[0];
+            player.element.classList.remove('walking', 'runway', 'breakdance');
+            player.mode = mode;
+            
+            // Update mode badge
+            const badge = player.element.querySelector('.mode-badge');
+            const modeNames = {
+                'walking': 'WALK',
+                'runway': 'FIERCE',
+                'breakdance': 'BREAK'
+            };
+            badge.textContent = modeNames[mode];
+            badge.style.setProperty('--mode-color', 
+                mode === 'runway' ? '#ff1a78' : 
+                mode === 'breakdance' ? '#00ffff' : 
+                '#00ff88'
+            );
+        }
+        
+        // Chat system
+        function toggleChat() {
+            const panel = document.getElementById('chatPanel');
+            const toggle = document.getElementById('chatToggle');
+            panel.classList.toggle('minimized');
+            toggle.textContent = panel.classList.contains('minimized') ? '▲' : '▼';
+        }
+        
+        function sendMessage() {
+            const text = chatInput.value.trim();
+            if (!text) return;
+            
+            addChatMessage('You', text, '#00ff88');
+            chatInput.value = '';
+            
+            // Simulate other users responding
+            if (Math.random() > 0.5) {
+                setTimeout(() => {
+                    const randomUser = users[Math.floor(Math.random() * (users.length - 1)) + 1];
+                    const responses = [
+                        '🔥🔥🔥',
+                        'This beat is insane!',
+                        'Who\'s ready to dance?',
+                        'Best night ever!',
+                        'Love this vibe',
+                        'Let\'s gooo!',
+                        'Sound Factory forever!'
+                    ];
+                    addChatMessage(
+                        randomUser.name,
+                        responses[Math.floor(Math.random() * responses.length)],
+                        randomUser.color
+                    );
+                }, 1000 + Math.random() * 2000);
+            }
+        }
+        
+        function addChatMessage(name, text, color) {
+            const message = document.createElement('div');
+            message.className = 'chat-message';
+            message.innerHTML = `
+                <div class="chat-avatar" style="background:${color}"></div>
+                <div class="chat-content">
+                    <div class="chat-name" style="color:${color}">${name}</div>
+                    <div class="chat-text">${text}</div>
+                </div>
+            `;
+            chatMessages.appendChild(message);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        // Share functions
+        function openShare() {
+            document.getElementById('sharePanel').classList.add('active');
+        }
+        
+        function closeShare() {
+            document.getElementById('sharePanel').classList.remove('active');
+        }
+        
+        function shareOn(platform) {
+            showNotification(`Sharing on ${platform}...`, '#9933ff');
+            setTimeout(() => closeShare(), 500);
+        }
+        
+        function copyLink() {
+            const url = document.getElementById('shareUrl');
+            url.select();
+            document.execCommand('copy');
+            showNotification('Link copied!', '#00ff88');
+        }
+        
+        // Interaction
+        window.interact = function(action, userName) {
+            event.stopPropagation();
+            const messages = {
+                like: `❤️ Liked ${userName}`,
+                chat: `💬 Started chat with ${userName}`,
+                share: `📤 Shared ${userName}'s vibe`,
+                drink: `🍹 Sent a drink to ${userName}!`
+            };
+            showNotification(messages[action], '#ff1a78');
+            
+            // Add to chat if it's a drink
+            if (action === 'drink') {
+                addChatMessage('You', `🍹 Sent a drink to ${userName}!`, '#00ff88');
+            }
+        };
+        
+        function showNotification(text, color) {
+            const notif = document.createElement('div');
+            notif.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(0,0,0,0.95);
+                padding: 15px 25px;
+                border-radius: 20px;
+                color: #fff;
+                font-size: 14px;
+                border: 1px solid ${color};
+                box-shadow: 0 0 20px ${color};
+                animation: notifPop 2s ease-out forwards;
+                z-index: 3000;
+            `;
+            notif.textContent = text;
+            document.body.appendChild(notif);
+            setTimeout(() => notif.remove(), 2000);
+        }
+        
+        // Add notif animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes notifPop {
+                0% { opacity: 0; transform: translate(-50%, -50%) scale(0.8); }
+                20% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
+                40% { transform: translate(-50%, -50%) scale(1); }
+                100% { opacity: 0; transform: translate(-50%, -50%) scale(0.95); }
+            }
+        `;
+        document.head.appendChild(style);
+        
+        // Joystick control
+        const joystick = document.getElementById('joystick');
+        const knob = document.getElementById('knob');
+        let isDragging = false;
+        let joystickX = 0;
+        let joystickY = 0;
+        
+        function handleJoystickStart(e) {
+            isDragging = true;
+            handleJoystickMove(e);
+        }
+        
+        function handleJoystickMove(e) {
+            if (!isDragging) return;
+            
+            const rect = joystick.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            let clientX = e.touches ? e.touches[0].clientX : e.clientX;
+            let clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            
+            let deltaX = clientX - centerX;
+            let deltaY = clientY - centerY;
+            
+            const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+            const maxDistance = rect.width / 2 - 17;
+            
+            if (distance > maxDistance) {
+                deltaX = (deltaX / distance) * maxDistance;
+                deltaY = (deltaY / distance) * maxDistance;
+            }
+            
+            knob.style.transform = `translate(calc(-50% + ${deltaX}px), calc(-50% + ${deltaY}px))`;
+            
+            joystickX = deltaX / maxDistance;
+            joystickY = deltaY / maxDistance;
+            
+            // Apply movement class
+            const player = characters[0];
+            if (Math.abs(joystickX) > 0.1 || Math.abs(joystickY) > 0.1) {
+                if (!player.element.classList.contains(currentMode)) {
+                    player.element.classList.add(currentMode);
+                }
+            } else {
+                player.element.classList.remove('walking', 'runway', 'breakdance');
+            }
+        }
+        
+        function handleJoystickEnd() {
+            isDragging = false;
+            knob.style.transform = 'translate(-50%, -50%)';
+            joystickX = 0;
+            joystickY = 0;
+            characters[0].element.classList.remove('walking', 'runway', 'breakdance');
+        }
+        
+        joystick.addEventListener('touchstart', handleJoystickStart);
+        joystick.addEventListener('touchmove', handleJoystickMove);
+        joystick.addEventListener('touchend', handleJoystickEnd);
+        joystick.addEventListener('mousedown', handleJoystickStart);
+        document.addEventListener('mousemove', handleJoystickMove);
+        document.addEventListener('mouseup', handleJoystickEnd);
+        
+        // Animation loop
+        function animate() {
+            // Player movement
+            const player = characters[0];
+            const speed = currentMode === 'runway' ? 2 : currentMode === 'breakdance' ? 1.5 : 3;
+            player.vx = joystickX * speed;
+            player.vy = joystickY * speed;
+            player.x += player.vx;
+            player.y += player.vy;
+            player.x = Math.max(10, Math.min(window.innerWidth - 10, player.x));
+            player.y = Math.max(10, Math.min(window.innerHeight - 10, player.y));
+            player.element.style.left = player.x + 'px';
+            player.element.style.top = player.y + 'px';
+            
+            // Rotate based on movement (except breakdance)
+            if (currentMode !== 'breakdance' && (Math.abs(player.vx) > 0.1 || Math.abs(player.vy) > 0.1)) {
+                const angle = Math.atan2(player.vy, player.vx) * (180 / Math.PI) + 90;
+                player.element.style.transform = `rotate(${angle}deg)`;
+            }
+            
+            // AI movement
+            characters.slice(1).forEach(char => {
+                if (Math.random() < 0.008) {
+                    char.targetX = Math.random() * (window.innerWidth - 50) + 25;
+                    char.targetY = Math.random() * (window.innerHeight - 150) + 50;
+                    char.element.classList.add('walking');
+                    
+                    // Random chance for AI to change modes
+                    if (Math.random() < 0.3) {
+                        const modes = ['walking', 'runway', null];
+                        const newMode = modes[Math.floor(Math.random() * modes.length)];
+                        char.element.classList.remove('walking', 'runway');
+                        if (newMode) {
+                            char.element.classList.add(newMode);
+                            const badge = char.element.querySelector('.mode-badge');
+                            badge.textContent = newMode === 'runway' ? 'FIERCE' : '';
+                            badge.style.setProperty('--mode-color', '#ff1a78');
+                        }
+                    }
+                }
+                
+                const dx = char.targetX - char.x;
+                const dy = char.targetY - char.y;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                
+                if (dist > 2) {
+                    char.vx = (dx / dist) * 1.5;
+                    char.vy = (dy / dist) * 1.5;
+                    char.x += char.vx;
+                    char.y += char.vy;
+                    char.element.style.left = char.x + 'px';
+                    char.element.style.top = char.y + 'px';
+                    
+                    const angle = Math.atan2(char.vy, char.vx) * (180 / Math.PI) + 90;
+                    char.element.style.transform = `rotate(${angle}deg)`;
+                } else {
+                    char.element.classList.remove('walking', 'runway');
+                    char.element.querySelector('.mode-badge').textContent = '';
+                }
+            });
+            
+            requestAnimationFrame(animate);
+        }
+        
+        animate();
+        
+        // Simulate initial chat activity
+        setTimeout(() => {
+            addChatMessage('Alex Chen', 'This floor is packed tonight! 🔥', '#ff1a78');
+        }, 2000);
+        
+        setTimeout(() => {
+            addChatMessage('Jordan M', 'VIP section is lit! Who\'s coming?', '#00ffff');
+        }, 4000);
+        
+        setTimeout(() => {
+            addChatMessage('Sam Rivera', 'Just got here, where\'s everyone at?', '#ff9f00');
+        }, 6000);
+    </script>
+</body>
+</html>
