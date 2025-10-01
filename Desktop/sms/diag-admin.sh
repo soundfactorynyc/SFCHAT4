@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-SITE="https://tourmaline-meerkat-3129f1.netlify.app"
+SITE="https://sf-sms-service.netlify.app"
 KEY="Deepernyc1"    # <-- if you rotated it, paste the *exact* ADMIN_KEY here
 EMAIL="test+admincheck@sfnyc.com"
 

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SMS Auth Test - No Twilio</title>
+  <style>
+    :root{
+      --sf-bg:#070011;         
+      --sf-blue:#0b00ff;       
+      --sf-magenta:#ff2fd2;    
+      --sf-text:#e9e9f1;       
+      --sf-card:#0f0a1a;       
+    }
+    body { margin:0; background:var(--sf-bg); color:var(--sf-text); font-family: system-ui, -apple-system, sans-serif; padding: 20px; }
+    .sms-modal { max-width: 560px; margin: 0 auto; background: var(--sf-card); color: var(--sf-text); border: 1px solid rgba(255,47,210,.35); border-radius: 14px; overflow: hidden; }
+    .sms-header { padding: 14px 16px; background: linear-gradient(180deg, #0c061a, #080313); color: var(--sf-magenta); font-weight: 700; }
+    .sms-body { padding: 18px; }
+    .sms-row { display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-bottom:12px; }
+    .sms-row input { flex:1; min-width: 200px; padding: 12px; background:#0c0718; color: var(--sf-text); border: 1px solid rgba(255,47,210,.35); border-radius: 8px; outline: none; }
+    .sms-row button { padding: 12px 16px; border: 0; background: var(--sf-magenta); color:#14061f; font-weight:700; border-radius: 8px; cursor: pointer; }
+    .sms-out { margin-top:12px; background:#0b0814; color:#7bff7b; padding:12px; border:1px solid rgba(27,255,123,.25); border-radius:8px; min-height:44px; white-space:pre-wrap; font-family: monospace; }
+    .success { color: #00ff88; }
+    .error { color: #ff4444; }
+  </style>
+</head>
+<body>
+  <div class="sms-modal">
+    <div class="sms-header">
+      <div>🧪 SMS Auth Test (No Twilio Required)</div>
+    </div>
+    <div class="sms-body">
+      <div class="sms-row">
+        <input id="phone" type="tel" placeholder="+15551234567" />
+        <button id="sendBtn">Send Code</button>
+      </div>
+      <div class="sms-row">
+        <input id="code" type="text" placeholder="123456" maxlength="6" />
+        <button id="verifyBtn">Verify</button>
+      </div>
+      <pre id="output" class="sms-out">Enter any phone number and use code: 123456</pre>
+    </div>
+  </div>
+
+  <script>
+    const phoneEl = document.getElementById('phone');
+    const codeEl = document.getElementById('code');
+    const sendBtn = document.getElementById('sendBtn');
+    const verifyBtn = document.getElementById('verifyBtn');
+    const output = document.getElementById('output');
+
+    function log(message, type = 'info') {
+      console.log(message);
+      output.textContent = typeof message === 'object' ? JSON.stringify(message, null, 2) : message;
+      output.className = 'sms-out ' + type;
+    }
+
+    // Test the API base detection
+    function getApiBase() {
+      return window.location.origin; // Same origin for test
+    }
+
+    async function post(path, body) {
+      const url = `${getApiBase()}${path}`;
+      log(`🔄 Request: ${path}\n${JSON.stringify(body, null, 2)}`);
+      
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify(body || {})
+        });
+        
+        const data = await response.json().catch(() => ({}));
+        log(`📡 Response (${response.status}):\n${JSON.stringify(data, null, 2)}`, response.ok ? 'success' : 'error');
+        
+        if (!response.ok) {
+          throw new Error(data.error || response.statusText);
+        }
+        
+        return data;
+      } catch (error) {
+        log(`❌ Error: ${error.message}`, 'error');
+        throw error;
+      }
+    }
+
+    function setCookie(name, value, seconds) {
+      const secure = location.protocol === 'https:' ? '; Secure' : '';
+      const maxAge = seconds ? `; Max-Age=${seconds}` : '';
+      document.cookie = `${name}=${encodeURIComponent(value)}; Path=/; SameSite=Lax${maxAge}${secure}`;
+    }
+
+    sendBtn.addEventListener('click', async () => {
+      if (!phoneEl.value.trim()) {
+        log('❌ Please enter a phone number', 'error');
+        return;
+      }
+      
+      try {
+        const result = await post('/.netlify/functions/test-send', { 
+          phone: phoneEl.value.trim() 
+        });
+        log(`✅ ${result.message || 'Code sent successfully!'}`, 'success');
+      } catch (error) {
+        // Error already logged in post function
+      }
+    });
+
+    verifyBtn.addEventListener('click', async () => {
+      if (!phoneEl.value.trim() || !codeEl.value.trim()) {
+        log('❌ Please enter both phone and code', 'error');
+        return;
+      }
+      
+      try {
+        const result = await post('/.netlify/functions/test-verify', { 
+          phone: phoneEl.value.trim(),
+          code: codeEl.value.trim()
+        });
+        
+        if (result.ok && result.token) {
+          // Set cookie
+          setCookie('sf_token', result.token, 3600);
+          
+          // Dispatch event
+          console.log('🎉 Dispatching sf:auth event:', { token: 'present', phone: result.phone });
+          window.dispatchEvent(new CustomEvent('sf:auth', { 
+            detail: { token: result.token, phone: result.phone } 
+          }));
+          
+          log(`🎉 SUCCESS! Authenticated as ${result.phone}`, 'success');
+        } else {
+          log('❌ Verification failed', 'error');
+        }
+      } catch (error) {
+        // Error already logged in post function
+      }
+    });
+
+    // Listen for the auth event
+    window.addEventListener('sf:auth', (e) => {
+      console.log('🎉 sf:auth event received:', e.detail);
+      alert(`🎉 Authentication Event Received!\\nPhone: ${e.detail.phone}`);
+    });
+
+    // Auto-focus phone input
+    phoneEl.focus();
+  </script>
+</body>
+</html>

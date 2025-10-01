@@ -1,0 +1,63 @@
+name: Deploy to Netlify
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Netlify CLI
+        run: npm install -g netlify-cli
+
+      - name: Sync Netlify environment variables
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+          TWILIO_ACCOUNT_SID: ${{ secrets.TWILIO_ACCOUNT_SID }}
+          TWILIO_AUTH_TOKEN: ${{ secrets.TWILIO_AUTH_TOKEN }}
+          TWILIO_VERIFY_SID: ${{ secrets.TWILIO_VERIFY_SID }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          ADMIN_KEY: ${{ secrets.ADMIN_KEY }}
+          ALLOWED_ORIGINS: ${{ secrets.ALLOWED_ORIGINS }}
+          DEFAULT_COUNTRY: ${{ secrets.DEFAULT_COUNTRY }}
+        run: |
+          set -euo pipefail
+          echo "Syncing Netlify env vars to site: $NETLIFY_SITE_ID"
+          sync_var(){
+            local key="$1"; local val="$2";
+            if [ -n "${val:-}" ]; then
+              echo "- setting $key"
+              netlify env:set "$key" "$val" --site "$NETLIFY_SITE_ID"
+            else
+              echo "! $key is empty or not provided; skipping"
+            fi
+          }
+          sync_var TWILIO_ACCOUNT_SID "${TWILIO_ACCOUNT_SID:-}"
+          sync_var TWILIO_AUTH_TOKEN  "${TWILIO_AUTH_TOKEN:-}"
+          sync_var TWILIO_VERIFY_SID  "${TWILIO_VERIFY_SID:-}"
+          sync_var JWT_SECRET         "${JWT_SECRET:-}"
+          sync_var ADMIN_KEY          "${ADMIN_KEY:-}"
+          sync_var ALLOWED_ORIGINS    "${ALLOWED_ORIGINS:-}"
+          sync_var DEFAULT_COUNTRY    "${DEFAULT_COUNTRY:-}"
+
+      - name: Deploy to Netlify (production)
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        run: |
+          netlify deploy --prod --dir=. --site "$NETLIFY_SITE_ID" --message "CI deploy $GITHUB_SHA"

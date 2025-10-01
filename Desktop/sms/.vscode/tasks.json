@@ -1,0 +1,27 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Sync Netlify env vars",
+			"type": "shell",
+			"command": "bash",
+			"args": [
+				"-lc",
+				"chmod +x ./set-netlify-env.sh && ./set-netlify-env.sh"
+			],
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "Create .env.sms from example",
+			"type": "shell",
+			"command": "bash",
+			"args": [
+				"-lc",
+				"cp -n .env.sms.example .env.sms || true; echo '.env.sms created (or already exists). Open it, fill values, then run: Tasks: Sync Netlify env vars'"
+			],
+			"problemMatcher": [],
+			"group": "build"
+		}
+	]
+}

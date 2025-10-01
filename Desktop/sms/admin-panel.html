@@ -273,7 +273,7 @@
           <h3>API Endpoints</h3>
           <div class="form-group">
             <label>SMS API URL</label>
-            <input type="text" id="smsApiUrl" value="https://tourmaline-meerkat-3129f1.netlify.app" />
+            <input type="text" id="smsApiUrl" value="" placeholder="https://sf-sms-service.netlify.app" />
           </div>
           <div class="form-group">
             <label>Website API URL</label>
@@ -449,7 +449,7 @@
   <script>
     // Configuration
     let config = {
-      smsApiUrl: localStorage.getItem('smsApiUrl') || 'https://tourmaline-meerkat-3129f1.netlify.app',
+      smsApiUrl: localStorage.getItem('smsApiUrl') || window.location.origin,
       websiteApiUrl: localStorage.getItem('websiteApiUrl') || 'https://seance.soundfactorynyc.com',
       adminKey: localStorage.getItem('adminKey') || 'Deepernyc1'
     };

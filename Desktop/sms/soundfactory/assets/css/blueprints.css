@@ -1,0 +1,2 @@
+/* Blueprint-specific styles */
+.blueprint-canvas{min-height:60vh;border:1px dashed rgba(255,255,255,.2);display:grid;place-items:center;margin:16px;border-radius:8px}

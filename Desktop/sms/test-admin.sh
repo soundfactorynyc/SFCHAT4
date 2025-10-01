@@ -1,5 +1,5 @@
 #!/bin/bash
-SITE="https://tourmaline-meerkat-3129f1.netlify.app"
+SITE="https://sf-sms-service.netlify.app"
 KEY="Deepernyc1"
 EMAIL="test@example.com"
 
