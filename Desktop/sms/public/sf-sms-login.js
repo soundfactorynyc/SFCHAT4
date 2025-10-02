@@ -14,6 +14,17 @@
   function attr(sel){ return document.querySelector(`[data-sf-${sel}]`); }
   function msg(t){ const el = attr('out'); if(!el) return; el.textContent = typeof t==='string'?t:JSON.stringify(t,null,2); }
 
+  // Normalize phone toward E.164 (basic US heuristics)
+  function normalizePhone(input){
+    if(!input) return '';
+    const s = String(input).trim();
+    if (s.startsWith('+')) return s;
+    const digits = s.replace(/\D/g,'');
+    if (digits.length === 10) return '+1'+digits;
+    if (digits.length === 11 && digits.startsWith('1')) return '+'+digits;
+    return '+'+digits;
+  }
+
   function apiBase(){
     // Prefer explicit override; else infer from script src origin
     if (window.SMS_API_BASE) return String(window.SMS_API_BASE).replace(/\/$/,'');
@@ -45,7 +56,7 @@
     sendBtn.addEventListener('click', async ()=>{
       msg('');
       try {
-        await post('/api/send-code', { phone: phoneEl.value.trim() });
+        await post('/api/send-code', { phone: normalizePhone(phoneEl.value) });
         msg({ ok:true, info:'Code sent' });
       } catch(e){ msg({ error: e.message }); }
     });
@@ -54,7 +65,7 @@
       verifyBtn.addEventListener('click', async ()=>{
         msg('');
         try {
-          const { ok, token, phone } = await post('/api/verify-code', { phone: phoneEl.value.trim(), code: codeEl.value.trim() });
+          const { ok, token, phone } = await post('/api/verify-code', { phone: normalizePhone(phoneEl.value), code: codeEl.value.trim() });
           if (ok) {
             setCookie('sf_token', token, 3600); // keep for 1h to match JWT
             window.dispatchEvent(new CustomEvent('sf:auth', { detail: { token, phone } }));

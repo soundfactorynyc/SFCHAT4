@@ -273,7 +273,7 @@
           <h3>API Endpoints</h3>
           <div class="form-group">
             <label>SMS API URL</label>
-            <input type="text" id="smsApiUrl" value="" placeholder="https://sf-sms-service.netlify.app" />
+            <input type="text" id="smsApiUrl" value="https://tourmaline-meerkat-3129f1.netlify.app" />
           </div>
           <div class="form-group">
             <label>Website API URL</label>
@@ -449,16 +449,39 @@
   <script>
     // Configuration
     let config = {
-      smsApiUrl: localStorage.getItem('smsApiUrl') || window.location.origin,
+      smsApiUrl: localStorage.getItem('smsApiUrl') || 'https://sf-sms-service.netlify.app',
       websiteApiUrl: localStorage.getItem('websiteApiUrl') || 'https://seance.soundfactorynyc.com',
-      adminKey: localStorage.getItem('adminKey') || 'Deepernyc1'
+      adminKey: localStorage.getItem('adminKey') || ''
     };
 
-    // Load saved config on page load
+    function readCookie(name) {
+      const m = document.cookie.match(new RegExp('(?:^|; )' + name.replace(/([.$?*|{}()\[\]\\\/\+^])/g, '\\$1') + '=([^;]*)'));
+      return m ? decodeURIComponent(m[1]) : '';
+    }
+
+    // Load saved config on page load; hydrate JWT token if present
     window.onload = function() {
       document.getElementById('smsApiUrl').value = config.smsApiUrl;
       document.getElementById('websiteApiUrl').value = config.websiteApiUrl;
       document.getElementById('adminKey').value = config.adminKey;
+
+       // Try to find an auth token from prior SMS verification
+       const knownKeys = ['jwtToken', 'sms_auth_token'];
+       let token = '';
+       for (const k of knownKeys) {
+         const v = localStorage.getItem(k);
+         if (v) { token = v; break; }
+       }
+       if (!token) token = readCookie('sf_token') || '';
+       if (token) localStorage.setItem('jwtToken', token);
+
+       if (!token && !config.adminKey) {
+         const status = document.getElementById('statusResponse');
+         if (status) {
+           status.textContent = 'Not authenticated. Verify a phone in the widget to obtain a token, then reload.';
+           status.className = 'response show error';
+         }
+       }
       checkSystemStatus();
     };
 
@@ -481,10 +504,25 @@
       element.className = 'response show' + (isError ? ' error' : '');
     }
 
+    // Normalize phone input toward E.164 (basic US heuristics)
+    function normalizePhone(input) {
+      if (!input) return '';
+      const trimmed = String(input).trim();
+      if (trimmed.startsWith('+')) return trimmed;
+      const digits = trimmed.replace(/\D/g, '');
+      // If 10 digits, assume US
+      if (digits.length === 10) return '+1' + digits;
+      // If 11 digits starting with 1, add leading +
+      if (digits.length === 11 && digits.startsWith('1')) return '+' + digits;
+      // Fallback: prefix + to what we have (server-side will validate)
+      return '+' + digits;
+    }
+
     // Admin Management
     async function addAdmin() {
       const email = document.getElementById('adminEmail').value;
       const role = document.getElementById('adminRole').value;
+      const token = localStorage.getItem('jwtToken') || '';
       
       if (!email) {
         showResponse('adminResponse', 'Please enter an email address', true);
@@ -492,13 +530,20 @@
       }
       
       try {
+        const headers = {
+          'Content-Type': 'application/json',
+          ...(config.adminKey ? { 'x-admin-key': config.adminKey } : {}),
+          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+        };
+
+        const payload = { email, role };
+        if (token) payload.tokenOrAdminKey = token;
+        else if (config.adminKey) payload.tokenOrAdminKey = config.adminKey;
+
         const response = await fetch(`${config.smsApiUrl}/api/members-upsert`, {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-admin-key': config.adminKey
-          },
-          body: JSON.stringify({ email, role })
+          headers,
+          body: JSON.stringify(payload)
         });
         
         const data = await response.json();
@@ -531,7 +576,7 @@
 
     // SMS Verification
     async function sendCode() {
-      const phone = document.getElementById('phoneNumber').value;
+      const phone = normalizePhone(document.getElementById('phoneNumber').value);
       
       if (!phone) {
         showResponse('smsResponse', 'Please enter a phone number', true);
@@ -555,7 +600,7 @@
     }
 
     async function verifyCode() {
-      const phone = document.getElementById('phoneNumber').value;
+      const phone = normalizePhone(document.getElementById('phoneNumber').value);
       const code = document.getElementById('verifyCode').value;
       
       if (!phone || !code) {
@@ -573,7 +618,16 @@
         });
         
         const data = await response.json();
-        showResponse('smsResponse', data, !response.ok);
+        // If verification succeeded, persist token for subsequent admin calls
+        if (response.ok && data && data.ok && data.token) {
+          try {
+            localStorage.setItem('jwtToken', data.token);
+            if (data.phone) localStorage.setItem('sms_auth_phone', data.phone);
+          } catch(_){}
+          showResponse('smsResponse', { ok: true, message: 'Verified. Token saved for admin actions.', phone: data.phone || null }, false);
+        } else {
+          showResponse('smsResponse', data, !response.ok);
+        }
       } catch (error) {
         showResponse('smsResponse', `Error: ${error.message}`, true);
       }

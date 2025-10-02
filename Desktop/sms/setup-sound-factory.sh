@@ -14,7 +14,7 @@ YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
 # Configuration
-SMS_SITE="https://sf-sms-service.netlify.app"
+SMS_SITE="https://tourmaline-meerkat-3129f1.netlify.app"
 WEBSITE="https://seance.soundfactorynyc.com"
 ADMIN_KEY="Deepernyc1"
 

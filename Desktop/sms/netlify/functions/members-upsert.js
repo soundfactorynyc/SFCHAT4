@@ -11,16 +11,25 @@ export async function handler(event) {
   try {
     const { tokenOrAdminKey, phone, email, tier, source } = JSON.parse(event.body || '{}');
 
+    // Accept admin key from multiple places for convenience
+    const headers = event.headers || {};
+    const headerKey = headers['x-admin-key'] || headers['X-Admin-Key'] || null;
+    const authHeader = headers['authorization'] || headers['Authorization'] || '';
+    const bearer = authHeader.startsWith('Bearer ') ? authHeader.slice(7).trim() : null;
+
+    const presented = tokenOrAdminKey || headerKey || bearer || null;
+
     const adminKey = process.env.ADMIN_KEY;
     let subject = null;
-    if (tokenOrAdminKey && adminKey && tokenOrAdminKey === adminKey) {
+    if (!presented) {
+      return jsonRes(event, { error: 'Unauthorized: No token provided' }, 401);
+    }
+    if (adminKey && presented === adminKey) {
       subject = 'admin';
-    } else if (tokenOrAdminKey) {
-      const payload = verifyJwt(tokenOrAdminKey, process.env.JWT_SECRET);
-      if (!payload) return jsonRes(event, { error: 'Unauthorized' }, 401);
-      subject = payload.sub || 'user';
     } else {
-      return jsonRes(event, { error: 'Unauthorized' }, 401);
+      const payload = verifyJwt(presented, process.env.JWT_SECRET);
+      if (!payload) return jsonRes(event, { error: 'Unauthorized: Invalid or expired token' }, 401);
+      subject = payload.sub || 'user';
     }
 
     if (!phone && !email) return jsonRes(event, { error: 'phone or email required' }, 400);

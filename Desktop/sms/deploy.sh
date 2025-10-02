@@ -39,17 +39,6 @@ else
     echo "✅ Already linked to Netlify site"
 fi
 
-echo ""
-read -p "Do you want to sync env vars from .env.sms to Netlify before deploy? (y/N) " yn
-if [[ "$yn" == "y" || "$yn" == "Y" ]]; then
-    if [ -f "set-netlify-env.sh" ]; then
-        chmod +x set-netlify-env.sh
-        ./set-netlify-env.sh || true
-    else
-        echo "⚠️  set-netlify-env.sh not found, skipping env sync"
-    fi
-fi
-
 # Deploy
 echo ""
 echo "🚀 Deploying to production..."

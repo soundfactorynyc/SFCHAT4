@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SITE_URL="https://sf-sms-service.netlify.app"
+SITE_URL="https://tourmaline-meerkat-3129f1.netlify.app"
 ADMIN_KEY="Deepernyc1"
 
 emails=(

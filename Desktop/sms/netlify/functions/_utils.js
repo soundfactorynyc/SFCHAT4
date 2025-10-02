@@ -21,24 +21,18 @@ export function getCorsHeaders(event) {
 
   let allowOrigin = '*';
   if (Array.isArray(allow)) {
-    // exact or wildcard match support (e.g., https://*.example.com)
-    const matches = (pattern, value) => {
-      if (!pattern || !value) return false;
-      if (pattern === value) return true;
-      if (!pattern.includes('*')) return false;
-      // Escape regex special chars except *
-      const esc = pattern.replace(/[-/\\^$+?.()|[\]{}]/g, '\\$&').replace(/\*/g, '.*');
-      const re = new RegExp(`^${esc}$`);
-      return re.test(value);
-    };
-    const hit = allow.find((p) => matches(p, origin));
-    allowOrigin = hit ? origin : (allow[0] || 'null');
+    // If origin is missing (e.g., file://), be permissive in dev and return '*'
+    if (!origin) {
+      allowOrigin = '*';
+    } else {
+      allowOrigin = allow.includes(origin) ? origin : allow[0] || 'null';
+    }
   }
 
   return {
     'Access-Control-Allow-Origin': allowOrigin,
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-admin-key',
     'Access-Control-Allow-Credentials': 'true',
     Vary: 'Origin'
   };

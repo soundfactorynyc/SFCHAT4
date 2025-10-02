@@ -4,6 +4,15 @@
   function setMsg(t,kind){ msg.textContent=t; msg.className='msg '+(kind||''); }
 
   const apiBase = (window.SMS_API_BASE || '').replace(/\/$/,'');
+  function normalizePhone(input){
+    if(!input) return '';
+    const s=String(input).trim();
+    if(s.startsWith('+')) return s;
+    const d=s.replace(/\D/g,'');
+    if(d.length===10) return '+1'+d;
+    if(d.length===11 && d.startsWith('1')) return '+'+d;
+    return '+'+d;
+  }
   function post(path, body){
     return fetch(`${apiBase}${path}`, {
       method:'POST',
@@ -20,7 +29,7 @@
   qs('#smsw-send').addEventListener('click', async ()=>{
     setMsg('');
     try {
-      await post('/api/send-code', { phone: phone.value.trim() });
+      await post('/api/send-code', { phone: normalizePhone(phone.value) });
       setMsg('Code sent. Check your SMS.','ok');
       step2.style.display='block';
     } catch(e){ setMsg(e.message,'err'); }
@@ -29,7 +38,7 @@
   qs('#smsw-verify').addEventListener('click', async ()=>{
     setMsg('');
     try {
-      const { ok, token, phone: p } = await post('/api/verify-code', { phone: phone.value.trim(), code: code.value.trim() });
+      const { ok, token, phone: p } = await post('/api/verify-code', { phone: normalizePhone(phone.value), code: code.value.trim() });
       if(ok){
         setMsg('Verified. You are logged in.','ok');
         // Store token in localStorage for host app consumption

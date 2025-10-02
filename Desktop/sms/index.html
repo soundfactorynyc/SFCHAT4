@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sound Factory — SMS Service</title>
+    <title>SMS Verification Service</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
@@ -22,10 +22,10 @@
             color: #333;
         }
         .status {
-            background: #E3F2FD;
-            color: #0D47A1;
-            padding: 10px 12px;
-            border-radius: 6px;
+            background: #4CAF50;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
             display: inline-block;
         }
         .endpoints {
@@ -56,15 +56,12 @@
         .widget-link:hover {
             background: #1976D2;
         }
-        .links { margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
-        .links a { text-decoration: none; }
-        .note { margin-top: 16px; color: #555; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🔐 Sound Factory — SMS Verification Service</h1>
-        <p class="status">This site hosts the SMS API and demo widgets. Use these endpoints from your main website.</p>
+        <h1>📱 SMS Verification Service</h1>
+        <p class="status">✅ Server is running!</p>
         
         <div class="endpoints">
             <h2>Available Endpoints:</h2>
@@ -92,24 +89,17 @@
                 <p>Test endpoint</p>
                 <code>/.netlify/functions/hello</code>
             </div>
-
-            <div class="endpoint">
-                <strong>GET /api/health</strong>
-                <p>Health and env diagnostics (for admins)</p>
-                <code>/.netlify/functions/health</code>
-            </div>
         </div>
-
-        <div class="links">
-            <a href="/widget/" class="widget-link">View Widget Demo →</a>
-            <a href="/public/sf-sms-gate.html?return=/" class="widget-link" style="background:#673AB7">Guaranteed Gate →</a>
-            <a href="/.netlify/functions/health" class="widget-link" style="background:#455A64">Health Check →</a>
+        
+        <a href="/widget/" class="widget-link">View Widget Demo →</a>
+        
+        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
+            <h3>Test the API:</h3>
+            <p>You can test the hello endpoint by visiting:</p>
+            <code>
+                <a href="/.netlify/functions/hello">/.netlify/functions/hello</a>
+            </code>
         </div>
-
-        <p class="note">
-            Tip: On your main site, link users to the Gate URL above (optionally with <code>?return=/path</code>)
-            or embed the widget and point it at these <code>/api/*</code> endpoints. CORS is enforced via ALLOWED_ORIGINS.
-        </p>
     </div>
 </body>
 </html>

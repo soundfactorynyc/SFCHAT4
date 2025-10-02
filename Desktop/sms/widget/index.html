@@ -82,19 +82,5 @@
 
   <!-- Widget script - will use same origin by default -->
   <script src="/public/sf-sms-login.js" defer></script>
-  
-  <script>
-    // Get return URL from query parameter
-    const urlParams = new URLSearchParams(window.location.search);
-    const returnUrl = urlParams.get('return') || '/';
-    
-    // Redirect after successful authentication
-    window.addEventListener('sf:auth', (e) => {
-      console.log('Authentication successful, redirecting to:', returnUrl);
-      setTimeout(() => {
-        window.location.href = returnUrl;
-      }, 1000); // Brief delay to show success
-    });
-  </script>
 </body>
 </html>

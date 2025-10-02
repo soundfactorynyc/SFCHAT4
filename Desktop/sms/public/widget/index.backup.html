@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>📲 SMS Auth Test</title>
+  <style>
+    body { font-family: system-ui, sans-serif; padding: 2rem; background: #111; color: #eee; }
+    label { display: block; margin-top: 1rem; }
+    input { padding: .5rem; width: 250px; }
+    button { margin-left: .5rem; padding: .5rem 1rem; cursor: pointer; }
+    pre { margin-top: 1rem; background: #222; padding: 1rem; color: #0f0; white-space: pre-wrap; }
+    .error { color: #f55; }
+    .success { color: #0f0; }
+  </style>
+</head>
+<body>
+  <h1>📲 SMS Authentication</h1>
+  
+  <label>Phone Number</label>
+  <input data-sf-phone placeholder="9082550185" />
+  <button data-sf-send>Send Code</button>
+  
+  <label>Verification Code</label>
+  <input data-sf-code placeholder="123456" />
+  <button data-sf-verify>Verify Code</button>
+  
+  <pre data-sf-out></pre>
+
+  <script>
+    const BASE = window.SMS_API_BASE || ''; // auto-points to same origin
+    const out = document.querySelector('[data-sf-out]');
+    const phoneEl = document.querySelector('[data-sf-phone]');
+    const codeEl = document.querySelector('[data-sf-code]');
+
+    // Normalize phone into +1… (E.164 for US)
+    function normalizePhone(input) {
+      let s = input.trim().replace(/\D/g, '');
+      if (s.startsWith('1') && s.length === 11) return '+' + s;
+      if (s.length === 10) return '+1' + s;
+      if (s.startsWith('+')) return s;
+      return null;
+    }
+
+    async function post(path, body) {
+      out.textContent = '...';
+      try {
+        const r = await fetch(`${BASE}${path}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify(body || {})
+        });
+        const data = await r.json();
+        out.textContent = JSON.stringify(data, null, 2);
+        out.className = data.ok ? 'success' : 'error';
+      } catch (e) {
+        out.textContent = e.message || 'Request failed';
+        out.className = 'error';
+      }
+    }
+
+    document.querySelector('[data-sf-send]').addEventListener('click', () => {
+      const phone = normalizePhone(phoneEl.value);
+      if (!phone) return out.textContent = '❌ Invalid phone';
+      post('/api/send-code', { phone });
+    });
+
+    document.querySelector('[data-sf-verify]').addEventListener('click', () => {
+      const phone = normalizePhone(phoneEl.value);
+      const code = codeEl.value.trim();
+      if (!phone || !code) return out.textContent = '❌ Phone + code required';
+      post('/api/verify-code', { phone, code });
+    });
+  </script>
+</body>
+</html>
