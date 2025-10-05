@@ -4,6 +4,7 @@
 
 [functions]
   directory = "netlify/functions"
+  node_bundler = "esbuild"
 
 [functions."retry-commissions"]
   # Run every 6 hours at minute 0
@@ -31,6 +32,27 @@
 [[redirects]]
   from = "/api/verify-code"
   to = "/.netlify/functions/verify-sms"
+  status = 200
+
+# Twilio Verify (new) endpoints
+[[redirects]]
+  from = "/api/verify/send-code"
+  to = "/.netlify/functions/sms-send-code"
+  status = 200
+
+[[redirects]]
+  from = "/api/verify/check-code"
+  to = "/.netlify/functions/sms-check-code"
+  status = 200
+
+[[redirects]]
+  from = "/api/verify/send-message"
+  to = "/.netlify/functions/sms-send-message"
+  status = 200
+
+[[redirects]]
+  from = "/api/verify/inbound"
+  to = "/.netlify/functions/sms-inbound-webhook"
   status = 200
 
 # Admin API redirects (same underlying functions, namespaced paths for admin panel)

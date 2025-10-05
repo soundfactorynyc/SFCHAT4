@@ -236,3 +236,64 @@ Expose a new public var:
 2. Run `npm run sync-env`
 
 Rotate secrets? Re-run sync to refresh `.env.netlify` (never commit it).
+
+### Twilio Verify (New Path)
+
+We now provide a set of Twilio Verify powered endpoints that can coexist with the legacy custom code flow. This is the recommended production path because Twilio manages code generation, rate limiting, fraud detection, and compliance flows.
+
+Endpoints (all `POST` unless noted):
+
+| Purpose | Endpoint | Underlying Function |
+|---------|----------|---------------------|
+| Send verification code | `/api/verify/send-code` | `sms-send-code` |
+| Check verification code | `/api/verify/check-code` | `sms-check-code` |
+| Send generic outbound SMS | `/api/verify/send-message` | `sms-send-message` |
+| Inbound webhook (Twilio -> site) | `/api/verify/inbound` | `sms-inbound-webhook` |
+
+Environment variables required:
+
+```
+TWILIO_ACCOUNT_SID=ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+TWILIO_AUTH_TOKEN=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+TWILIO_VERIFY_SERVICE_SID=VAXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+# (Optional for generic messaging)
+TWILIO_FROM=+15555550123
+TWILIO_MESSAGING_SERVICE_SID=MGxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+```
+
+Example curl usage:
+
+```bash
+# 1. Send a code
+curl -X POST -H 'Content-Type: application/json' \
+   -d '{"phone":"+15555550123"}' https://YOUR_DOMAIN/api/verify/send-code
+
+# 2. Check the code (replace 123456 with the received code)
+curl -X POST -H 'Content-Type: application/json' \
+   -d '{"phone":"+15555550123", "code":"123456"}' https://YOUR_DOMAIN/api/verify/check-code
+```
+
+Frontend helper (see `js/sms-widget.js`) demonstrates a minimal UI integration.
+
+Coexistence Strategy:
+- Legacy endpoints remain (`/api/send-verification`, `/api/verify-code`).
+- New Verify endpoints are additive. You can migrate clients gradually by switching the JS module they import.
+- Once fully migrated, you may remove legacy functions if desired.
+
+Fallback / Hybrid:
+- If `FALLBACK_SUPABASE_OTP=true` legacy `send-sms` short-circuits and instructs the frontend to use Supabase OTP (unchanged by Verify path).
+- The Verify functions operate independently of the fallback flag; they require valid Twilio credentials + Verify service SID.
+
+Inbound Webhook:
+- Exposed at `/api/verify/inbound`. Configure this URL in the Twilio console for your phone number or messaging service inbound handler.
+- Currently logs payload and returns 200. Extend as needed (e.g., command processing, auto-replies).
+
+Security Notes:
+- Do not expose `TWILIO_AUTH_TOKEN` client-side.
+- Consider adding signature validation (X-Twilio-Signature) for inbound webhooks before performing any sensitive action.
+- Rate limiting is partially handled by Twilio Verify, but you can still wrap these endpoints with an Edge Function if needed for IP-based throttling.
+
+Next Steps (Optional):
+- Replace legacy UI with the new widget.
+- Add Twilio signature validation for inbound.
+- Issue a signed session token (JWT) on successful check for downstream authenticated actions.
