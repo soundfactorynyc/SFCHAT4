@@ -40,17 +40,42 @@ if (TWILIO_SID && TWILIO_TOKEN) {
   try { twilioClient = require('twilio')(TWILIO_SID, TWILIO_TOKEN); } catch(e) { /* ignore */ }
 }
 
+// More robust phone normalization aiming for E.164. Strategy:
+// 1. Trim & handle leading 00 -> +
+// 2. Strip common formatting chars (space, (), -, .)
+// 3. If no leading + treat as national/ambiguous:
+//    - 10 digits -> assume NANP +1
+//    - 11 digits & starts with 1 -> +1XXXXXXXXXX
+//    - 8-15 digits -> assume already includes country code -> prepend +
+// 4. Validate final length (8-15 digits after +)
+// Returns null on failure.
 function normalizePhone(raw) {
-  let p = (raw || '').trim();
+  if (raw == null) return null;
+  let p = String(raw).trim();
   if (!p) return null;
-  if (!p.startsWith('+')) {
-    p = p.replace(/\D/g, '');
-    if (p.length === 10) p = '+1' + p;
-    else if (p.length === 11 && p.startsWith('1')) p = '+' + p;
-    else p = '+1' + p; // fallback
+  if (p.startsWith('00')) p = '+' + p.slice(2); // convert international prefix
+  // Remove formatting artifacts
+  p = p.replace(/[\s().-]/g, '');
+  // If it already starts with + ensure only digits follow; if not, rebuild
+  if (p[0] === '+') {
+    if (!/^\+\d+$/.test(p)) {
+      // salvage digits
+      const digits = p.replace(/\D/g, '');
+      p = '+' + digits;
+    }
+  } else {
+    const digits = p.replace(/\D/g, '');
+    if (digits.length === 10) {
+      p = '+1' + digits; // NANP assumption
+    } else if (digits.length === 11 && digits.startsWith('1')) {
+      p = '+' + digits; // leading country code 1
+    } else if (digits.length >= 8 && digits.length <= 15) {
+      p = '+' + digits; // assume already includes CC
+    } else {
+      return null;
+    }
   }
-  // Basic sanity
-  if (!/^\+\d{10,15}$/.test(p)) return null;
+  if (!/^\+\d{8,15}$/.test(p)) return null;
   return p;
 }
 

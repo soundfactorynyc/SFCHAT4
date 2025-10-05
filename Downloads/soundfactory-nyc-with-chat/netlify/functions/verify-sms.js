@@ -19,16 +19,31 @@ if (SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY) {
 const CODE_TTL_MS = 10 * 60_000; // must match send-sms
 const MAX_ATTEMPTS = 5;
 
+// Mirror normalization logic from send-sms (keep in sync if updated)
 function normalizePhone(raw) {
-  let p = (raw || '').trim();
+  if (raw == null) return null;
+  let p = String(raw).trim();
   if (!p) return null;
-  if (!p.startsWith('+')) {
-    p = p.replace(/\D/g, '');
-    if (p.length === 10) p = '+1' + p;
-    else if (p.length === 11 && p.startsWith('1')) p = '+' + p;
-    else p = '+1' + p;
+  if (p.startsWith('00')) p = '+' + p.slice(2);
+  p = p.replace(/[\s().-]/g, '');
+  if (p[0] === '+') {
+    if (!/^\+\d+$/.test(p)) {
+      const digits = p.replace(/\D/g, '');
+      p = '+' + digits;
+    }
+  } else {
+    const digits = p.replace(/\D/g, '');
+    if (digits.length === 10) {
+      p = '+1' + digits;
+    } else if (digits.length === 11 && digits.startsWith('1')) {
+      p = '+' + digits;
+    } else if (digits.length >= 8 && digits.length <= 15) {
+      p = '+' + digits;
+    } else {
+      return null;
+    }
   }
-  if (!/^\+\d{10,15}$/.test(p)) return null;
+  if (!/^\+\d{8,15}$/.test(p)) return null;
   return p;
 }
 

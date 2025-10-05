@@ -58,17 +58,38 @@ function initSMSAuth() {
         if (data.demo_code) console.log('Demo code:', data.demo_code);
     }
 
+    // Keep in sync with backend normalization (subset suitable for UX)
+    function normalizePhone(raw) {
+        if (raw == null) return null;
+        let p = String(raw).trim();
+        if (!p) return null;
+        if (p.startsWith('00')) p = '+' + p.slice(2);
+        p = p.replace(/[\s().-]/g, '');
+        if (p[0] === '+') {
+            if (!/^\+\d+$/.test(p)) {
+                const digits = p.replace(/\D/g, '');
+                p = '+' + digits;
+            }
+        } else {
+            const digits = p.replace(/\D/g, '');
+            if (digits.length === 10) {
+                p = '+1' + digits;
+            } else if (digits.length === 11 && digits.startsWith('1')) {
+                p = '+' + digits;
+            } else if (digits.length >= 8 && digits.length <= 15) {
+                p = '+' + digits;
+            } else {
+                return null;
+            }
+        }
+        if (!/^\+\d{8,15}$/.test(p)) return null;
+        return p;
+    }
+
     if (sendBtn) {
         sendBtn.addEventListener('click', async () => {
-            let phone = phoneInput.value.trim();
-            if (!phone) return showStatus('Please enter a phone number', 'error');
-
-            if (!phone.startsWith('+')) {
-                phone = phone.replace(/\D/g, '');
-                if (phone.length === 10) phone = '+1' + phone;
-                else if (phone.length === 11 && phone.startsWith('1')) phone = '+' + phone;
-                else phone = '+1' + phone;
-            }
+            let phone = normalizePhone(phoneInput.value);
+            if (!phone) return showStatus('Please enter a valid phone number', 'error');
 
             if (sendBtn.disabled) return; // Avoid double click during cooldown
             showStatus('📱 Sending code...', 'info');
@@ -97,8 +118,9 @@ function initSMSAuth() {
     if (verifyBtn) {
         verifyBtn.addEventListener('click', async () => {
             const code = codeInput.value.trim();
-            const phone = phoneDisplay.textContent;
+            const phone = normalizePhone(phoneDisplay.textContent);
             if (!code || code.length !== 6) return showStatus('Please enter the 6-digit code', 'error');
+            if (!phone) return showStatus('Phone missing', 'error');
 
             verifyBtn.disabled = true;
             showStatus('🔐 Verifying...', 'info');

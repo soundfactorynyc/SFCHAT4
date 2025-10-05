@@ -209,3 +209,25 @@ This modularization session focused on breaking up the large index.html file. Fu
 For issues or questions, contact the development team.
 
 Built with ❤️ for Sound Factory NYC 🎵
+
+## Environment Variable Sync (Netlify → Local)
+
+Pull currently configured Netlify environment variables to a local snapshot and update the public injection file.
+
+Steps:
+```bash
+netlify status           # ensure site is linked & authenticated
+npm run sync-env         # generates .env.netlify & updates config/netlify-env-inject.js
+```
+
+Artifacts:
+- `.env.netlify` (all site vars – DO NOT COMMIT)
+- `config/netlify-env-inject.js` (only whitelisted public vars)
+
+Public whitelist (browser): `STRIPE_PUBLISHABLE_KEY`, `SUPABASE_URL`, `SUPABASE_ANON_KEY`, `STRIPE_PRICE_TABLE`, `SF_PRESENCE_ENABLED`, `USE_SUPABASE_PHONE_OTP`
+
+Expose a new public var:
+1. Add its key to `PUBLIC_KEYS` in `scripts/sync-netlify-env.js`
+2. Run `npm run sync-env`
+
+Rotate secrets? Re-run sync to refresh `.env.netlify` (never commit it).

@@ -1,0 +1,19 @@
+{
+  "name": "soundfactory-nyc-site",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Static Sound Factory NYC site with Netlify Functions (SMS auth, Stripe, Supabase)",
+  "scripts": {
+    "build": "bash build.sh",
+    "dev": "CHOKIDAR_USEPOLLING=1 netlify dev",
+    "functions": "netlify functions:list",
+    "monitor": "node production-monitor.js",
+    "verify": "./verify-production.sh",
+    "sync-env": "node scripts/sync-netlify-env.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0",
+    "stripe": "^14.0.0",
+    "twilio": "^5.2.0"
+  }
+}
