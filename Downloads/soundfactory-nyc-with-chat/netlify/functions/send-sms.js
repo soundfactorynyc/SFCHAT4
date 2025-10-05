@@ -158,6 +158,11 @@ exports.handler = async (event) => {
   ephemeralStore.codes.set(phone, record);
   recordPhoneSend(phone);
 
+  // If configured to fallback, skip Twilio entirely
+  if (FALLBACK_SUPABASE_OTP) {
+    return { statusCode: 200, body: JSON.stringify({ success: false, fallback: 'supabase', message: 'Twilio bypassed (fallback mode)', phone, sms: 'fallback' }) };
+  }
+
   let smsResult = 'skipped';
   const demoMode = !twilioClient;
   let twilioAttempted = false;
