@@ -210,6 +210,11 @@ For issues or questions, contact the development team.
 
 Built with ❤️ for Sound Factory NYC 🎵
 
+### SMS Auth Variants
+Two frontend implementations are available:
+- `js/sms-auth.js` – Simplified version (no resend cooldown / feature flag complexity)
+- `js/sms-auth-advanced.js` – Original advanced version (cooldown timer, Supabase OTP flag, normalization parity with backend). To switch back, replace the script tag in `index.html` (or rename files) to load the advanced version instead of the simplified one.
+
 ## Environment Variable Sync (Netlify → Local)
 
 Pull currently configured Netlify environment variables to a local snapshot and update the public injection file.
