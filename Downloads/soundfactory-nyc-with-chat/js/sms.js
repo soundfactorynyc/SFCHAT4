@@ -1,40 +1,38 @@
 const SFSMS = {
     baseUrl: '/',
-    
-    configure(options) {
+
+    configure(options = {}) {
         if (options.baseUrl) {
             this.baseUrl = options.baseUrl;
         }
     },
-    
+
     async sendVerification(phone) {
-        const response = await fetch(`${this.baseUrl}.netlify/functions/send-sms`, {
+        // Deprecated legacy path remapped to Twilio Verify send
+        const response = await fetch(`${this.baseUrl}api/verify/send-code`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ phone })
         });
-        
         if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.error || 'Failed to send verification code');
+            const err = await response.json().catch(()=>({}));
+            throw new Error(err.error || 'Failed to send verification code');
         }
-        
-        return await response.json();
+        return response.json();
     },
-    
+
     async verifyCode(phone, code) {
-        const response = await fetch(`${this.baseUrl}.netlify/functions/verify-sms`, {
+        // Deprecated legacy path remapped to Twilio Verify check
+        const response = await fetch(`${this.baseUrl}api/verify/check-code`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ phone, code })
         });
-        
         if (!response.ok) {
-            const error = await response.json();
-            throw new Error(error.error || 'Verification failed');
+            const err = await response.json().catch(()=>({}));
+            throw new Error(err.error || 'Verification failed');
         }
-        
-        return await response.json();
+        return response.json();
     }
 };
 

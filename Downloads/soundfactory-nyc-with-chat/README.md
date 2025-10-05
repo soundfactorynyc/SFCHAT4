@@ -239,6 +239,38 @@ Rotate secrets? Re-run sync to refresh `.env.netlify` (never commit it).
 
 ### Twilio Verify (New Path)
 
+The original custom code endpoints (`send-sms.js`, `verify-sms.js`) have been removed in favor of Twilio Verify. Existing redirect paths now transparently point to the new functions:
+
+| Old Endpoint | New Destination |
+|--------------|-----------------|
+| `/api/send-verification` | `/.netlify/functions/sms-send-code` |
+| `/api/verify-code` | `/.netlify/functions/sms-check-code` |
+| `/api/admin/send-verification` | `/.netlify/functions/sms-send-code` |
+| `/api/admin/verify-code` | `/.netlify/functions/sms-check-code` |
+
+If any client still calls the legacy routes it will continue to work through the redirect layer. Update clients to use `/api/verify/send-code` and `/api/verify/check-code` directly.
+
+### Outbound Messaging Security
+
+`sms-send-message` now supports an optional API key header. Set `SMS_API_KEY` in the Netlify environment and include `x-api-key: <value>` in requests. If the variable is unset the endpoint is open (not advised for production). Recommended best practice:
+
+1. Generate a long random value (`openssl rand -hex 32`).
+2. Store as `SMS_API_KEY` in Production & Branch contexts.
+3. Rotate periodically (quarterly) and invalidate old key.
+
+### Inbound Webhook Hardening
+
+Enable signature verification by setting `ENABLE_TWILIO_SIGNATURE_CHECK=true`. Optionally define `INBOUND_AUTOREPLY` to send a simple automatic response (TwiML if library is available). Without the flag, inbound requests are accepted without verification (not recommended for production).
+
+### Smoke Test Script
+
+A `scripts/verify-production.sh` script can be executed post-deploy to sanity check:
+- Verify send endpoint returns pending
+- Outbound SMS endpoint rejects missing API key
+- Outbound SMS endpoint succeeds with correct API key
+
+Configure `TEST_SMS_PHONE` with a non-critical test handset.
+
 We now provide a set of Twilio Verify powered endpoints that can coexist with the legacy custom code flow. This is the recommended production path because Twilio manages code generation, rate limiting, fraud detection, and compliance flows.
 
 Endpoints (all `POST` unless noted):
