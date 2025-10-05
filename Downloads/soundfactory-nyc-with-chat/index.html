@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sound Factory NYC</title>
+    <meta name="description" content="Sound Factory NYC – immersive virtual venue, live sets, real-time chat, interactive blueprint floors, and exclusive events.">
+    <meta name="keywords" content="Sound Factory, NYC nightclub, live stream, virtual venue, music, events, tickets, tables, promoter">
+    <meta property="og:title" content="Sound Factory NYC" />
+    <meta property="og:description" content="Explore the iconic Sound Factory in an interactive virtual space. Real-time chat, live stream, exclusive drops." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://soundfactory.nyc/" />
+    <meta property="og:image" content="https://soundfactory.nyc/og-image.jpg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Sound Factory NYC" />
+    <meta name="twitter:description" content="Live. Social. Immersive. A reimagined Sound Factory experience." />
+    <meta name="twitter:image" content="https://soundfactory.nyc/og-image.jpg" />
+    <link rel="preload" href="/css/landing.css" as="style">
+    <link rel="stylesheet" href="/css/landing.css">
+    <link rel="stylesheet" href="/css/blueprint-theme.css">
+    <link rel="stylesheet" href="/css/components.css">
+</head>
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <div id="sf-loader" aria-label="Loading Sound Factory" role="status">
+        <div class="loader-pulse"></div>
+    </div>
+
+    <section class="sf-hero" id="hero">
+        <div class="sf-hero-inner">
+            <h1>Sound Factory<br>Reimagined</h1>
+            <p class="lede">Step into a living virtual venue. Explore iconic floors, watch live sets, drop pins, react in real time, and connect with the culture.</p>
+            <div class="sf-cta-row">
+                <button class="sf-btn" id="ctaEnter" onclick="document.querySelector('.blueprint-view').scrollIntoView({behavior:'smooth'});">Enter Venue</button>
+                <button class="sf-btn alt" onclick="buyTickets()">Buy Tickets</button>
+                <button class="sf-btn alt" onclick="buyTables()">Tables</button>
+            </div>
+        </div>
+    </section>
+
+    <section class="sf-events-teaser" id="events">
+        <h2 style="text-align:center; font-size:2.2rem; font-weight:800; letter-spacing:.5px; background:linear-gradient(45deg,#ff0066,#00ffcc); -webkit-background-clip:text; color:transparent;">Upcoming Energy</h2>
+        <div class="sf-events-grid">
+            <div class="sf-event-card">
+                <div class="sf-event-date">FRI • OCT 18</div>
+                <div class="sf-event-title">Opening Night Stream</div>
+                <div class="sf-event-meta">Global broadcast • Live chat</div>
+            </div>
+            <div class="sf-event-card">
+                <div class="sf-event-date">SAT • OCT 26</div>
+                <div class="sf-event-title">Afterhours Revival</div>
+                <div class="sf-event-meta">Late session • Exclusive access</div>
+            </div>
+            <div class="sf-event-card">
+                <div class="sf-event-date">NOV • TBA</div>
+                <div class="sf-event-title">Promoter Takeover</div>
+                <div class="sf-event-meta">Community curated lineup</div>
+            </div>
+            <div class="sf-event-card">
+                <div class="sf-event-date">DEC • TBA</div>
+                <div class="sf-event-title">Year End Pulse</div>
+                <div class="sf-event-meta">360° multi-floor event</div>
+            </div>
+        </div>
+    </section>
+
+    <div id="sf-chat-launcher" style="display:none;">
+        <button aria-label="Open chat" onclick="(function(){
+          if(typeof openGroupChat==='function'){ openGroupChat(); return; }
+          var gc=document.getElementById('groupChat');
+          if(gc){ gc.style.display = (gc.style.display==='none'||!gc.style.display)?'block':'none'; }
+        })()">💬</button>
+    </div>
+
+    <div class="chrome-bg"></div>
+
+    <div class="header">
+        <div class="header-content">
+            <div class="logo">SOUND FACTORY</div>
+            <div class="header-buttons">
+                <button class="header-btn" onclick="buyTickets()">TICKETS</button>
+                <button class="header-btn" onclick="buyTables()">💳 TABLES</button>
+                <button class="header-btn" id="btnPairController" onclick="openControllerPairing()">PAIR</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="sms-modal" class="sms-modal-overlay">
+        <div class="sms-modal">
+            <div class="sms-icon">📱</div>
+            <h1 class="sms-modal-title">Welcome!</h1>
+            <p class="sms-modal-subtitle">Enter your phone number to continue</p>
+            
+            <div id="sms-phone-step">
+                <input type="tel" id="sms-phone-input" class="sms-input" placeholder="+1 (555) 123-4567" maxlength="20">
+                <button id="sms-send-btn" class="sms-btn">Send Code</button>
+            </div>
+            
+            <div id="sms-code-step" style="display: none;">
+                <div id="sms-phone-display" class="sms-phone-display"></div>
+                <input type="text" id="sms-code-input" class="sms-input" placeholder="Enter 6-digit code" maxlength="6" inputmode="numeric">
+                <button id="sms-verify-btn" class="sms-btn">Verify Code</button>
+                <button id="sms-back-btn" class="sms-btn secondary">← Back</button>
+            </div>
+            
+            <div id="sms-status" class="sms-status"></div>
+        </div>
+    </div>
+
+    <div class="blueprint-view">
+        <div class="blueprint-bg"></div>
+        
+        <!-- BASEMENT Floor -->
+        <div class="floor-svg" id="floor-b" style="position: absolute; width: 100%; height: 100%; display: none; align-items: center; justify-content: center; opacity: 0.3; pointer-events: none;">
+            <svg viewBox="0 0 400 520" preserveAspectRatio="xMidYMid meet" style="width: 90%; height: 90%; max-width: 800px;">
+                <defs>
+                    <filter id="basementGlow">
+                        <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                        <feMerge>
+                            <feMergeNode in="coloredBlur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                </defs>
+                
+                <rect width="400" height="520" fill="#000"/>
+                <rect x="5" y="5" width="390" height="510" fill="none" stroke="#333" stroke-width="2" filter="url(#basementGlow)"/>
+                <rect x="10" y="10" width="380" height="500" fill="#050505" stroke="#222" stroke-width="1"/>
+                <rect x="30" y="30" width="340" height="460" fill="none" stroke="#444" stroke-width="2"/>
+                
+                <rect x="180" y="35" width="140" height="45" fill="#000" stroke="#555" stroke-width="2"/>
+                <rect x="35" y="35" width="60" height="80" fill="#000" stroke="#555" stroke-width="2"/>
+                <rect x="35" y="120" width="60" height="60" fill="#000" stroke="#555" stroke-width="2"/>
+                <rect x="35" y="320" width="60" height="60" fill="#000" stroke="#555" stroke-width="2"/>
+                <rect x="35" y="385" width="60" height="100" fill="#000" stroke="#555" stroke-width="2"/>
+                
+                <rect x="110" y="100" width="180" height="320" fill="none" stroke="#333" stroke-width="1" stroke-dasharray="5,5" opacity="0.5"/>
+                
+                <rect x="305" y="120" width="60" height="60" fill="#000" stroke="#555" stroke-width="2"/>
+                <rect x="305" y="185" width="60" height="60" fill="#000" stroke="#555" stroke-width="2"/>
+                <rect x="305" y="250" width="60" height="60" fill="#000" stroke="#555" stroke-width="2"/>
+                <rect x="305" y="315" width="60" height="60" fill="#000" stroke="#555" stroke-width="2"/>
+                <rect x="305" y="380" width="60" height="60" fill="#000" stroke="#555" stroke-width="2"/>
+                
+                <rect x="120" y="440" width="160" height="45" fill="#000" stroke="#555" stroke-width="2"/>
+                <path d="M180,485 L180,475 L220,475 L220,485" stroke="#666" stroke-width="2" fill="none" stroke-dasharray="2,2"/>
+            </svg>
+        </div>
+
+        <!-- MAIN Floor (default visible) -->
+        <div class="floor-svg" id="floor-mf" style="position: absolute; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; opacity: 0.3; pointer-events: none;">
+            <svg viewBox="0 0 400 520" preserveAspectRatio="xMidYMid meet" style="width: 90%; height: 90%; max-width: 800px;">
+                <defs>
+                    <linearGradient id="perimeterGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#333;stop-opacity:1" />
+                        <stop offset="50%" style="stop-color:#666;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#333;stop-opacity:1" />
+                    </linearGradient>
+                    <filter id="glow">
+                        <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                        <feMerge>
+                            <feMergeNode in="coloredBlur"/>
+                            <feMergeNode in="SourceGraphic"/>
+                        </feMerge>
+                    </filter>
+                </defs>
+                
+                <rect width="400" height="520" fill="#000"/>
+                <rect x="5" y="5" width="390" height="510" fill="none" stroke="url(#perimeterGrad1)" stroke-width="3" filter="url(#glow)"/>
+                <rect x="10" y="10" width="380" height="500" fill="#050505" stroke="#444" stroke-width="2"/>
+                
+                <rect x="100" y="20" width="95" height="65" fill="#0a0a0a" stroke="#555" stroke-width="2"/>
+                <rect x="205" y="20" width="95" height="65" fill="#0a0a0a" stroke="#555" stroke-width="2"/>
+                
+                <rect x="45" y="30" width="40" height="45" fill="#000" stroke="#555" stroke-width="2"/>
+                <rect x="315" y="30" width="40" height="45" fill="#000" stroke="#555" stroke-width="2"/>
+                
+                <rect x="20" y="110" width="45" height="350" fill="#000" stroke="#555" stroke-width="2"/>
+                
+                <g opacity="0.9" filter="url(#glow)">
+                    <rect x="90" y="140" width="35" height="35" fill="#000" stroke="#444" stroke-width="2" rx="2"/>
+                    <rect x="182" y="140" width="35" height="35" fill="#000" stroke="#444" stroke-width="2" rx="2"/>
+                    <rect x="275" y="140" width="35" height="35" fill="#000" stroke="#444" stroke-width="2" rx="2"/>
+                    
+                    <rect x="90" y="210" width="35" height="35" fill="#000" stroke="#444" stroke-width="2" rx="2"/>
+                    <rect x="182" y="210" width="35" height="35" fill="#000" stroke="#444" stroke-width="2" rx="2"/>
+                    <rect x="275" y="210" width="35" height="35" fill="#000" stroke="#444" stroke-width="2" rx="2"/>
+                    
+                    <rect x="90" y="280" width="35" height="35" fill="#000" stroke="#444" stroke-width="2" rx="2"/>
+                    <rect x="182" y="280" width="35" height="35" fill="#000" stroke="#444" stroke-width="2" rx="2"/>
+                    <rect x="275" y="280" width="35" height="35" fill="#000" stroke="#444" stroke-width="2" rx="2"/>
+                    
+                    <rect x="90" y="350" width="35" height="35" fill="#000" stroke="#444" stroke-width="2" rx="2"/>
+                    <rect x="182" y="350" width="35" height="35" fill="#000" stroke="#444" stroke-width="2" rx="2"/>
+                    <rect x="275" y="350" width="35" height="35" fill="#000" stroke="#444" stroke-width="2" rx="2"/>
+                </g>
+                
+                <rect x="100" y="420" width="200" height="50" fill="#000" stroke="#666" stroke-width="2"/>
+                
+                <g stroke="#666" stroke-width="2" fill="none">
+                    <path d="M100,505 L100,485 L120,485 L120,505" stroke-dasharray="2,2"/>
+                    <path d="M190,505 L190,485 L210,485 L210,505" stroke-dasharray="2,2"/>
+                    <path d="M280,505 L280,485 L300,485 L300,505" stroke-dasharray="2,2"/>
+                </g>
+            </svg>
+        </div>
+
+        <!-- MEZZANINE Floor -->
+        <div class="floor-svg" id="floor-mz" style="position: absolute; width: 100%; height: 100%; display: none; align-items: center; justify-content: center; opacity: 0.3; pointer-events: none;">
+            <svg viewBox="0 0 400 520" preserveAspectRatio="xMidYMid meet" style="width: 90%; height: 90%; max-width: 800px;">
+                <rect width="400" height="520" fill="#000"/>
+                <rect x="5" y="5" width="390" height="510" fill="none" stroke="#555" stroke-width="3"/>
+                <rect x="10" y="10" width="380" height="500" fill="#050505" stroke="#555" stroke-width="2"/>
+                
+                <rect x="35" y="35" width="330" height="450" fill="#0a0a0a" stroke="#666" stroke-width="3"/>
+                
+                <rect x="100" y="100" width="200" height="250" fill="#000" stroke="#444" stroke-width="2"/>
+                <text x="200" y="225" font-family="Arial" font-size="11" fill="#666" text-anchor="middle" opacity="0.8">
+                    OPEN TO BELOW
+                </text>
+                
+                <rect x="175" y="45" width="50" height="50" fill="#0f0f0f" stroke="#777" stroke-width="2"/>
+                <rect x="175" y="425" width="50" height="50" fill="#0f0f0f" stroke="#777" stroke-width="2"/>
+                <rect x="250" y="170" width="50" height="70" fill="#0f0f0f" stroke="#666" stroke-width="2"/>
+                <rect x="320" y="45" width="35" height="35" fill="#1a0000" stroke="#aa3333" stroke-width="2" opacity="0.8"/>
+                
+                <rect x="45" y="130" width="45" height="30" fill="none" stroke="#555" stroke-width="2" rx="2"/>
+                <rect x="45" y="170" width="45" height="30" fill="none" stroke="#555" stroke-width="2" rx="2"/>
+                <rect x="45" y="210" width="45" height="30" fill="none" stroke="#555" stroke-width="2" rx="2"/>
+                <rect x="45" y="250" width="45" height="30" fill="none" stroke="#555" stroke-width="2" rx="2"/>
+                <rect x="45" y="290" width="45" height="30" fill="none" stroke="#555" stroke-width="2" rx="2"/>
+                
+                <rect x="310" y="130" width="45" height="30" fill="none" stroke="#555" stroke-width="2" rx="2"/>
+                <rect x="310" y="170" width="45" height="30" fill="none" stroke="#555" stroke-width="2" rx="2"/>
+                <rect x="310" y="210" width="45" height="30" fill="none" stroke="#555" stroke-width="2" rx="2"/>
+                <rect x="310" y="250" width="45" height="30" fill="none" stroke="#555" stroke-width="2" rx="2"/>
+                <rect x="310" y="290" width="45" height="30" fill="none" stroke="#555" stroke-width="2" rx="2"/>
+            </svg>
+        </div>
+
+        <!-- SECOND Floor -->
+        <div class="floor-svg" id="floor-2f" style="position: absolute; width: 100%; height: 100%; display: none; align-items: center; justify-content: center; opacity: 0.3; pointer-events: none;">
+            <svg viewBox="0 0 400 520" preserveAspectRatio="xMidYMid meet" style="width: 90%; height: 90%; max-width: 800px;">
+                <rect width="400" height="520" fill="#000"/>
+                <rect x="5" y="5" width="390" height="510" fill="none" stroke="#888" stroke-width="4"/>
+                <rect x="10" y="10" width="380" height="500" fill="#000" stroke="#666" stroke-width="3"/>
+                
+                <rect x="30" y="30" width="140" height="100" fill="#000" stroke="#666" stroke-width="2"/>
+                <rect x="30" y="30" width="140" height="35" fill="#0a0a0a" stroke="#555" stroke-width="1"/>
+                <rect x="30" y="65" width="70" height="65" fill="none" stroke="#444" stroke-width="1"/>
+                <rect x="100" y="65" width="70" height="65" fill="none" stroke="#444" stroke-width="1"/>
+                
+                <rect x="170" y="50" width="60" height="80" fill="#0a0a0a" stroke="#777" stroke-width="2"/>
+                <rect x="230" y="50" width="60" height="80" fill="#0a0a0a" stroke="#777" stroke-width="2"/>
+                
+                <rect x="290" y="30" width="80" height="100" fill="#000" stroke="#666" stroke-width="2"/>
+                
+                <rect x="30" y="150" width="60" height="300" fill="#000" stroke="#666" stroke-width="2"/>
+                
+                <rect x="120" y="180" width="160" height="160" fill="none" stroke="#555" stroke-width="2" stroke-dasharray="4,4"/>
+                <text x="200" y="260" font-family="Arial" font-size="11" fill="#666" text-anchor="middle" opacity="0.8">
+                    OPEN SPACE
+                </text>
+                
+                <circle cx="105" cy="165" r="8" fill="#000" stroke="#666" stroke-width="2"/>
+                <circle cx="105" cy="220" r="8" fill="#000" stroke="#666" stroke-width="2"/>
+                <circle cx="105" cy="275" r="8" fill="#000" stroke="#666" stroke-width="2"/>
+                <circle cx="105" cy="330" r="8" fill="#000" stroke="#666" stroke-width="2"/>
+                
+                <circle cx="295" cy="165" r="8" fill="#000" stroke="#666" stroke-width="2"/>
+                <circle cx="295" cy="220" r="8" fill="#000" stroke="#666" stroke-width="2"/>
+                <circle cx="295" cy="275" r="8" fill="#000" stroke="#666" stroke-width="2"/>
+                <circle cx="295" cy="330" r="8" fill="#000" stroke="#666" stroke-width="2"/>
+                
+                <rect x="310" y="180" width="60" height="160" fill="#000" stroke="#666" stroke-width="2"/>
+                <rect x="120" y="390" width="160" height="80" fill="#0a0a0a" stroke="#777" stroke-width="2"/>
+                <rect x="310" y="410" width="60" height="60" fill="#000" stroke="#666" stroke-width="2"/>
+            </svg>
+        </div>
+
+        <!-- THIRD Floor -->
+        <div class="floor-svg" id="floor-3f" style="position: absolute; width: 100%; height: 100%; display: none; align-items: center; justify-content: center; opacity: 0.3; pointer-events: none;">
+            <svg viewBox="0 0 400 520" preserveAspectRatio="xMidYMid meet" style="width: 90%; height: 90%; max-width: 800px;">
+                <rect width="400" height="520" fill="#000"/>
+                <rect x="5" y="5" width="390" height="510" fill="none" stroke="#555" stroke-width="3"/>
+                <rect x="10" y="10" width="380" height="500" fill="#050505" stroke="#444" stroke-width="2"/>
+                
+                <rect x="30" y="30" width="340" height="460" fill="none" stroke="#666" stroke-width="2"/>
+                
+                <rect x="100" y="140" width="200" height="180" fill="#000" stroke="#555" stroke-width="2"/>
+                <text x="200" y="230" font-family="Arial" font-size="11" fill="#666" text-anchor="middle" opacity="0.8">
+                    ROOFTOP TERRACE
+                </text>
+                
+                <rect x="45" y="80" width="60" height="60" fill="#000" stroke="#555" stroke-width="2"/>
+                <rect x="295" y="80" width="60" height="60" fill="#000" stroke="#555" stroke-width="2"/>
+                
+                <rect x="45" y="180" width="40" height="80" fill="#000" stroke="#555" stroke-width="2"/>
+                <rect x="315" y="180" width="40" height="80" fill="#000" stroke="#555" stroke-width="2"/>
+                
+                <rect x="305" y="350" width="60" height="80" fill="#000" stroke="#555" stroke-width="2"/>
+                
+                <rect x="120" y="390" width="160" height="80" fill="#000" stroke="#666" stroke-width="2"/>
+                
+                <rect x="35" y="440" width="40" height="40" fill="#000" stroke="#555" stroke-width="2"/>
+                <rect x="325" y="440" width="40" height="40" fill="#000" stroke="#555" stroke-width="2"/>
+                
+                <path d="M180,485 L180,475 L220,475 L220,485" stroke="#666" stroke-width="2" fill="none" stroke-dasharray="2,2"/>
+            </svg>
+        </div>
+
+        <!-- Joystick Character -->
+        <div class="person clickable" id="myCharacter" style="left: 200px; top: 150px;">
+            <div class="shadow"></div>
+            <div class="leg-left-upper">
+                <div class="leg-left-lower"></div>
+            </div>
+            <div class="leg-right-upper">
+                <div class="leg-right-lower"></div>
+            </div>
+            <div class="torso"></div>
+            <div class="arm-left-upper">
+                <div class="arm-left-lower"></div>
+            </div>
+            <div class="arm-right-upper">
+                <div class="arm-right-lower"></div>
+            </div>
+            <div class="head"></div>
+        </div>
+
+        <div class="person user-2 clickable" id="otherCharacter" style="left: 300px; top: 200px;">
+            <div class="shadow"></div>
+            <div class="leg-left-upper">
+                <div class="leg-left-lower"></div>
+            </div>
+            <div class="leg-right-upper">
+                <div class="leg-right-lower"></div>
+            </div>
+            <div class="torso"></div>
+            <div class="arm-left-upper">
+                <div class="arm-left-lower"></div>
+            </div>
+            <div class="arm-right-upper">
+                <div class="arm-right-lower"></div>
+            </div>
+            <div class="head"></div>
+        </div>
+
+        <div id="pinOverlay" style="position: absolute; width: 100%; height: 100%;"></div>
+    </div>
+
+    <div class="floor-buttons">
+        <button class="floor-btn" onclick="changeFloor('3F')">3F</button>
+        <button class="floor-btn" onclick="changeFloor('2F')">2F</button>
+        <button class="floor-btn" onclick="changeFloor('MZ')">MZ</button>
+        <button class="floor-btn active" onclick="changeFloor('MF')">MF</button>
+        <button class="floor-btn" onclick="changeFloor('B')">B</button>
+    </div>
+
+    <div id="reactionLayer" style="position: fixed; inset: 0; pointer-events: none; z-index: 1100;"></div>
+      
+    <div id="sf-live-stream" class="sf-live-stream-container">
+        <div class="stream-header">
+            <div class="live-indicator">
+                <span class="live-dot"></span>
+                <span class="live-text">LIVE FROM SOUND FACTORY</span>
+            </div>
+            <div class="viewer-count">
+                <span id="viewer-count">0</span> watching
+            </div>
+            <button class="minimize-btn" onclick="toggleStreamSize()">−</button>
+        </div>
+        <div class="video-container">
+            <video id="stream-video" playsinline controls></video>
+            <div class="stream-overlay" id="stream-overlay">
+                <div class="play-button" onclick="playStream()">▶</div>
+            </div>
+        </div>
+    </div>
+      
+    <div id="floatingLiveBtn" class="floating-live-button" onclick="scrollToStream()">
+        <span class="live-dot"></span>
+        <span>WATCH LIVE</span>
+    </div>
+      
+    <div id="pairModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:10050; align-items:center; justify-content:center;">
+        <div style="width:min(92vw,420px); background:#111; border:1px solid rgba(255,255,255,0.1); border-radius:16px; padding:18px; color:#fff; box-shadow:0 20px 60px rgba(0,0,0,0.6);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <div style="font-size:16px; font-weight:700;">Pair Mobile Controller</div>
+                <button onclick="closePairModal()" style="background:none; border:none; color:#ff0066; font-weight:700; cursor:pointer;">✕</button>
+            </div>
+            <div id="pairDetails" style="font-size:13px; color:#ccc; margin-bottom:12px;">Generating code...</div>
+            <div id="pairCode" style="font-size:36px; letter-spacing:6px; text-align:center; margin:10px 0; font-weight:800; color:#00ff88;">----</div>
+            <div id="pairLinkWrap" style="word-break:break-all; font-size:12px; background:#0a0a0a; border:1px solid rgba(255,255,255,0.08); border-radius:8px; padding:10px; color:#bbb;"></div>
+            <div style="display:flex; gap:8px; margin-top:12px;">
+                <button id="copyPairLink" style="flex:1; padding:10px; background:#00ff88; color:#000; border:none; border-radius:10px; font-weight:800; cursor:pointer;">Copy Link</button>
+                <button id="openPairLink" style="flex:1; padding:10px; background:rgba(255,255,255,0.1); color:#fff; border:1px solid rgba(255,255,255,0.2); border-radius:10px; cursor:pointer;">Open</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="joystick" id="joystick">
+        <div class="joystick-knob" id="knob"></div>
+    </div>
+
+    <div class="mode-toggle">
+        <button class="mode-btn" data-mode="explore">🔍 Explore</button>
+        <button class="mode-btn active" data-mode="drop">📍 Drop Pin</button>
+    </div>
+
+    <div id="pinCounterChip" style="position: fixed; top: 70px; right: 20px; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); color: white; padding: 6px 10px; border-radius: 14px; font-size: 11px; z-index: 1200;">
+        Pins: <span id="pinCount">0</span>/5
+    </div>
+
+    <canvas id="reaction-canvas"></canvas>
+    
+    <div class="bottom-layout" style="position: fixed; bottom: 0; left: 0; right: 0; background: rgba(0, 0, 0, 0.95); backdrop-filter: blur(20px); border-top: 1px solid rgba(255, 255, 255, 0.1); z-index: 1000; padding: 15px;">
+        <div style="display: flex; gap: 8px; justify-content: center; align-items: center; padding: 4px 0; margin-bottom: 8px;">
+            <span style="color: rgba(255,255,255,0.6); font-size: 11px; font-weight: 600; margin-right: 4px;">SPEED:</span>
+            <button class="speed-btn" data-speed="0.5" onclick="setReactionSpeed(0.5)" style="padding: 4px 10px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; color: white; font-size: 10px; cursor: pointer; font-weight: 600;">0.5x</button>
+            <button class="speed-btn active" data-speed="1" onclick="setReactionSpeed(1)" style="padding: 4px 10px; background: rgba(0,255,136,0.2); border: 1px solid rgba(0,255,136,0.5); border-radius: 12px; color: #00ff88; font-size: 10px; cursor: pointer; font-weight: 600;">1x</button>
+            <button class="speed-btn" data-speed="2" onclick="setReactionSpeed(2)" style="padding: 4px 10px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; color: white; font-size: 10px; cursor: pointer; font-weight: 600;">2x</button>
+            <button class="speed-btn" data-speed="3" onclick="setReactionSpeed(3)" style="padding: 4px 10px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; color: white; font-size: 10px; cursor: pointer; font-weight: 600;">3x</button>
+            <span style="color: rgba(255,255,255,0.6); font-size: 11px; font-weight: 600; margin: 0 8px;">•</span>
+            <span style="color: rgba(255,255,255,0.6); font-size: 11px; font-weight: 600; margin-right: 4px;">EFFECT:</span>
+            <button class="effect-btn active" data-effect="classic" onclick="setReactionEffect('classic')" style="padding: 4px 12px; background: rgba(0,255,136,0.2); border: 1px solid rgba(0,255,136,0.5); border-radius: 12px; color: #00ff88; font-size: 10px; cursor: pointer; font-weight: 600;">Classic</button>
+            <button class="effect-btn" data-effect="bouncy" onclick="setReactionEffect('bouncy')" style="padding: 4px 12px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; color: white; font-size: 10px; cursor: pointer; font-weight: 600;">Bouncy</button>
+            <button class="effect-btn" data-effect="explosive" onclick="setReactionEffect('explosive')" style="padding: 4px 12px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; color: white; font-size: 10px; cursor: pointer; font-weight: 600;">Explosive</button>
+        </div>
+        <div class="reaction-controls" id="reaction-controls" style="display: flex; gap: 4px; flex-wrap: wrap; justify-content: center; padding: 8px 0; max-width: 600px; margin: 0 auto;">
+            <button class="reaction-btn" id="btn-love">❤️</button>
+            <button class="reaction-btn" id="btn-fire">🔥</button>
+            <button class="reaction-btn" id="btn-laugh">😂</button>
+            <button class="reaction-btn" id="btn-party">🎉</button>
+            <button class="reaction-btn" id="btn-heel">👠</button>
+            <button class="reaction-btn" id="btn-pride">🏳️‍🌈</button>
+        </div>
+        
+        <div class="chat-input-row" style="display: flex; gap: 10px; justify-content: center; align-items: center; padding: 8px 0;">
+            <input type="text" id="chatInputBottom" placeholder="Type a message..." style="width: 400px; max-width: 60vw; padding: 12px 20px; background: rgba(255, 255, 255, 0.08); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 25px; color: white; outline: none;" onkeypress="if(event.key==='Enter') sendBottomMessage()">
+            <button id="send-button" onclick="sendBottomMessage()" style="padding: 12px 24px; background: linear-gradient(135deg, #ff0066, #ff3399); border: none; border-radius: 25px; color: white; cursor: pointer; font-weight: 700; white-space: nowrap;">Send</button>
+        </div>
+    </div>
+
+    <button class="main-button button-top" onclick="toggleGrid('top')">+</button>
+    <button class="main-button button-middle" onclick="toggleGrid('middle')">+</button>
+    <button class="main-button button-bottom" onclick="toggleGrid('bottom')">+</button>
+
+    <div class="grid-overlay" id="grid-top">
+        <button class="close-button" onclick="closeGrid('top')">×</button>
+        <div class="grid-container" id="grid-top-container"></div>
+    </div>
+
+    <div class="grid-overlay" id="grid-middle">
+        <button class="close-button" onclick="closeGrid('middle')">×</button>
+        <div class="grid-container" id="grid-middle-container"></div>
+    </div>
+
+    <div class="grid-overlay" id="grid-bottom">
+        <button class="close-button" onclick="closeGrid('bottom')">×</button>
+        <div class="grid-container" id="grid-bottom-container"></div>
+    </div>
+
+    <div class="profile-hover" id="profileHover">
+        <div class="profile-header">
+            <div class="profile-avatar" id="hoverAvatar">👤</div>
+            <div class="profile-info">
+                <div class="profile-name" id="hoverName">Party Person</div>
+                <div class="profile-status">🟢 At the venue</div>
+            </div>
+        </div>
+        
+        <div class="social-actions">
+            <button class="social-btn" onclick="sendDrink()">
+                <span>🍹</span>
+                Buy Drink
+            </button>
+            <button class="social-btn" onclick="inviteToTable()">
+                <span>🍾</span>
+                Table Invite
+            </button>
+            <button class="social-btn" onclick="giftTicket()">
+                <span>🎟️</span>
+                Gift Ticket
+            </button>
+            <button class="social-btn primary" onclick="startChat()">
+                <span>💬</span>
+                Start Chat
+            </button>
+        </div>
+        
+        <div class="profile-actions">
+            <button class="profile-action-btn">👍 Like</button>
+            <button class="profile-action-btn">🎁 Send Gift</button>
+        </div>
+        
+        <div style="text-align: center; padding-top: 10px;">
+            <button onclick="closeProfileHover()" style="background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 8px 20px; border-radius: 20px; color: rgba(255,255,255,0.7); cursor: pointer;">Close</button>
+        </div>
+    </div>
+
+    <div class="image-modal" id="imageModal">
+        <div class="image-modal-content">
+            <button class="image-modal-close" onclick="closeImageModal()">×</button>
+            <div class="image-modal-preview">
+                <label for="imageUploadInput" style="cursor: pointer; display: block;">
+                    <div class="image-upload-zone" id="imageUploadZone">
+                        <img id="imagePreview" style="max-width: 100%; max-height: 300px; display: none;">
+                        📸 Click to select image
+                    </div>
+                    <input type="file" id="imageUploadInput" accept="image/*" style="display: none;">
+                </label>
+            </div>
+            <input type="text" id="imageCaption" placeholder="Add a caption..." style="width: 100%; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: white; margin-top: 10px;">
+            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                <button id="uploadImageBtn" onclick="uploadImage()" style="flex: 1; padding: 12px; background: #00ff88; color: #000; border: none; border-radius: 10px; font-weight: bold; cursor: pointer;">Upload</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- One-Line Chat Bar -->
+    <div class="chat-bar">
+        <div class="chat-label">
+            <span class="chat-icon">💬</span>
+            <span>Chat</span>
+        </div>
+        <div class="chat-online-indicator">
+            <div class="chat-online-dot"></div>
+            <span id="chatOnlineCount">-</span>
+        </div>
+        <div class="chat-input-wrapper">
+            <input 
+                type="text" 
+                class="chat-input" 
+                id="chatBarInput" 
+                placeholder="Send a message to the community..."
+                onkeypress="if(event.key==='Enter') sendChatBarMessage()"
+            >
+            <button class="chat-send-btn" onclick="sendChatBarMessage()">➤</button>
+        </div>
+    </div>
+
+    <!-- Group Chat Window -->
+    <div class="group-chat-window" id="groupChat" style="display: none;">
+        <div class="group-chat-header">
+            <div class="group-chat-title">💬 Group Chat</div>
+            <button class="group-chat-close" onclick="closeGroupChat()">×</button>
+        </div>
+        
+        <div class="group-chat-messages" id="chatMessages">
+        </div>
+        
+        <div class="group-chat-input-row">
+            <input type="text" placeholder="Type a message..." class="group-chat-input" id="groupChatInput" onkeypress="if(event.key==='Enter') sendGroupMessage()">
+            <button class="group-chat-send" onclick="sendGroupMessage()">Send</button>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <script src="/config/netlify-env-inject.js"></script>
+    <script src="/js/config.js"></script>
+    <script src="/js/sms.js"></script>
+    <script src="/js/supabase-client.js"></script>
+    <script src="/js/sms-auth.js"></script>
+    <script src="/js/stripe-integration.js"></script>
+    <script src="/js/live-stream.js"></script>
+    <script src="/js/websocket.js"></script>
+    <script src="/js/interactions.js"></script>
+    <script src="/js/pins-reactions.js"></script>
+    <script src="/js/social.js"></script>
+    <script src="/js/grids.js"></script>
+    <script src="/js/chat.js"></script>
+    <script src="/js/main.js"></script>
+        <script>
+            // Loader fade + chat launcher init
+            (function(){
+                const loader = document.getElementById('sf-loader');
+                function hideLoader(){
+                    if(loader){
+                        loader.classList.add('hidden');
+                        setTimeout(()=> loader.remove && loader.remove(), 900);
+                    }
+                    const launcher = document.getElementById('sf-chat-launcher');
+                    if(launcher) launcher.style.display='block';
+                }
+                if(document.readyState === 'complete') {
+                    setTimeout(hideLoader, 350);
+                } else {
+                    window.addEventListener('load', () => setTimeout(hideLoader, 350));
+                }
+            })();
+        </script>
+</body>
+</html>

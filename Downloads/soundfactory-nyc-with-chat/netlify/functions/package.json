@@ -1,0 +1,12 @@
+{
+  "name": "soundfactory-functions",
+  "version": "1.0.0",
+  "private": true,
+  "license": "MIT",
+  "type": "commonjs",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0",
+    "stripe": "^14.0.0",
+    "twilio": "^5.2.0"
+  }
+}

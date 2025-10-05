@@ -1,0 +1,117 @@
+[build]
+  publish = "."
+  command = "bash build.sh"
+
+[functions]
+  directory = "netlify/functions"
+
+[functions."retry-commissions"]
+  # Run every 6 hours at minute 0
+  schedule = "0 */6 * * *"
+
+[build.environment]
+  # Supabase values now supplied via Netlify UI environment variables.
+  # SUPABASE_URL and SUPABASE_ANON_KEY removed from repo for security hygiene.
+  # Build script still performs injection using whatever is set in the build environment.
+
+[[edge_functions]]
+  path = "/.netlify/functions/stripe-webhook"
+  function = "rate-limit"
+
+[[edge_functions]]
+  path = "/api/webhook/*"
+  function = "rate-limit"
+
+# API redirects to Netlify functions
+[[redirects]]
+  from = "/api/send-verification"
+  to = "/.netlify/functions/send-sms"
+  status = 200
+
+[[redirects]]
+  from = "/api/verify-code"
+  to = "/.netlify/functions/verify-sms"
+  status = 200
+
+# Admin API redirects (same underlying functions, namespaced paths for admin panel)
+[[redirects]]
+  from = "/api/admin/send-verification"
+  to = "/.netlify/functions/send-sms"
+  status = 200
+
+[[redirects]]
+  from = "/api/admin/verify-code"
+  to = "/.netlify/functions/verify-sms"
+  status = 200
+
+# Force HTTPS
+[[redirects]]
+  from = "http://soundfactorynyc.com/*"
+  to = "https://soundfactorynyc.com/:splat"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "http://www.soundfactorynyc.com/*"
+  to = "https://soundfactorynyc.com/:splat"
+  status = 301
+  force = true
+
+# Redirect rules for single page application behavior
+[[redirects]]
+  from = "/admin/*"
+  to = "/admin.html"
+  status = 200
+
+[[redirects]]
+  from = "/promoter/*"
+  to = "/promoter.html"
+  status = 200
+
+# Fallback for root and unknown routes
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Security headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
+  Content-Security-Policy = "default-src 'self' https: data: 'unsafe-inline' 'unsafe-eval'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://connect.stripe.com https://cdn.jsdelivr.net; frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://connect.stripe.com; connect-src 'self' https://api.stripe.com wss://*.supabase.co https://*.supabase.co https://live.soundfactorynyc.com;"
+    Permissions-Policy = "microphone=(self), autoplay=(self)"
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, POST, PUT, DELETE, OPTIONS"
+    Access-Control-Allow-Headers = "Content-Type, Authorization"
+
+# Don't block function requests
+[[headers]]
+  for = "/.netlify/functions/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+
+# Cache static assets
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/config/netlify-env-inject.js"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+
+[[headers]]
+  for = "*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

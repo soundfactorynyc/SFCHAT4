@@ -1,0 +1,95 @@
+/* -------------------------------------------------------------
+  Landing / Marketing Layer Styles (non-intrusive)
+  IMPORTANT: Do NOT style or override any .blueprint-* selectors
+  or the venue background from this file. Keep all marketing /
+  hero / loader UI isolated to .sf-* or #sf-* names.
+
+  Safeguards / Guidance:
+  - If you need new styles, prefix with .sf- or #sf-
+  - Never add rules for: .blueprint-view, .blueprint-bg, .floor-svg
+  - Visual regressions? Inspect cascade; this file should not leak.
+  ------------------------------------------------------------- */
+:root {
+  --sf-primary: #ff0066;
+  --sf-secondary: #00ffcc;
+  --sf-dark: #0a0a0a;
+  --sf-glow: 0 0 18px rgba(255,0,102,0.4), 0 0 28px rgba(0,255,204,0.15);
+}
+
+body.sf-has-hero {
+  overflow-x: hidden;
+}
+
+/* Loader */
+#sf-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+  background: radial-gradient(circle at 50% 40%, #111 0%, #000 70%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity .6s ease;
+}
+#sf-loader.hidden { opacity: 0; pointer-events: none; }
+.loader-pulse {
+  width: 64px; height: 64px; border: 3px solid var(--sf-primary); border-radius: 50%;
+  animation: sfPulse 2s ease-in-out infinite;
+  box-shadow: var(--sf-glow);
+}
+@keyframes sfPulse { 0%{transform:scale(1);opacity:1}50%{transform:scale(1.25);opacity:.6}100%{transform:scale(1);opacity:1}}
+
+/* Hero */
+.sf-hero {
+  position: relative;
+  min-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: clamp(2rem, 5vw, 6rem) 1.5rem 4rem;
+  text-align: center;
+  background: linear-gradient(140deg, rgba(255,0,102,0.15), rgba(0,255,204,0.12));
+}
+.sf-hero-inner { max-width: 1000px; }
+.sf-hero h1 {
+  font-size: clamp(3rem, 8vw, 5.5rem);
+  line-height: 1.05;
+  font-weight: 800;
+  background: linear-gradient(45deg,var(--sf-primary),var(--sf-secondary));
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  margin-bottom: 1rem;
+}
+.sf-hero p.lede { font-size: clamp(1.1rem,2.2vw,1.6rem); color:#bbb; margin:0 auto 2rem; max-width: 48ch; }
+.sf-cta-row { display:flex; flex-wrap:wrap; gap:1rem; justify-content:center; }
+.sf-btn {
+  position: relative;
+  background: linear-gradient(45deg,var(--sf-primary),var(--sf-secondary));
+  border:none; color:#fff; font-weight:700; letter-spacing:.5px; cursor:pointer;
+  padding: 0.9rem 1.8rem; border-radius: 48px; font-size:1rem;
+  box-shadow: 0 8px 28px -6px rgba(255,0,102,0.45);
+  transition: transform .35s, box-shadow .35s;
+}
+.sf-btn:hover { transform: translateY(-3px); box-shadow:0 12px 36px -8px rgba(255,0,102,0.55); }
+.sf-btn.alt { background: rgba(255,255,255,0.08); box-shadow:none; backdrop-filter: blur(6px); border:1px solid rgba(255,255,255,0.18); }
+.sf-btn.alt:hover { background: rgba(255,255,255,0.12); }
+
+/* Events teaser */
+.sf-events-teaser { padding: 3rem 1.5rem 4rem; background: #090909; border-top:1px solid rgba(255,255,255,0.05); }
+.sf-events-grid { display:grid; gap:1.5rem; grid-template-columns: repeat(auto-fit,minmax(240px,1fr)); margin-top:2rem; }
+.sf-event-card { background:#111; border:1px solid rgba(255,255,255,0.08); padding:1.1rem 1.2rem 1.3rem; border-radius:16px; position:relative; overflow:hidden; }
+.sf-event-card:before { content:""; position:absolute; inset:0; background:radial-gradient(circle at 30% 20%, rgba(255,0,102,0.15), transparent 70%); opacity:.5; }
+.sf-event-date { font-size:.75rem; letter-spacing:1px; font-weight:600; color:var(--sf-secondary); opacity:.85; text-transform:uppercase; }
+.sf-event-title { font-size:1.05rem; font-weight:700; margin:.45rem 0 .4rem; }
+.sf-event-meta { font-size:.8rem; color:#aaa; }
+
+/* Chat bubble launcher (marketing layer) */
+#sf-chat-launcher { position:fixed; bottom:20px; right:20px; z-index:1400; }
+#sf-chat-launcher button { width:60px;height:60px;border-radius:50%;background:linear-gradient(45deg,var(--sf-primary),var(--sf-secondary));border:none;color:#fff;font-size:26px;cursor:pointer;box-shadow:0 8px 28px -6px rgba(255,0,102,0.55);transition:transform .35s; }
+#sf-chat-launcher button:hover { transform:scale(1.12); }
+
+/* Responsive tweaks */
+@media (max-width:700px){
+  .sf-hero h1 { font-size: clamp(2.6rem,10vw,3.5rem); }
+  .sf-hero p.lede { font-size:1rem; }
+  .sf-btn { padding:.8rem 1.4rem; font-size:.95rem; }
+}
