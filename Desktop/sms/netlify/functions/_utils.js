@@ -153,6 +153,10 @@ export function toE164(input, defaultCountry = 'US') {
   s = s.replace(/(?!^\+)[^\d]/g, '');
   if (s.startsWith('+')) {
     const digits = s.slice(1).replace(/\D/g, '');
+    // If someone typed '+##########' (10 digits) and default is US, coerce to +1##########
+    if (defaultCountry.toUpperCase() === 'US' && digits.length === 10) {
+      return '+1' + digits;
+    }
     if (digits.length < 8 || digits.length > 15) return null;
     return '+' + digits;
   }

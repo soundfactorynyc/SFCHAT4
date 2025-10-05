@@ -149,10 +149,10 @@ async function handleCheckoutCompleted(session) {
   }
 
   if (customer_phone) {
-    await sendConfirmationSMS(customer_phone, pin);
+    // SMS confirmation removed - consider implementing alternative notification
   }
 
-  console.log(`✅ Booking ${booking_id} confirmed with PIN ${pin}`);
+  
 }
 
 async function processPromoterCommission({ booking_id, promoter_code, amount, session_id }) {
@@ -264,10 +264,7 @@ async function generateUniquePin(supabase, type = 'numeric') {
   return Date.now().toString().slice(-6);
 }
 
-async function sendConfirmationSMS(phone, pin) {
-  // Placeholder: integrate with Twilio/other provider
-  console.log(`(SMS) PIN ${pin} -> ${phone}`);
-}
+
 
 // Placeholder handlers for other event types (implement as needed)
 async function handlePaymentSucceeded(obj) { console.log('payment_intent.succeeded', obj.id); }

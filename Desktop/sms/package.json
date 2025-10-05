@@ -1,14 +1,11 @@
 {
-  "name": "sms",
-  "private": true,
+  "name": "sf-sms-service",
+  "version": "1.0.0",
+  "description": "Sound Factory NYC SMS Authentication Service",
   "scripts": {
-    "dev": "netlify dev --port 8888 --dir=. --functions=netlify/functions --live=false"
-  },
-  "devDependencies": {
-    "netlify-cli": "^23.5.0"
+    "build": "echo 'No build required'"
   },
   "dependencies": {
-    "@netlify/blobs": "^6.5.0",
-    "twilio": "^5.9.0"
+    "stripe": "^14.0.0"
   }
 }

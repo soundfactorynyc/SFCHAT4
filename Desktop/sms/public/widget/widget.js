@@ -7,7 +7,11 @@
   function normalizePhone(input){
     if(!input) return '';
     const s=String(input).trim();
-    if(s.startsWith('+')) return s;
+    if(s.startsWith('+')){
+      const d=s.slice(1).replace(/\D/g,'');
+      if(d.length===10) return '+1'+d; // assume US when exactly 10 digits after +
+      return '+'+d;
+    }
     const d=s.replace(/\D/g,'');
     if(d.length===10) return '+1'+d;
     if(d.length===11 && d.startsWith('1')) return '+'+d;

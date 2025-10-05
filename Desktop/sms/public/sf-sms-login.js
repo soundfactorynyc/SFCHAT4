@@ -18,7 +18,12 @@
   function normalizePhone(input){
     if(!input) return '';
     const s = String(input).trim();
-    if (s.startsWith('+')) return s;
+    if (s.startsWith('+')) {
+      const d = s.slice(1).replace(/\D/g,'');
+      // If user typed +########## (10 digits) assume US and prefix +1
+      if (d.length === 10) return '+1'+d;
+      return '+'+d;
+    }
     const digits = s.replace(/\D/g,'');
     if (digits.length === 10) return '+1'+digits;
     if (digits.length === 11 && digits.startsWith('1')) return '+'+digits;

@@ -56,5 +56,6 @@ set_var JWT_SECRET
 set_var ADMIN_KEY
 set_var BASE_URL
 set_var CORS_STRICT
+set_var SMS_DEMO_MODE
 
 echo "✅ Sync complete. Deploy or restart previews to apply."

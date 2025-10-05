@@ -508,14 +508,15 @@
     function normalizePhone(input) {
       if (!input) return '';
       const trimmed = String(input).trim();
-      if (trimmed.startsWith('+')) return trimmed;
+      if (trimmed.startsWith('+')) {
+        const d = trimmed.slice(1).replace(/\D/g,'');
+        if (d.length === 10) return '+1' + d; // assume US when only 10 digits after +
+        return '+' + d;
+      }
       const digits = trimmed.replace(/\D/g, '');
-      // If 10 digits, assume US
-      if (digits.length === 10) return '+1' + digits;
-      // If 11 digits starting with 1, add leading +
+      if (digits.length === 10) return '+1' + digits; // US default
       if (digits.length === 11 && digits.startsWith('1')) return '+' + digits;
-      // Fallback: prefix + to what we have (server-side will validate)
-      return '+' + digits;
+      return '+' + digits; // fallback; server will validate
     }
 
     // Admin Management

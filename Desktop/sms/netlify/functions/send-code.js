@@ -34,6 +34,11 @@ export async function handler(event) {
       });
     }
     
+    // Demo mode: skip Twilio and pretend to send
+    if (String(process.env.VERIFY_DEMO || '').toLowerCase() === 'true') {
+      return jsonRes(event, { ok: true, to: phone, demo: true });
+    }
+    
     // ========================================
     // 🔒 PRODUCTION MODE - Real Twilio
     // ========================================

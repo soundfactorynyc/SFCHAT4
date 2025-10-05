@@ -11,10 +11,7 @@ fi
 export CHOKIDAR_USEPOLLING=1
 export NODE_ENV=development
 
-# Optional: warn if Twilio vars missing
-if [[ -z "${TWILIO_ACCOUNT_SID:-}" || -z "${TWILIO_AUTH_TOKEN:-}" ]]; then
-  echo "[warn] Twilio credentials not fully set. Functions will run in demo mode (demo_code returned)." >&2
-fi
+
 
 # Prevent accidental demo code leakage in production-like env
 if [[ "${ALLOW_DEMO_CODES:-true}" != "false" ]]; then

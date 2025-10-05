@@ -36,9 +36,7 @@ function initApp() {
         initStripe();
     }
     
-    if (window.initSMSAuth) {
-        initSMSAuth();
-    }
+
     
     if (window.RobustPinSystem) {
         try {
@@ -49,9 +47,7 @@ function initApp() {
         }
     }
     
-    if (window.initStreamListener) {
-        setTimeout(() => initStreamListener(), 1000);
-    }
+    
     
     const hasSeenHelp = localStorage.getItem('sf_help_shown');
     if (!hasSeenHelp) {

@@ -649,5 +649,56 @@
             e.preventDefault();
         });
     </script>
+
+    <!-- Chat Overlay Mount -->
+    <div id="sf-chat-root" style="position:fixed;left:0;right:0;bottom:0;z-index:200;"></div>
+
+    <script type="module">
+      class SFChatOverlay extends HTMLElement {
+        connectedCallback() {
+          this.innerHTML = `
+            <style>
+              .chat-bar {
+                height: 60px;
+                background: rgba(0,0,0,0.85);
+                border-top: 2px solid #ff0066;
+                color: #fff;
+                font-family: system-ui, sans-serif;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding: 0 12px;
+                cursor: pointer;
+              }
+              .chat-expanded {
+                position: absolute;
+                bottom: 60px;
+                left: 0;
+                right: 0;
+                height: 300px;
+                background: rgba(10,10,10,0.95);
+                border-top: 1px solid #333;
+                overflow-y: auto;
+              }
+              .chat-msg {
+                padding: 6px 10px;
+                border-bottom: 1px solid #222;
+                font-size: 13px;
+              }
+            </style>
+            <div class="chat-bar">💬 Tap to open chat</div>
+            <div class="chat-expanded" hidden></div>
+          `;
+          this.querySelector(".chat-bar").addEventListener("click", () => {
+            const panel = this.querySelector(".chat-expanded");
+            panel.hidden = !panel.hidden;
+          });
+        }
+      }
+      customElements.define("sf-chat-overlay", SFChatOverlay);
+
+      // Mount it
+      document.getElementById("sf-chat-root").appendChild(document.createElement("sf-chat-overlay"));
+    </script>
 </body>
 </html>

@@ -16,8 +16,7 @@ const FAIL_THRESHOLD = parseInt(process.env.FAIL_THRESHOLD || '5', 10); // fail 
 
 const endpoints = [
   '/',
-  '/.netlify/functions/send-sms',
-  '/.netlify/functions/verify-sms',
+
   '/.netlify/functions/stripe-webhook'
 ];
 
