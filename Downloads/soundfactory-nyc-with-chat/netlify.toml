@@ -62,7 +62,6 @@
   status = 200
 
 [[redirects]]
-[[redirects]]
   from = "/api/admin/verify-code"
   to = "/.netlify/functions/sms-check-code"
   status = 200
