@@ -38,14 +38,24 @@ function initSMSAuth() {
             showStatus('📱 Sending code...', 'info');
             try {
                 const data = await SFSMS.sendVerification(phone);
-                showStatus('✅ Code sent! Check your phone.', 'success');
+                if (data.fallback === 'supabase') {
+                    showStatus('Twilio failed. Switching to Supabase OTP...', 'info');
+                    // Require Supabase client
+                    if (!window.getSupabaseClient) throw new Error('Supabase client not available for fallback');
+                    const supa = window.getSupabaseClient();
+                    const { error } = await supa.auth.signInWithOtp({ phone });
+                    if (error) throw error;
+                    showStatus('✅ Supabase code sent! Check your phone.', 'success');
+                } else {
+                    showStatus('✅ Code sent! Check your phone.', 'success');
+                    if (data.demo_code) console.log('Demo code:', data.demo_code);
+                }
                 phoneDisplay.textContent = phone;
                 phoneStep.style.display = 'none';
                 codeStep.style.display = 'block';
                 codeInput.focus();
-                if (data.demo_code) console.log('Demo code:', data.demo_code);
             } catch (error) {
-                showStatus('❌ ' + error.message, 'error');
+                showStatus('❌ ' + (error.message || 'Send failed'), 'error');
                 sendBtn.disabled = false;
             }
         });
@@ -58,13 +68,27 @@ function initSMSAuth() {
             verifyBtn.disabled = true;
             showStatus('🔐 Verifying...', 'info');
             try {
+                if (window.getSupabaseClient) {
+                    const supa = window.getSupabaseClient();
+                    // Attempt Supabase OTP verification first if fallback path was used
+                    const fallbackUsed = phoneDisplay.textContent && phoneDisplay.textContent.includes('+'); // simple heuristic
+                    if (fallbackUsed) {
+                        const { data, error } = await supa.auth.verifyOtp({ phone, token: code, type: 'sms' });
+                        if (!error && data?.user) {
+                            localStorage.setItem('sf_user_session', JSON.stringify({ phone, verified: true, supabaseUserId: data.user.id, timestamp: Date.now() }));
+                            showStatus('✅ Verified via Supabase OTP', 'success');
+                            setTimeout(() => smsModal.classList.remove('active'), 1500);
+                            return;
+                        }
+                    }
+                }
                 await SFSMS.verifyCode(phone, code);
                 const sessionData = { phone: phone, verified: true, timestamp: Date.now() };
                 localStorage.setItem('sf_user_session', JSON.stringify(sessionData));
                 showStatus('✅ Welcome to Sound Factory NYC!', 'success');
                 setTimeout(() => smsModal.classList.remove('active'), 1500);
             } catch (error) {
-                showStatus('❌ ' + error.message, 'error');
+                showStatus('❌ ' + (error.message || 'Verification failed'), 'error');
                 verifyBtn.disabled = false;
             }
         });

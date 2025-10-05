@@ -38,6 +38,7 @@ const TWILIO_FROM = getEnv('TWILIO_FROM') || getEnv('TWILIO_PHONE_NUMBER');
 // Support Messaging Service SID (preferred for production scaling)
 const TWILIO_MESSAGING_SERVICE_SID = getEnv('TWILIO_MESSAGING_SERVICE_SID');
 const SMS_DEBUG = getEnv('SMS_DEBUG') === 'true';
+const FALLBACK_SUPABASE_OTP = getEnv('FALLBACK_SUPABASE_OTP') === 'true';
 
 let twilioClient = null;
 if (TWILIO_SID && TWILIO_TOKEN) {
@@ -159,6 +160,8 @@ exports.handler = async (event) => {
 
   let smsResult = 'skipped';
   const demoMode = !twilioClient;
+  let twilioAttempted = false;
+  let twilioFailed = false;
   if (!demoMode) {
     // Build Twilio message params with fallbacks
     if (!TWILIO_FROM && !TWILIO_MESSAGING_SERVICE_SID) {
@@ -169,16 +172,33 @@ exports.handler = async (event) => {
     if (TWILIO_MESSAGING_SERVICE_SID) msgParams.messagingServiceSid = TWILIO_MESSAGING_SERVICE_SID;
     else msgParams.from = TWILIO_FROM;
     try {
+      twilioAttempted = true;
       const twilioResp = await twilioClient.messages.create(msgParams);
       smsResult = 'sent';
       if (SMS_DEBUG) console.log('Twilio message SID', twilioResp.sid);
     } catch (e) {
       console.error('Twilio send failed', e.message, e.code, e.status);
-      const payload = { error: 'Failed to dispatch SMS' };
-      if (SMS_DEBUG) {
-        payload.twilio = { code: e.code, status: e.status, message: e.message };
+      twilioFailed = true;
+      if (!FALLBACK_SUPABASE_OTP) {
+        const payload = { error: 'Failed to dispatch SMS' };
+        if (SMS_DEBUG) {
+          payload.twilio = { code: e.code, status: e.status, message: e.message };
+        }
+        return { statusCode: 500, body: JSON.stringify(payload) };
       }
-      return { statusCode: 500, body: JSON.stringify(payload) };
+    }
+  }
+
+  // If Twilio failed and fallback enabled, trigger Supabase OTP (requires service role)
+  if (twilioFailed && FALLBACK_SUPABASE_OTP && supabase && SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY) {
+    try {
+      // Use Auth admin API to send OTP (Supabase JS v2: auth.admin.generateLink not ideal; use REST direct)
+      // We can call the public OTP endpoint if anon key were available here, but we avoid leaking anon in function logs.
+      // Instead instruct client to use Supabase OTP route.
+      return { statusCode: 200, body: JSON.stringify({ success: false, fallback: 'supabase', message: 'Use Supabase OTP flow', phone, sms: 'fallback' }) };
+    } catch (e) {
+      console.error('Supabase fallback failed', e.message);
+      return { statusCode: 500, body: JSON.stringify({ error: 'All SMS providers failed' }) };
     }
   }
 
@@ -194,7 +214,7 @@ exports.handler = async (event) => {
     }
   }
 
-  const response = { success: true, expires_in: CODE_TTL_MS / 1000, sms: smsResult };
+  const response = { success: true, expires_in: CODE_TTL_MS / 1000, sms: smsResult, provider: twilioAttempted ? (twilioFailed ? 'fallback' : 'twilio') : 'demo' };
   if (demoMode && process.env.ALLOW_DEMO_CODES !== 'false') {
     response.demo_code = code; // DO NOT enable in production
   }
