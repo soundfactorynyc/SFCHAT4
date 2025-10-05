@@ -25,12 +25,10 @@
 
 # API redirects to Netlify functions
 [[redirects]]
-[[redirects]]
   from = "/api/send-verification"
   to = "/.netlify/functions/sms-send-code"
   status = 200
 
-[[redirects]]
 [[redirects]]
   from = "/api/verify-code"
   to = "/.netlify/functions/sms-check-code"
@@ -58,7 +56,6 @@
   status = 200
 
 # Admin API redirects (same underlying functions, namespaced paths for admin panel)
-[[redirects]]
 [[redirects]]
   from = "/api/admin/send-verification"
   to = "/.netlify/functions/sms-send-code"
