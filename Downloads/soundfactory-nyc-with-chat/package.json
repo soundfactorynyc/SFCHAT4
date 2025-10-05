@@ -13,8 +13,8 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.0",
-    "stripe": "^14.0.0"
-
+    "stripe": "^14.0.0",
+    "twilio": "^4.19.0"
   },
   "devDependencies": {
     "netlify-cli": "^17.35.0"
