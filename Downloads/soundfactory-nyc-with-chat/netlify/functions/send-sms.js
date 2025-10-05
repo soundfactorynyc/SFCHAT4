@@ -33,7 +33,11 @@ if (SUPABASE_URL && SUPABASE_SERVICE_ROLE_KEY) {
 
 const TWILIO_SID = getEnv('TWILIO_ACCOUNT_SID');
 const TWILIO_TOKEN = getEnv('TWILIO_AUTH_TOKEN');
-const TWILIO_FROM = getEnv('TWILIO_FROM');
+// Allow fallback to TWILIO_PHONE_NUMBER for backwards compatibility
+const TWILIO_FROM = getEnv('TWILIO_FROM') || getEnv('TWILIO_PHONE_NUMBER');
+// Support Messaging Service SID (preferred for production scaling)
+const TWILIO_MESSAGING_SERVICE_SID = getEnv('TWILIO_MESSAGING_SERVICE_SID');
+const SMS_DEBUG = getEnv('SMS_DEBUG') === 'true';
 
 let twilioClient = null;
 if (TWILIO_SID && TWILIO_TOKEN) {
@@ -156,12 +160,25 @@ exports.handler = async (event) => {
   let smsResult = 'skipped';
   const demoMode = !twilioClient;
   if (!demoMode) {
+    // Build Twilio message params with fallbacks
+    if (!TWILIO_FROM && !TWILIO_MESSAGING_SERVICE_SID) {
+      console.error('Twilio configuration missing: need TWILIO_FROM (or TWILIO_PHONE_NUMBER) or TWILIO_MESSAGING_SERVICE_SID');
+      return { statusCode: 500, body: JSON.stringify({ error: 'SMS not configured' }) };
+    }
+    const msgParams = { to: phone, body: `Your Sound Factory code: ${code}` };
+    if (TWILIO_MESSAGING_SERVICE_SID) msgParams.messagingServiceSid = TWILIO_MESSAGING_SERVICE_SID;
+    else msgParams.from = TWILIO_FROM;
     try {
-      await twilioClient.messages.create({ to: phone, from: TWILIO_FROM, body: `Your Sound Factory code: ${code}` });
+      const twilioResp = await twilioClient.messages.create(msgParams);
       smsResult = 'sent';
+      if (SMS_DEBUG) console.log('Twilio message SID', twilioResp.sid);
     } catch (e) {
-      console.error('Twilio send failed', e.message);
-      return { statusCode: 500, body: JSON.stringify({ error: 'Failed to dispatch SMS' }) };
+      console.error('Twilio send failed', e.message, e.code, e.status);
+      const payload = { error: 'Failed to dispatch SMS' };
+      if (SMS_DEBUG) {
+        payload.twilio = { code: e.code, status: e.status, message: e.message };
+      }
+      return { statusCode: 500, body: JSON.stringify(payload) };
     }
   }
 
