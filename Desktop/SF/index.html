@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Sound Factory NYC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            background: #000;
+            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', system-ui, sans-serif;
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+            height: 100vh;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+        }
+        
+        /* BLUEPRINT BG - iOS Style */
+        .blueprint-bg {
+            position: fixed;
+            inset: 0;
+            background: 
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 20px 20px;
+            background-position: -1px -1px;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        /* TOP BAR - iOS Typography Style */
+        .top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 8px 15px;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 0.5px solid rgba(255,255,255,0.12);
+            z-index: 900;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+        
+        .stats {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        
+        .stat-item {
+            font-size: 9px;
+            font-weight: 590;
+            font-variant-numeric: tabular-nums;
+            color: rgba(255,255,255,0.6);
+            letter-spacing: 0.02em;
+        }
+        
+        .stat-value {
+            color: #fff;
+            margin-right: 2px;
+        }
+        
+        .stat-divider {
+            width: 1px;
+            height: 12px;
+            background: rgba(255,255,255,0.12);
+        }
+        
+        /* CONTROL PANEL - iOS Style Buttons */
+        .control-panel {
+            position: fixed;
+            top: 50px;
+            left: 0;
+            right: 0;
+            padding: 10px 15px;
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            flex-wrap: wrap;
+            z-index: 850;
+        }
+        
+        .control-btn {
+            background: rgba(255,255,255,0.08);
+            border: 0.5px solid rgba(255,255,255,0.15);
+            border-radius: 6px;
+            padding: 6px 10px;
+            font-size: 9px;
+            font-weight: 590;
+            color: #fff;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.15s;
+        }
+        
+        .control-btn:hover {
+            background: rgba(255,255,255,0.15);
+            border-color: rgba(255,255,255,0.3);
+        }
+        
+        .control-btn:active {
+            transform: scale(0.96);
+        }
+        
+        .control-btn.active {
+            background: #fff;
+            color: #000;
+            border-color: #fff;
+        }
+        
+        /* MAIN FLOOR AREA */
+        .content {
+            position: fixed;
+            top: 110px;
+            bottom: 160px;
+            left: 0;
+            right: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+        
+        /* FLOOR GRID - iOS Style */
+        .floor-grid {
+            position: relative;
+            width: 90%;
+            height: 90%;
+            max-width: 600px;
+            max-height: 500px;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 10px;
+            padding: 20px;
+        }
+        
+        .grid-item {
+            background: rgba(255,255,255,0.06);
+            border: 0.5px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            font-weight: 590;
+            letter-spacing: -0.01em;
+            color: rgba(255,255,255,0.4);
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: all 0.15s;
+        }
+        
+        .grid-item:hover {
+            background: rgba(255,255,255,0.12);
+            border-color: rgba(255,255,255,0.2);
+            color: rgba(255,255,255,0.8);
+        }
+        
+        .grid-item.special {
+            background: rgba(255,0,102,0.1);
+            border-color: rgba(255,0,102,0.3);
+            color: rgba(255,0,102,0.8);
+        }
+        
+        /* CHARACTER */
+        .character {
+            position: absolute;
+            width: 32px;
+            height: 32px;
+            background: #fff;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 1px solid rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            font-weight: 700;
+            color: #000;
+            cursor: move;
+            z-index: 100;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+        
+        /* PIN MARKERS - iOS Style */
+        .pin {
+            position: absolute;
+            background: rgba(255,255,255,0.08);
+            border: 0.5px solid rgba(255,255,255,0.2);
+            border-radius: 6px;
+            padding: 4px 8px;
+            font-size: 9px;
+            font-weight: 590;
+            letter-spacing: -0.01em;
+            color: #fff;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        
+        .pin:hover {
+            background: rgba(255,255,255,0.15);
+            border-color: rgba(255,255,255,0.4);
+        }
+        
+        /* SLIDING PANELS - iOS Style */
+        .slide-panel {
+            position: fixed;
+            background: rgba(10,10,10,0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 0.5px solid rgba(255,255,255,0.2);
+            z-index: 800;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+        
+        .panel-left {
+            left: -100%;
+            top: 110px;
+            bottom: 160px;
+            width: 85vw;
+            max-width: 320px;
+            border-left: none;
+            border-radius: 0 12px 12px 0;
+        }
+        
+        .panel-left.open { left: 0; }
+        
+        .panel-right {
+            right: -100%;
+            top: 110px;
+            bottom: 160px;
+            width: 85vw;
+            max-width: 320px;
+            border-right: none;
+            border-radius: 12px 0 0 12px;
+        }
+        
+        .panel-right.open { right: 0; }
+        
+        .panel-header {
+            padding: 15px;
+            border-bottom: 0.5px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .panel-title {
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+        }
+        
+        .panel-close {
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.6);
+            font-size: 20px;
+            cursor: pointer;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        
+        .panel-close:hover {
+            background: rgba(255,255,255,0.08);
+            color: #fff;
+        }
+        
+        .panel-body {
+            padding: 15px;
+            overflow-y: auto;
+            height: calc(100% - 60px);
+        }
+        
+        /* OPTION GRID - iOS Style */
+        .option-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+            gap: 6px;
+        }
+        
+        .option-item {
+            background: rgba(255,255,255,0.06);
+            border: 0.5px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 12px 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        
+        .option-item:hover {
+            background: rgba(255,255,255,0.12);
+            border-color: rgba(255,255,255,0.2);
+        }
+        
+        .option-item.selected {
+            background: #fff;
+            border-color: #fff;
+        }
+        
+        .option-label {
+            font-size: 9px;
+            font-weight: 590;
+            letter-spacing: -0.01em;
+            color: #fff;
+            text-transform: uppercase;
+        }
+        
+        .option-item.selected .option-label {
+            color: #000;
+        }
+        
+        /* CHAT IN PANEL */
+        .chat-messages {
+            background: rgba(255,255,255,0.04);
+            border: 0.5px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 10px;
+            height: calc(100% - 50px);
+            overflow-y: auto;
+            margin-bottom: 10px;
+        }
+        
+        .chat-message {
+            padding: 8px 10px;
+            margin-bottom: 6px;
+            font-size: 11px;
+            color: rgba(255,255,255,0.8);
+            background: rgba(255,255,255,0.02);
+            border-radius: 6px;
+        }
+        
+        .chat-input-panel {
+            display: flex;
+            gap: 6px;
+        }
+        
+        .chat-input-field {
+            flex: 1;
+            background: rgba(255,255,255,0.08);
+            border: 0.5px solid rgba(255,255,255,0.15);
+            border-radius: 20px;
+            padding: 8px 15px;
+            font-size: 11px;
+            font-weight: 500;
+            color: #fff;
+            font-family: inherit;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            outline: none;
+        }
+        
+        .chat-input-field::placeholder {
+            color: rgba(255,255,255,0.4);
+        }
+        
+        .chat-input-field:focus {
+            border-color: rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.12);
+        }
+        
+        .chat-send-panel {
+            background: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .chat-send-panel:hover {
+            background: rgba(255,255,255,0.9);
+        }
+        
+        /* MONEY GRID IN PANEL */
+        .money-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+        
+        .money-btn-panel {
+            background: rgba(255,255,255,0.06);
+            border: 0.5px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 24px 16px;
+            font-size: 18px;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            color: #fff;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.15s;
+        }
+        
+        .money-btn-panel:hover {
+            background: rgba(255,255,255,0.12);
+            border-color: rgba(255,255,255,0.2);
+        }
+        
+        .money-btn-panel:active {
+            transform: scale(0.96);
+        }
+        
+        /* BOTTOM SECTION - iOS Style */
+        .bottom-section {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 0.5px solid rgba(255,255,255,0.12);
+            z-index: 900;
+            padding: 10px 15px;
+        }
+        
+        .action-strip {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 10px;
+        }
+        
+        .action-btn {
+            background: rgba(255,255,255,0.08);
+            border: 0.5px solid rgba(255,255,255,0.15);
+            border-radius: 6px;
+            padding: 6px 10px;
+            font-size: 9px;
+            font-weight: 590;
+            color: #fff;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.15s;
+        }
+        
+        .action-btn:hover {
+            background: rgba(255,255,255,0.15);
+            border-color: rgba(255,255,255,0.3);
+        }
+        
+        .action-btn:active {
+            transform: scale(0.96);
+        }
+        
+        .action-btn.primary {
+            background: #fff;
+            color: #000;
+            border-color: #fff;
+        }
+        
+        .action-btn.primary:hover {
+            background: rgba(255,255,255,0.9);
+        }
+        
+        /* MONEY STRIP */
+        .money-strip {
+            display: flex;
+            gap: 4px;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+        
+        .money-btn {
+            background: rgba(255,255,255,0.08);
+            border: 0.5px solid rgba(255,255,255,0.15);
+            border-radius: 6px;
+            padding: 6px 8px;
+            font-size: 9px;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            color: #fff;
+            cursor: pointer;
+            min-width: 32px;
+            text-align: center;
+            transition: all 0.15s;
+        }
+        
+        .money-btn:hover {
+            background: rgba(255,255,255,0.15);
+            border-color: rgba(255,255,255,0.3);
+        }
+        
+        .money-btn:active {
+            transform: scale(0.96);
+        }
+        
+        /* CHAT INPUT - iOS Style */
+        .chat-input-container {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+        }
+        
+        .chat-input {
+            flex: 1;
+            max-width: 500px;
+            background: rgba(255,255,255,0.08);
+            border: 0.5px solid rgba(255,255,255,0.15);
+            border-radius: 20px;
+            padding: 8px 15px;
+            font-size: 11px;
+            font-weight: 500;
+            color: #fff;
+            font-family: inherit;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            outline: none;
+        }
+        
+        .chat-input::placeholder {
+            color: rgba(255,255,255,0.4);
+        }
+        
+        .chat-input:focus {
+            border-color: rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.12);
+        }
+        
+        .chat-send {
+            background: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        .chat-send:hover {
+            background: rgba(255,255,255,0.9);
+        }
+        
+        /* FLOOR SELECTOR */
+        .floor-selector {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            z-index: 100;
+        }
+        
+        .floor-btn {
+            background: rgba(255,255,255,0.08);
+            border: 0.5px solid rgba(255,255,255,0.15);
+            border-radius: 6px;
+            width: 32px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            font-weight: 590;
+            color: rgba(255,255,255,0.6);
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        
+        .floor-btn:hover {
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+        }
+        
+        .floor-btn.active {
+            background: #fff;
+            color: #000;
+            border-color: #fff;
+        }
+        
+        /* MODAL - iOS Style */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: rgba(10,10,10,0.95);
+            border: 0.5px solid rgba(255,255,255,0.2);
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+        
+        .modal-header {
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            letter-spacing: -0.01em;
+            padding-bottom: 10px;
+            border-bottom: 0.5px solid rgba(255,255,255,0.1);
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.6);
+            font-size: 20px;
+            cursor: pointer;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+        
+        .modal-close:hover {
+            background: rgba(255,255,255,0.08);
+            color: #fff;
+        }
+        
+        /* ANIMATIONS */
+        @keyframes reactionFloat {
+            0% {
+                transform: translateY(0) scale(0);
+                opacity: 0;
+            }
+            20% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-250px) scale(1.2);
+                opacity: 0;
+            }
+        }
+        
+        .reaction-particle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 10000;
+            animation: reactionFloat 1.5s ease-out forwards;
+        }
+    </style>
+</head>
+<body>
+    <div class="blueprint-bg"></div>
+    
+    <!-- TOP BAR -->
+    <div class="top-bar">
+        <div class="logo">SOUND FACTORY</div>
+        <div class="stats">
+            <div class="stat-item">
+                <span class="stat-value" id="onlineCount">842</span> ONLINE
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                <span class="stat-value" id="pinCount">3</span>/3 PINS
+            </div>
+            <div class="stat-divider"></div>
+            <div class="stat-item">
+                $<span class="stat-value" id="tippedAmount">47</span> TIPPED
+            </div>
+        </div>
+    </div>
+    
+    <!-- CONTROL PANEL -->
+    <div class="control-panel">
+        <button class="control-btn" onclick="openModal('social')">SOCIAL</button>
+        <button class="control-btn" onclick="openModal('reactions')">REACTIONS</button>
+        <button class="control-btn" onclick="openModal('effects')">EFFECTS</button>
+        <button class="control-btn active" onclick="openModal('ai')">AI CHAIN</button>
+        <button class="control-btn" onclick="togglePanel('left')">CHAT</button>
+        <button class="control-btn" onclick="togglePanel('right')">MONEY</button>
+        <button class="control-btn" onclick="openModal('pins')">DROP PIN</button>
+    </div>
+    
+    <!-- MAIN FLOOR -->
+    <div class="content">
+        <div class="floor-grid">
+            <div class="grid-item special">DJ BOOTH</div>
+            <div class="grid-item">STAGE</div>
+            <div class="grid-item">VIP</div>
+            <div class="grid-item">BAR</div>
+            <div class="grid-item">DANCE</div>
+            <div class="grid-item">LOUNGE</div>
+            <div class="grid-item">PHOTO</div>
+            <div class="grid-item">MERCH</div>
+            <div class="grid-item special">EXIT</div>
+        </div>
+        
+        <!-- Character -->
+        <div class="character" id="myCharacter">YOU</div>
+        
+        <!-- Pins -->
+        <div class="pin" style="top: 30%; left: 25%;">STAGE</div>
+        <div class="pin" style="top: 45%; left: 70%;">BAR</div>
+        <div class="pin" style="top: 65%; left: 40%;">VIP</div>
+        
+        <!-- Floor Selector -->
+        <div class="floor-selector">
+            <div class="floor-btn active">1F</div>
+            <div class="floor-btn">2F</div>
+            <div class="floor-btn">3F</div>
+            <div class="floor-btn">4F</div>
+            <div class="floor-btn">5F</div>
+        </div>
+    </div>
+    
+    <!-- LEFT PANEL - CHAT -->
+    <div class="slide-panel panel-left" id="panelLeft">
+        <div class="panel-header">
+            <div class="panel-title">CHAT</div>
+            <button class="panel-close" onclick="togglePanel('left')">×</button>
+        </div>
+        <div class="panel-body">
+            <div class="chat-messages" id="chatMessages">
+                <div class="chat-message"><strong>System:</strong> Welcome to Sound Factory!</div>
+            </div>
+            <div class="chat-input-panel">
+                <input type="text" class="chat-input-field" id="chatInputPanel" placeholder="Type a message...">
+                <button class="chat-send-panel" onclick="sendPanelMessage()">→</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- RIGHT PANEL - MONEY -->
+    <div class="slide-panel panel-right" id="panelRight">
+        <div class="panel-header">
+            <div class="panel-title">TIPS</div>
+            <button class="panel-close" onclick="togglePanel('right')">×</button>
+        </div>
+        <div class="panel-body">
+            <div class="money-grid">
+                <button class="money-btn-panel" onclick="shootMoney(1)">$1</button>
+                <button class="money-btn-panel" onclick="shootMoney(5)">$5</button>
+                <button class="money-btn-panel" onclick="shootMoney(10)">$10</button>
+                <button class="money-btn-panel" onclick="shootMoney(20)">$20</button>
+                <button class="money-btn-panel" onclick="shootMoney(50)">$50</button>
+                <button class="money-btn-panel" onclick="shootMoney(100)">$100</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- MODAL -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal()">×</button>
+            <div class="modal-header" id="modalTitle">Options</div>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+    
+    <!-- SMS LOGIN MODAL -->
+    <div class="modal" id="smsModal">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">SOUND FACTORY ACCESS</div>
+            <div id="smsModalBody">
+                <!-- Phone Step -->
+                <div id="phoneStep">
+                    <p style="color: rgba(255,255,255,0.6); font-size: 11px; margin-bottom: 15px;">Enter your phone number to get exclusive access</p>
+                    <input type="tel" id="phoneInput" placeholder="(555) 555-5555" style="
+                        width: 100%;
+                        background: rgba(255,255,255,0.06);
+                        border: 0.5px solid rgba(255,255,255,0.15);
+                        border-radius: 8px;
+                        padding: 12px;
+                        font-size: 14px;
+                        color: #fff;
+                        font-family: inherit;
+                        margin-bottom: 15px;
+                        outline: none;
+                        text-align: center;
+                        letter-spacing: 0.5px;
+                    ">
+                    <button onclick="sendSMSCode()" class="action-btn primary" style="width: 100%; padding: 12px;">SEND CODE</button>
+                </div>
+                
+                <!-- Code Step -->
+                <div id="codeStep" style="display: none;">
+                    <p style="color: rgba(255,255,255,0.6); font-size: 11px; margin-bottom: 15px;">Enter the 6-digit code we sent you</p>
+                    <input type="text" id="codeInput" placeholder="000000" maxlength="6" style="
+                        width: 100%;
+                        background: rgba(255,255,255,0.06);
+                        border: 0.5px solid rgba(255,255,255,0.15);
+                        border-radius: 8px;
+                        padding: 12px;
+                        font-size: 20px;
+                        color: #fff;
+                        font-family: inherit;
+                        margin-bottom: 15px;
+                        outline: none;
+                        text-align: center;
+                        letter-spacing: 8px;
+                        font-weight: 600;
+                    ">
+                    <button onclick="verifyCode()" class="action-btn primary" style="width: 100%; padding: 12px;">VERIFY</button>
+                    <button onclick="backToPhone()" style="
+                        background: none;
+                        border: none;
+                        color: rgba(255,255,255,0.4);
+                        font-size: 11px;
+                        margin-top: 10px;
+                        cursor: pointer;
+                        width: 100%;
+                        text-align: center;
+                    ">Change Number</button>
+                </div>
+                
+                <!-- Loading -->
+                <div id="loadingStep" style="display: none; text-align: center; padding: 30px;">
+                    <div style="font-size: 24px; margin-bottom: 10px;">🎉</div>
+                    <p style="color: rgba(255,255,255,0.6); font-size: 11px;">Verifying...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- BOTTOM SECTION -->
+    <div class="bottom-section">
+        <!-- Action Strip -->
+        <div class="action-strip">
+            <button class="action-btn" onclick="shootReaction('❤️')">❤️</button>
+            <button class="action-btn" onclick="shootReaction('🔥')">🔥</button>
+            <button class="action-btn" onclick="shootReaction('😂')">😂</button>
+            <button class="action-btn" onclick="shootReaction('🎉')">🎉</button>
+            <button class="action-btn" onclick="shootReaction('✨')">✨</button>
+            <button class="action-btn" onclick="shootReaction('🎵')">🎵</button>
+            <button class="action-btn" onclick="shootReaction('🏳️‍🌈')">🏳️‍🌈</button>
+            <button class="action-btn primary" onclick="openModal('special')">SPECIAL</button>
+        </div>
+        
+        <!-- Money Strip -->
+        <div class="money-strip">
+            <button class="money-btn" onclick="shootMoney(1)">$1</button>
+            <button class="money-btn" onclick="shootMoney(5)">$5</button>
+            <button class="money-btn" onclick="shootMoney(10)">$10</button>
+            <button class="money-btn" onclick="shootMoney(20)">$20</button>
+        </div>
+        
+        <!-- Chat Input -->
+        <div class="chat-input-container">
+            <input type="text" class="chat-input" id="chatInput" placeholder="Type a message...">
+            <button class="chat-send" onclick="sendMessage()">→</button>
+        </div>
+    </div>
+    
+    <script>
+        let totalMoney = 0;
+        let tippedAmount = 47;
+        let onlineCount = 842;
+        
+        // PANEL TOGGLE
+        function togglePanel(side) {
+            const panel = document.getElementById('panel' + (side === 'left' ? 'Left' : 'Right'));
+            const otherPanel = document.getElementById('panel' + (side === 'left' ? 'Right' : 'Left'));
+            
+            // Close other panel if open
+            otherPanel.classList.remove('open');
+            
+            // Toggle this panel
+            panel.classList.toggle('open');
+        }
+        
+        // CHARACTER DRAG
+        const char = document.getElementById('myCharacter');
+        let isDragging = false;
+        let currentX;
+        let currentY;
+        let initialX;
+        let initialY;
+        let xOffset = 0;
+        let yOffset = 0;
+        
+        char.addEventListener('mousedown', dragStart);
+        char.addEventListener('touchstart', dragStart);
+        
+        document.addEventListener('mouseup', dragEnd);
+        document.addEventListener('touchend', dragEnd);
+        
+        document.addEventListener('mousemove', drag);
+        document.addEventListener('touchmove', drag);
+        
+        function dragStart(e) {
+            if (e.type === "touchstart") {
+                initialX = e.touches[0].clientX - xOffset;
+                initialY = e.touches[0].clientY - yOffset;
+            } else {
+                initialX = e.clientX - xOffset;
+                initialY = e.clientY - yOffset;
+            }
+            
+            if (e.target === char) {
+                isDragging = true;
+            }
+        }
+        
+        function dragEnd(e) {
+            initialX = currentX;
+            initialY = currentY;
+            isDragging = false;
+        }
+        
+        function drag(e) {
+            if (isDragging) {
+                e.preventDefault();
+                
+                if (e.type === "touchmove") {
+                    currentX = e.touches[0].clientX - initialX;
+                    currentY = e.touches[0].clientY - initialY;
+                } else {
+                    currentX = e.clientX - initialX;
+                    currentY = e.clientY - initialY;
+                }
+                
+                xOffset = currentX;
+                yOffset = currentY;
+                
+                char.style.transform = "translate(" + currentX + "px, " + currentY + "px)";
+            }
+        }
+        
+        // FLOOR SELECTOR
+        document.querySelectorAll('.floor-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.floor-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Change floor content
+                const floor = this.textContent;
+                console.log('Changed to floor:', floor);
+            });
+        });
+        
+        // SHOOT REACTION
+        function shootReaction(emoji) {
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    const p = document.createElement('div');
+                    p.className = 'reaction-particle';
+                    p.textContent = emoji;
+                    p.style.cssText = `
+                        left: ${Math.random() * window.innerWidth}px;
+                        bottom: 160px;
+                        font-size: 28px;
+                    `;
+                    document.body.appendChild(p);
+                    setTimeout(() => p.remove(), 1500);
+                }, i * 100);
+            }
+        }
+        
+        // SHOOT MONEY
+        function shootMoney(amount) {
+            tippedAmount += amount;
+            document.getElementById('tippedAmount').textContent = tippedAmount;
+            
+            for (let i = 0; i < 10; i++) {
+                setTimeout(() => {
+                    const p = document.createElement('div');
+                    p.className = 'reaction-particle';
+                    p.textContent = '💵';
+                    p.style.cssText = `
+                        left: ${Math.random() * window.innerWidth}px;
+                        bottom: 160px;
+                        font-size: 32px;
+                    `;
+                    document.body.appendChild(p);
+                    setTimeout(() => p.remove(), 1500);
+                }, i * 80);
+            }
+        }
+        
+        // SEND MESSAGE
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            if (input.value.trim()) {
+                console.log('Global message:', input.value);
+                
+                // Simulate message sent
+                shootReaction('💬');
+                input.value = '';
+            }
+        }
+        
+        function sendPanelMessage() {
+            const input = document.getElementById('chatInputPanel');
+            if (input.value.trim()) {
+                const messages = document.getElementById('chatMessages');
+                const msg = document.createElement('div');
+                msg.className = 'chat-message';
+                msg.innerHTML = `<strong>You:</strong> ${input.value}`;
+                messages.appendChild(msg);
+                messages.scrollTop = messages.scrollHeight;
+                input.value = '';
+            }
+        }
+        
+        // MODAL SYSTEM
+        function openModal(type) {
+            const modal = document.getElementById('modal');
+            const title = document.getElementById('modalTitle');
+            const body = document.getElementById('modalBody');
+            
+            modal.classList.add('active');
+            
+            switch(type) {
+                case 'social':
+                    title.textContent = 'SOCIAL MEDIA';
+                    body.innerHTML = generateGrid([
+                        'TIKTOK', 'INSTAGRAM', 'FACEBOOK', 'TWITTER',
+                        'YOUTUBE', 'LINKEDIN', 'SNAPCHAT', 'SPOTIFY'
+                    ]);
+                    break;
+                case 'reactions':
+                    title.textContent = 'REACTIONS';
+                    body.innerHTML = generateGrid([
+                        'LOVE', 'FIRE', 'LAUGH', 'PARTY', 'STAR', 'SPARKLE',
+                        'CLAP', 'HANDS', 'STRONG', 'ROCK', 'EYES', 'SKULL',
+                        'HEART', 'CELEBRATE', 'MUSIC', 'NOTE', 'MIC', 'HEADPHONE',
+                        'GUITAR', 'PIANO', 'DRUM', 'TRUMPET', 'DANCE', 'DISCO'
+                    ]);
+                    break;
+                case 'effects':
+                    title.textContent = 'CAMERA EFFECTS';
+                    body.innerHTML = generateGrid([
+                        'YOUNGER', 'SMOOTH', 'GLOW', 'GLAMOUR', 'VINTAGE', 'NEON',
+                        'B&W', 'WARM', 'COOL', 'DREAMY', 'SHARP', 'SOFT',
+                        'DRAMATIC', 'SUNSET', 'DISCO', 'SPARKLE', 'HALO', 'STAR',
+                        'BLUR BG', 'BOKEH', 'VHS', '80S', '90S', 'Y2K',
+                        'GLITCH', 'MIRROR', 'KALEIDO', 'RAINBOW', 'GOLD', 'SILVER'
+                    ]);
+                    break;
+                case 'ai':
+                    title.textContent = 'AI CHAIN REACTION';
+                    body.innerHTML = generateGrid([
+                        'HAPPY', 'SARCASM', 'DRAMATIC', 'CHILL', 'FANCY', 'HYPE',
+                        'POET', 'ROBOT', 'GEN Z', 'ALIEN', 'LEGENDARY', 'ICONIC'
+                    ]);
+                    break;
+                case 'pins':
+                    title.textContent = 'DROP A PIN';
+                    body.innerHTML = `
+                        <div style="margin-top: 15px;">
+                            <input type="text" placeholder="Pin title..." style="
+                                width: 100%;
+                                background: rgba(255,255,255,0.06);
+                                border: 0.5px solid rgba(255,255,255,0.15);
+                                border-radius: 8px;
+                                padding: 10px 12px;
+                                font-size: 11px;
+                                color: #fff;
+                                font-family: inherit;
+                                margin-bottom: 10px;
+                                outline: none;
+                            ">
+                            <textarea placeholder="Add a message..." style="
+                                width: 100%;
+                                height: 80px;
+                                background: rgba(255,255,255,0.06);
+                                border: 0.5px solid rgba(255,255,255,0.15);
+                                border-radius: 8px;
+                                padding: 10px 12px;
+                                font-size: 11px;
+                                color: #fff;
+                                font-family: inherit;
+                                resize: vertical;
+                                outline: none;
+                            "></textarea>
+                            <button class="action-btn primary" style="width: 100%; margin-top: 10px; padding: 12px;" onclick="dropPin()">
+                                DROP PIN
+                            </button>
+                        </div>
+                    `;
+                    break;
+                case 'special':
+                    title.textContent = 'SPECIAL EFFECTS';
+                    body.innerHTML = generateGrid([
+                        'CONFETTI', 'FIREWORKS', 'LASERS', 'SMOKE',
+                        'STROBE', 'RAINBOW', 'GLITTER', 'BUBBLES'
+                    ]);
+                    break;
+            }
+        }
+        
+        function closeModal() {
+            document.getElementById('modal').classList.remove('active');
+        }
+        
+        function generateGrid(items) {
+            return `
+                <div class="option-grid">
+                    ${items.map(item => `
+                        <div class="option-item" onclick="selectOption(this, '${item}')">
+                            <div class="option-label">${item}</div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+        
+        function selectOption(element, option) {
+            element.classList.toggle('selected');
+            console.log('Selected:', option);
+            
+            // Trigger reaction when selected
+            if (element.classList.contains('selected')) {
+                shootReaction('✅');
+            }
+        }
+        
+        function dropPin() {
+            console.log('Pin dropped!');
+            shootReaction('📍');
+            closeModal();
+        }
+        
+        // Close modal on background click
+        document.getElementById('modal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+        
+        // Enter key to send messages
+        document.getElementById('chatInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') sendMessage();
+        });
+        
+        document.getElementById('chatInputPanel').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') sendPanelMessage();
+        });
+        
+        // Simulate online count changes
+        setInterval(() => {
+            onlineCount += Math.floor(Math.random() * 11) - 5;
+            onlineCount = Math.max(100, onlineCount);
+            document.getElementById('onlineCount').textContent = onlineCount;
+        }, 5000);
+        
+        console.log('🎉 SOUND FACTORY NYC - LEGENDARY NIGHTLIFE EXPERIENCE!');
+        console.log('iOS Typography Edition - Clean & Minimal Design');
+        
+        // SMS AUTHENTICATION
+        let userPhone = '';
+        let isAuthenticated = localStorage.getItem('sf_authenticated') === 'true';
+        
+        // Check authentication on load
+        window.addEventListener('DOMContentLoaded', () => {
+            if (!isAuthenticated) {
+                setTimeout(() => {
+                    document.getElementById('smsModal').classList.add('active');
+                }, 1000);
+            }
+        });
+        
+        // Format phone number as user types
+        document.getElementById('phoneInput').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            let formattedValue = '';
+            
+            if (value.length > 0) {
+                if (value.length <= 3) {
+                    formattedValue = `(${value}`;
+                } else if (value.length <= 6) {
+                    formattedValue = `(${value.slice(0, 3)}) ${value.slice(3)}`;
+                } else {
+                    formattedValue = `(${value.slice(0, 3)}) ${value.slice(3, 6)}-${value.slice(6, 10)}`;
+                }
+            }
+            
+            e.target.value = formattedValue;
+        });
+        
+        // Auto-advance code input
+        document.getElementById('codeInput').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            e.target.value = value;
+            
+            if (value.length === 6) {
+                verifyCode();
+            }
+        });
+        
+        // Send SMS Code
+        async function sendSMSCode() {
+            const phoneInput = document.getElementById('phoneInput');
+            const phone = phoneInput.value.replace(/\D/g, '');
+            
+            if (phone.length !== 10) {
+                phoneInput.style.borderColor = 'rgba(255,0,0,0.5)';
+                setTimeout(() => {
+                    phoneInput.style.borderColor = 'rgba(255,255,255,0.15)';
+                }, 2000);
+                return;
+            }
+            
+            userPhone = '+1' + phone;
+            
+            // Show loading
+            document.getElementById('phoneStep').style.display = 'none';
+            document.getElementById('loadingStep').style.display = 'block';
+            
+            try {
+                const response = await fetch('/.netlify/functions/send-sms', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone: userPhone })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // Show code input
+                    document.getElementById('loadingStep').style.display = 'none';
+                    document.getElementById('codeStep').style.display = 'block';
+                    document.getElementById('codeInput').focus();
+                } else {
+                    // Show error
+                    document.getElementById('loadingStep').style.display = 'none';
+                    document.getElementById('phoneStep').style.display = 'block';
+                    phoneInput.style.borderColor = 'rgba(255,0,0,0.5)';
+                }
+            } catch (error) {
+                console.error('SMS Error:', error);
+                // Show error and stay on phone step
+                document.getElementById('loadingStep').style.display = 'none';
+                document.getElementById('phoneStep').style.display = 'block';
+                phoneInput.style.borderColor = 'rgba(255,0,0,0.5)';
+                alert('Unable to send SMS. Please try again.');
+            }
+        }
+        
+        // Verify Code
+        async function verifyCode() {
+            const codeInput = document.getElementById('codeInput');
+            const code = codeInput.value;
+            
+            if (code.length !== 6) {
+                codeInput.style.borderColor = 'rgba(255,0,0,0.5)';
+                setTimeout(() => {
+                    codeInput.style.borderColor = 'rgba(255,255,255,0.15)';
+                }, 2000);
+                return;
+            }
+            
+            // Show loading
+            document.getElementById('codeStep').style.display = 'none';
+            document.getElementById('loadingStep').style.display = 'block';
+            
+            try {
+                const response = await fetch('/.netlify/functions/verify-sms', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone: userPhone, code: code })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) { // Real verification only
+                    // Success!
+                    localStorage.setItem('sf_authenticated', 'true');
+                    localStorage.setItem('sf_user_phone', userPhone);
+                    isAuthenticated = true;
+                    
+                    // Celebrate and close
+                    document.getElementById('loadingStep').innerHTML = `
+                        <div style="font-size: 48px; margin-bottom: 10px;">🎆</div>
+                        <p style="color: #fff; font-size: 14px; font-weight: 600;">WELCOME TO SOUND FACTORY!</p>
+                    `;
+                    
+                    shootReaction('🎉');
+                    shootReaction('✨');
+                    shootReaction('🎆');
+                    
+                    setTimeout(() => {
+                        document.getElementById('smsModal').classList.remove('active');
+                    }, 2000);
+                } else {
+                    // Show error
+                    document.getElementById('loadingStep').style.display = 'none';
+                    document.getElementById('codeStep').style.display = 'block';
+                    codeInput.style.borderColor = 'rgba(255,0,0,0.5)';
+                    codeInput.value = '';
+                }
+            } catch (error) {
+                console.error('Verify Error:', error);
+                // Show error - no demo mode
+                document.getElementById('loadingStep').style.display = 'none';
+                document.getElementById('codeStep').style.display = 'block';
+                codeInput.style.borderColor = 'rgba(255,0,0,0.5)';
+                codeInput.value = '';
+                alert('Invalid verification code. Please try again.');
+            }
+        }
+        
+        // Back to Phone
+        function backToPhone() {
+            document.getElementById('codeStep').style.display = 'none';
+            document.getElementById('phoneStep').style.display = 'block';
+            document.getElementById('phoneInput').focus();
+        }
+        
+        // Add logout option (for testing)
+        function logout() {
+            localStorage.removeItem('sf_authenticated');
+            localStorage.removeItem('sf_user_phone');
+            location.reload();
+        }
+    </script>
+</body>
+</html>

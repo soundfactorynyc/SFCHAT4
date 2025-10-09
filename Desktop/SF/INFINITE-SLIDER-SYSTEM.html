@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sound Factory - INFINITE SLIDER SYSTEM</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            background: #000;
+            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+            touch-action: pan-y;
+        }
+        
+        /* BLUEPRINT GRID */
+        #blueprint-bg {
+            position: fixed;
+            inset: 0;
+            background: 
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 20px 20px;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        /* TOP BAR */
+        .top-bar {
+            padding: 10px 20px;
+            border-bottom: 0.5px solid rgba(255,255,255,0.12);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(20px);
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            position: relative;
+        }
+        
+        .logo {
+            font-size: 16px;
+            font-weight: 700;
+        }
+        
+        /* MAIN FLOOR */
+        .content {
+            height: calc(100vh - 200px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        svg {
+            width: 100%;
+            height: 100%;
+            max-width: 95vw;
+            max-height: 90vh;
+        }
+        
+        .character {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #ff0066, #ff3399);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+            font-weight: 700;
+            color: #fff;
+            cursor: move;
+            box-shadow: 0 0 20px rgba(255, 0, 102, 0.8);
+            z-index: 100;
+            left: 50%;
+            top: 40%;
+            transform: translate(-50%, -50%);
+        }
+        
+        /* ========== INFINITE HORIZONTAL SLIDER ========== */
+        .slider-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 120px;
+            background: rgba(0,0,0,0.95);
+            border-top: 1px solid rgba(255,255,255,0.1);
+            backdrop-filter: blur(20px);
+            z-index: 900;
+            overflow: hidden;
+        }
+        
+        .slider-track {
+            display: flex;
+            height: 100%;
+            align-items: center;
+            padding: 0 20px;
+            gap: 15px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none; /* Firefox */
+        }
+        
+        .slider-track::-webkit-scrollbar {
+            display: none; /* Chrome/Safari */
+        }
+        
+        .slider-item {
+            min-width: 80px;
+            height: 80px;
+            flex-shrink: 0;
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            user-select: none;
+        }
+        
+        .slider-item:active {
+            transform: scale(0.9);
+        }
+        
+        .slider-item.selected {
+            background: linear-gradient(135deg, #ff0066, #ff3399);
+            border-color: #ff0066;
+            box-shadow: 0 0 20px rgba(255, 0, 102, 0.6);
+        }
+        
+        .slider-emoji {
+            font-size: 36px;
+            line-height: 1;
+        }
+        
+        .slider-label {
+            font-size: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            opacity: 0.7;
+        }
+        
+        /* SHOOT BUTTON */
+        .shoot-button {
+            position: fixed;
+            bottom: 140px;
+            right: 20px;
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #00ff88, #00cc66);
+            border: none;
+            border-radius: 50%;
+            font-size: 32px;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(0,255,136,0.5);
+            z-index: 1000;
+            transition: all 0.2s;
+        }
+        
+        .shoot-button:active {
+            transform: scale(0.9);
+        }
+        
+        .shoot-button.disabled {
+            opacity: 0.3;
+            pointer-events: none;
+        }
+        
+        /* MONEY COUNTER */
+        .money-display {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: rgba(0,0,0,0.9);
+            border: 2px solid rgba(0,255,136,0.4);
+            border-radius: 20px;
+            padding: 12px 20px;
+            font-size: 20px;
+            font-weight: 700;
+            color: #00ff88;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 5px 20px rgba(0,255,136,0.3);
+        }
+        
+        .multiplier {
+            font-size: 12px;
+            color: rgba(255,255,255,0.6);
+            margin-top: 4px;
+        }
+        
+        /* SCROLL INDICATORS */
+        .scroll-hint {
+            position: fixed;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10px;
+            color: rgba(255,255,255,0.4);
+            z-index: 1000;
+            animation: fadeInOut 2s infinite;
+        }
+        
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.8; }
+        }
+        
+        /* ANIMATIONS */
+        @keyframes reactionFloat {
+            0% {
+                transform: translateY(0) scale(0) rotate(0deg);
+                opacity: 0;
+            }
+            20% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-400px) scale(1.5) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        .reaction-particle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 10000;
+            animation: reactionFloat 2s ease-out forwards;
+        }
+        
+        /* TOAST */
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(135deg, #ff0066, #ff3399);
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            box-shadow: 0 10px 30px rgba(255, 0, 102, 0.4);
+            z-index: 10000;
+            display: none;
+        }
+        
+        .toast.active {
+            display: block;
+            animation: toastSlide 0.3s;
+        }
+        
+        @keyframes toastSlide {
+            from { transform: translateX(-50%) translateY(-100px); opacity: 0; }
+            to { transform: translateX(-50%) translateY(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Blueprint Background -->
+    <div id="blueprint-bg"></div>
+    
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="logo">SOUND FACTORY</div>
+        <div style="font-size: 11px; color: rgba(255,255,255,0.6);">SWIPE TO EXPLORE →</div>
+    </div>
+    
+    <!-- Main Floor -->
+    <div class="content">
+        <svg viewBox="0 0 400 520" preserveAspectRatio="xMidYMid meet">
+            <rect width="400" height="520" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="2"/>
+            <rect x="30" y="30" width="340" height="460" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+            
+            <!-- DJ BOOTH -->
+            <line x1="30" y1="30" x2="100" y2="100" stroke="rgba(255,0,102,0.8)" stroke-width="3"/>
+            <rect x="30" y="30" width="70" height="70" fill="none" stroke="rgba(255,0,102,0.5)" stroke-width="1.5"/>
+            <text x="65" y="70" font-family="Arial" font-size="9" fill="rgba(255,0,102,0.8)" text-anchor="middle" font-weight="bold">DJ</text>
+            
+            <!-- Bar -->
+            <rect x="30" y="120" width="40" height="300" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+            
+            <!-- Columns -->
+            <rect x="90" y="140" width="35" height="35" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1" rx="2"/>
+            <rect x="182" y="140" width="35" height="35" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1" rx="2"/>
+            <rect x="275" y="140" width="35" height="35" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1" rx="2"/>
+            <rect x="90" y="210" width="35" height="35" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1" rx="2"/>
+            <rect x="182" y="210" width="35" height="35" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1" rx="2"/>
+            <rect x="275" y="210" width="35" height="35" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1" rx="2"/>
+            <rect x="90" y="280" width="35" height="35" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1" rx="2"/>
+            <rect x="182" y="280" width="35" height="35" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1" rx="2"/>
+            <rect x="275" y="280" width="35" height="35" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1" rx="2"/>
+            <rect x="90" y="350" width="35" height="35" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1" rx="2"/>
+            <rect x="182" y="350" width="35" height="35" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1" rx="2"/>
+            <rect x="275" y="350" width="35" height="35" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1" rx="2"/>
+            
+            <!-- Dance floor -->
+            <rect x="90" y="140" width="230" height="260" fill="none" stroke="rgba(0,255,136,0.2)" stroke-width="1" stroke-dasharray="5,5"/>
+            
+            <text x="200" y="25" font-family="Arial" font-size="11" fill="rgba(255,255,255,0.5)" text-anchor="middle" font-weight="bold">MAIN FLOOR</text>
+        </svg>
+        
+        <!-- Character -->
+        <div class="character" id="myCharacter">YOU</div>
+    </div>
+    
+    <!-- Money Display -->
+    <div class="money-display">
+        <div>💰 $<span id="totalMoney">0</span></div>
+        <div class="multiplier"><span id="multiplier">1.0</span>x POWER</div>
+    </div>
+    
+    <!-- Shoot Button -->
+    <button class="shoot-button" id="shootBtn" onclick="shootSelected()">🚀</button>
+    
+    <!-- Infinite Slider -->
+    <div class="slider-container">
+        <div class="slider-track" id="sliderTrack"></div>
+    </div>
+    
+    <!-- Scroll Hint -->
+    <div class="scroll-hint">⬅️ SWIPE TO EXPLORE ➡️</div>
+    
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+    
+    <script>
+        // ========== ALL 64 ITEMS (32 Reactions + 32 Camera Effects) ==========
+        const ALL_ITEMS = [
+            // REACTIONS (32)
+            { type: 'reaction', emoji: '❤️', name: 'Love', color: '#ff0066' },
+            { type: 'reaction', emoji: '🔥', name: 'Fire', color: '#ff4500' },
+            { type: 'reaction', emoji: '😂', name: 'Laugh', color: '#ffd700' },
+            { type: 'reaction', emoji: '🎉', name: 'Party', color: '#ff69b4' },
+            { type: 'reaction', emoji: '👠', name: 'Heel', color: '#e74c3c' },
+            { type: 'reaction', emoji: '🏳️‍🌈', name: 'Pride', color: 'rainbow' },
+            { type: 'reaction', emoji: '✨', name: 'Sparkle', color: '#ffd700' },
+            { type: 'reaction', emoji: '⭐', name: 'Star', color: '#f39c12' },
+            { type: 'reaction', emoji: '👑', name: 'Crown', color: '#f1c40f' },
+            { type: 'reaction', emoji: '💎', name: 'Diamond', color: '#3498db' },
+            { type: 'reaction', emoji: '💋', name: 'Kiss', color: '#e74c3c' },
+            { type: 'reaction', emoji: '🌹', name: 'Rose', color: '#c0392b' },
+            { type: 'reaction', emoji: '🍾', name: 'Champagne', color: '#f39c12' },
+            { type: 'reaction', emoji: '🍸', name: 'Cocktail', color: '#16a085' },
+            { type: 'reaction', emoji: '🪩', name: 'Disco', color: '#9b59b6' },
+            { type: 'reaction', emoji: '🎵', name: 'Music', color: '#3498db' },
+            { type: 'reaction', emoji: '🔊', name: 'Speaker', color: '#2c3e50' },
+            { type: 'reaction', emoji: '⚡', name: 'Lightning', color: '#f1c40f' },
+            { type: 'reaction', emoji: '💥', name: 'Boom', color: '#e67e22' },
+            { type: 'reaction', emoji: '🙌', name: 'Hands', color: '#f39c12' },
+            { type: 'reaction', emoji: '👏', name: 'Clap', color: '#e67e22' },
+            { type: 'reaction', emoji: '✌️', name: 'Peace', color: '#16a085' },
+            { type: 'reaction', emoji: '👌', name: 'OK', color: '#27ae60' },
+            { type: 'reaction', emoji: '💪', name: 'Strong', color: '#c0392b' },
+            { type: 'reaction', emoji: '👀', name: 'Eyes', color: '#34495e' },
+            { type: 'reaction', emoji: '😉', name: 'Wink', color: '#f39c12' },
+            { type: 'reaction', emoji: '😎', name: 'Cool', color: '#2980b9' },
+            { type: 'reaction', emoji: '🥵', name: 'Hot', color: '#e74c3c' },
+            { type: 'reaction', emoji: '👽', name: 'Alien', color: '#27ae60' },
+            { type: 'reaction', emoji: '🤖', name: 'Robot', color: '#95a5a6' },
+            { type: 'reaction', emoji: '🦄', name: 'Unicorn', color: '#e91e63' },
+            { type: 'reaction', emoji: '🚀', name: 'Rocket', color: '#e74c3c' },
+            
+            // MONEY (4)
+            { type: 'money', emoji: '💵', name: '$1', value: 1 },
+            { type: 'money', emoji: '💵', name: '$5', value: 5 },
+            { type: 'money', emoji: '💰', name: '$10', value: 10 },
+            { type: 'money', emoji: '💎', name: '$20', value: 20 },
+            
+            // CAMERA EFFECTS (28 more to make endless feel)
+            { type: 'effect', emoji: '✨', name: 'Younger', desc: '-10 years' },
+            { type: 'effect', emoji: '🌟', name: 'Smooth', desc: 'Flawless' },
+            { type: 'effect', emoji: '💫', name: 'Glow', desc: 'Natural' },
+            { type: 'effect', emoji: '💄', name: 'Glamour', desc: 'Full glam' },
+            { type: 'effect', emoji: '📷', name: 'Vintage', desc: 'Classic' },
+            { type: 'effect', emoji: '🌈', name: 'Neon', desc: 'Neon vibes' },
+            { type: 'effect', emoji: '⚫', name: 'B&W', desc: 'Classic' },
+            { type: 'effect', emoji: '🔥', name: 'Warm', desc: 'Warm tones' },
+            { type: 'effect', emoji: '❄️', name: 'Cool', desc: 'Cool tones' },
+            { type: 'effect', emoji: '☁️', name: 'Dreamy', desc: 'Soft' },
+            { type: 'effect', emoji: '💎', name: 'Sharp', desc: 'Crystal' },
+            { type: 'effect', emoji: '🌸', name: 'Soft', desc: 'Romantic' },
+            { type: 'effect', emoji: '🎭', name: 'Dramatic', desc: 'High contrast' },
+            { type: 'effect', emoji: '🌅', name: 'Sunset', desc: 'Golden' },
+            { type: 'effect', emoji: '🪩', name: 'Disco', desc: 'Lights' },
+            { type: 'effect', emoji: '✨', name: 'Sparkle', desc: 'Add sparkles' },
+            { type: 'effect', emoji: '👼', name: 'Halo', desc: 'Angelic' },
+            { type: 'effect', emoji: '⭐', name: 'Star', desc: 'Star filter' },
+            { type: 'effect', emoji: '🎯', name: 'Blur BG', desc: 'Focus' },
+            { type: 'effect', emoji: '💫', name: 'Bokeh', desc: 'Lights' },
+            { type: 'effect', emoji: '📼', name: 'VHS', desc: 'Retro' },
+            { type: 'effect', emoji: '🎸', name: '80s', desc: '80s vibe' },
+            { type: 'effect', emoji: '💿', name: '90s', desc: '90s vibe' },
+            { type: 'effect', emoji: '💻', name: 'Y2K', desc: 'Y2K' },
+            { type: 'effect', emoji: '⚡', name: 'Glitch', desc: 'Glitch' },
+            { type: 'effect', emoji: '🪞', name: 'Mirror', desc: 'Mirror' },
+            { type: 'effect', emoji: '🔮', name: 'Kaleid', desc: 'Trippy' },
+            { type: 'effect', emoji: '🌈', name: 'Rainbow', desc: 'Rainbow' }
+        ];
+        
+        // ========== STATE ==========
+        let selectedItem = null;
+        let totalMoney = 0;
+        let multiplier = 1.0;
+        
+        // ========== INITIALIZE SLIDER ==========
+        function initSlider() {
+            const track = document.getElementById('sliderTrack');
+            
+            ALL_ITEMS.forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'slider-item';
+                div.dataset.index = index;
+                
+                div.innerHTML = `
+                    <div class="slider-emoji">${item.emoji}</div>
+                    <div class="slider-label">${item.name}</div>
+                `;
+                
+                div.onclick = () => selectItem(item, div);
+                track.appendChild(div);
+            });
+            
+            // Auto-select first reaction
+            selectItem(ALL_ITEMS[0], track.firstChild);
+        }
+        
+        // ========== SELECT ITEM ==========
+        function selectItem(item, element) {
+            // Clear previous selection
+            document.querySelectorAll('.slider-item').forEach(el => el.classList.remove('selected'));
+            element.classList.add('selected');
+            
+            selectedItem = item;
+            
+            // Update shoot button
+            const btn = document.getElementById('shootBtn');
+            if (item.type === 'money') {
+                btn.textContent = '💰';
+                btn.style.background = 'linear-gradient(135deg, #00ff88, #00cc66)';
+            } else if (item.type === 'effect') {
+                btn.textContent = '📸';
+                btn.style.background = 'linear-gradient(135deg, #9933ff, #6600cc)';
+            } else {
+                btn.textContent = '🚀';
+                btn.style.background = 'linear-gradient(135deg, #ff0066, #ff3399)';
+            }
+            
+            showToast(`✅ ${item.name} selected!`);
+        }
+        
+        // ========== SHOOT SELECTED ==========
+        function shootSelected() {
+            if (!selectedItem) {
+                showToast('⚠️ Select something first!');
+                return;
+            }
+            
+            if (selectedItem.type === 'money') {
+                processMoney(selectedItem.value);
+            } else if (selectedItem.type === 'effect') {
+                applyEffect(selectedItem);
+            } else {
+                shootReaction(selectedItem);
+            }
+        }
+        
+        // ========== SHOOT REACTION ==========
+        function shootReaction(item) {
+            const count = Math.ceil(10 * multiplier);
+            
+            for (let i = 0; i < count; i++) {
+                setTimeout(() => {
+                    const particle = document.createElement('div');
+                    particle.className = 'reaction-particle';
+                    particle.textContent = item.emoji;
+                    particle.style.cssText = `
+                        left: ${Math.random() * window.innerWidth}px;
+                        bottom: 120px;
+                        font-size: ${30 + multiplier * 10}px;
+                    `;
+                    
+                    document.body.appendChild(particle);
+                    setTimeout(() => particle.remove(), 2000);
+                }, i * 100);
+            }
+            
+            showToast(`🚀 ${item.name} shot! ${count} particles!`);
+        }
+        
+        // ========== PROCESS MONEY ==========
+        function processMoney(amount) {
+            totalMoney += amount;
+            multiplier = 1 + (totalMoney / 20);
+            
+            document.getElementById('totalMoney').textContent = totalMoney;
+            document.getElementById('multiplier').textContent = multiplier.toFixed(1);
+            
+            // Shoot money particles
+            const count = Math.ceil(20 * multiplier);
+            for (let i = 0; i < count; i++) {
+                setTimeout(() => {
+                    const particle = document.createElement('div');
+                    particle.className = 'reaction-particle';
+                    particle.textContent = '💵';
+                    particle.style.cssText = `
+                        left: ${Math.random() * window.innerWidth}px;
+                        bottom: 120px;
+                        font-size: ${40 + multiplier * 10}px;
+                        filter: brightness(${1 + multiplier * 0.3});
+                    `;
+                    
+                    document.body.appendChild(particle);
+                    setTimeout(() => particle.remove(), 2000);
+                }, i * 50);
+            }
+            
+            showToast(`💰 +$${amount}! Total: $${totalMoney} | ${multiplier.toFixed(1)}x POWER!`);
+        }
+        
+        // ========== APPLY EFFECT ==========
+        function applyEffect(item) {
+            showToast(`📸 ${item.name} applied!`);
+            // TODO: Integrate with camera
+        }
+        
+        // ========== CHARACTER DRAG ==========
+        const character = document.getElementById('myCharacter');
+        let isDragging = false;
+        
+        character.addEventListener('mousedown', () => isDragging = true);
+        character.addEventListener('touchstart', () => isDragging = true);
+        document.addEventListener('mouseup', () => isDragging = false);
+        document.addEventListener('touchend', () => isDragging = false);
+        
+        document.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                character.style.left = e.clientX + 'px';
+                character.style.top = e.clientY + 'px';
+            }
+        });
+        
+        document.addEventListener('touchmove', (e) => {
+            if (isDragging && e.touches[0]) {
+                character.style.left = e.touches[0].clientX + 'px';
+                character.style.top = e.touches[0].clientY + 'px';
+            }
+        });
+        
+        // ========== TOAST ==========
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('active');
+            setTimeout(() => toast.classList.remove('active'), 2000);
+        }
+        
+        // ========== INIT ==========
+        initSlider();
+        
+        console.log('🚀 INFINITE SLIDER SYSTEM READY!');
+        console.log('✅ 64 items to swipe through!');
+        console.log('✅ Progressive money system!');
+        console.log('✅ Mobile optimized!');
+    </script>
+</body>
+</html>

@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Sound Factory - LEGENDARY</title>
+    <style>
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; 
+            user-select: none;
+        }
+        
+        html, body { 
+            background: #000; 
+            color: #fff; 
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; 
+            overflow: hidden; 
+            height: 100vh; 
+            width: 100vw; 
+            position: fixed; 
+        }
+        
+        /* Blueprint takes FULL SCREEN */
+        .blueprint-bg { 
+            position: fixed; 
+            inset: 0; 
+            background: 
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), 
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px); 
+            background-size: 20px 20px; 
+            z-index: 1; 
+        }
+        
+        .blueprint-area { 
+            position: fixed; 
+            inset: 0; /* FULL SCREEN */
+            z-index: 10; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+        }
+        
+        svg { 
+            width: 100%; 
+            height: 100%; 
+            max-width: 600px; 
+        }
+        
+        /* DRAWER SYSTEM - Pull from edges */
+        .drawer {
+            position: fixed;
+            background: #000;
+            border: 1px solid rgba(255,255,255,0.2);
+            z-index: 1000;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Bottom drawer for reactions */
+        .drawer-bottom {
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            transform: translateY(calc(100% - 15px)); /* Shows 15px handle */
+            border-top: 1px solid rgba(255,255,255,0.2);
+            border-radius: 12px 12px 0 0;
+        }
+        
+        .drawer-bottom.open {
+            transform: translateY(0);
+        }
+        
+        /* Right drawer for money */
+        .drawer-right {
+            right: 0;
+            top: 50%;
+            transform: translate(calc(100% - 15px), -50%);
+            width: 200px;
+            height: 60px;
+            border-left: 1px solid rgba(255,255,255,0.2);
+            border-radius: 12px 0 0 12px;
+        }
+        
+        .drawer-right.open {
+            transform: translate(0, -50%);
+        }
+        
+        /* Left drawer for pins/actions */
+        .drawer-left {
+            left: 0;
+            top: 50%;
+            transform: translate(calc(-100% + 15px), -50%);
+            width: 200px;
+            height: 60px;
+            border-right: 1px solid rgba(255,255,255,0.2);
+            border-radius: 0 12px 12px 0;
+        }
+        
+        .drawer-left.open {
+            transform: translate(0, -50%);
+        }
+        
+        /* Drawer handle */
+        .drawer-handle {
+            position: absolute;
+            cursor: grab;
+            touch-action: none;
+        }
+        
+        .drawer-handle:active {
+            cursor: grabbing;
+        }
+        
+        .drawer-bottom .drawer-handle {
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .drawer-right .drawer-handle {
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .drawer-left .drawer-handle {
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .handle-dots {
+            display: flex;
+            gap: 2px;
+        }
+        
+        .handle-dots span {
+            width: 4px;
+            height: 4px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+        }
+        
+        /* Drawer content */
+        .drawer-content {
+            padding: 8px;
+            display: flex;
+            gap: 6px;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .drawer-content::-webkit-scrollbar {
+            display: none;
+        }
+        
+        /* Reaction items - SMALL */
+        .reaction-item {
+            min-width: 40px;
+            height: 40px;
+            background: #000;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        
+        .reaction-item:active {
+            background: rgba(255,255,255,0.1);
+            transform: scale(0.95);
+        }
+        
+        /* Money buttons - SMALL */
+        .money-btn {
+            min-width: 45px;
+            height: 35px;
+            background: #000;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .money-btn:active {
+            background: rgba(255,255,255,0.1);
+            transform: scale(0.95);
+        }
+        
+        /* Pin button */
+        .pin-btn {
+            width: 40px;
+            height: 40px;
+            background: #000;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .pin-btn:active {
+            background: rgba(255,255,255,0.1);
+            transform: scale(0.95);
+        }
+        
+        /* Character on blueprint */
+        .character { 
+            position: absolute; 
+            width: 30px; 
+            height: 30px; 
+            background: #000; 
+            border: 2px solid #fff; 
+            border-radius: 50%; 
+            font-size: 8px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-weight: 700; 
+            z-index: 100; 
+            left: 50%; 
+            top: 50%; 
+            transform: translate(-50%, -50%); 
+            cursor: move;
+        }
+        
+        /* Pins on blueprint */
+        .pin {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: #000;
+            border: 1px solid rgba(255,255,255,0.5);
+            border-radius: 50% 50% 50% 0;
+            transform: rotate(-45deg);
+            cursor: pointer;
+            z-index: 50;
+        }
+        
+        /* Small popup for pins */
+        .pin-popup {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            background: #000;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+            padding: 10px;
+            z-index: 2000;
+            display: none;
+        }
+        
+        .pin-popup.show {
+            display: block;
+        }
+        
+        .popup-title {
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        
+        .popup-text {
+            font-size: 10px;
+            color: rgba(255,255,255,0.7);
+        }
+        
+        /* Minimal header */
+        .mini-header {
+            position: fixed;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 10px;
+            color: rgba(255,255,255,0.5);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            z-index: 100;
+        }
+    </style>
+</head>
+<body>
+    <!-- Blueprint background -->
+    <div class="blueprint-bg"></div>
+    
+    <!-- Minimal header -->
+    <div class="mini-header">SOUND FACTORY</div>
+    
+    <!-- Full screen blueprint -->
+    <div class="blueprint-area" id="blueprintArea">
+        <svg viewBox="0 0 400 520">
+            <!-- Main floor outline -->
+            <rect width="400" height="520" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+            <rect x="30" y="30" width="340" height="460" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+            
+            <!-- DJ Booth -->
+            <rect x="30" y="420" width="70" height="70" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+            <text x="65" y="460" font-size="8" fill="rgba(255,255,255,0.3)" text-anchor="middle">DJ</text>
+            
+            <!-- Bar -->
+            <rect x="30" y="120" width="40" height="280" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+            <text x="50" y="260" font-size="8" fill="rgba(255,255,255,0.3)" text-anchor="middle" transform="rotate(-90 50 260)">BAR</text>
+            
+            <!-- Dance floor sections -->
+            <rect x="120" y="160" width="80" height="80" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+            <rect x="220" y="160" width="80" height="80" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+            <rect x="120" y="260" width="80" height="80" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+            <rect x="220" y="260" width="80" height="80" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+            
+            <text x="200" y="20" font-size="9" fill="rgba(255,255,255,0.3)" text-anchor="middle">MAIN FLOOR</text>
+        </svg>
+        
+        <!-- Draggable character -->
+        <div class="character" id="character">YOU</div>
+    </div>
+    
+    <!-- Bottom drawer for reactions (swipe up) -->
+    <div class="drawer drawer-bottom" id="reactionsDrawer">
+        <div class="drawer-handle" id="reactionsHandle">
+            <div class="handle-dots">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+        <div class="drawer-content" id="reactionsContent">
+            <!-- Endless scrolling reactions -->
+        </div>
+    </div>
+    
+    <!-- Right drawer for money (swipe left) -->
+    <div class="drawer drawer-right" id="moneyDrawer">
+        <div class="drawer-handle" id="moneyHandle">
+            <div class="handle-dots" style="flex-direction: column;">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+        <div class="drawer-content">
+            <button class="money-btn">$1</button>
+            <button class="money-btn">$5</button>
+            <button class="money-btn">$10</button>
+            <button class="money-btn">$20</button>
+        </div>
+    </div>
+    
+    <!-- Left drawer for pins/actions (swipe right) -->
+    <div class="drawer drawer-left" id="pinsDrawer">
+        <div class="drawer-handle" id="pinsHandle">
+            <div class="handle-dots" style="flex-direction: column;">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+        </div>
+        <div class="drawer-content">
+            <button class="pin-btn" onclick="dropPin()">📍</button>
+            <button class="pin-btn">💬</button>
+            <button class="pin-btn">🎤</button>
+            <button class="pin-btn">🎯</button>
+        </div>
+    </div>
+    
+    <!-- Small popup for pins -->
+    <div class="pin-popup" id="pinPopup">
+        <div class="popup-title">Pin dropped!</div>
+        <div class="popup-text">Tap to add message</div>
+    </div>
+    
+    <script src="drawer-system.js"></script>
+</body>
+</html>

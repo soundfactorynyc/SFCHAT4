@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Sound Factory — Floor Viewer + Social Pin Overlay</title>
+
+    <style>
+        /* =========================
+           Base Reset / Mobile-first
+        ==========================*/
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+        }
+
+        body {
+            background: #000;
+            height: 100vh;
+            height: 100dvh;
+            overflow: hidden;
+            position: relative;
+            touch-action: none; /* Prevent scrolling/zooming */
+        }
+
+        /* =========================
+           RIGHT NAV (kept above overlay)
+        ==========================*/
+        .nav-panel {
+            width: 40px;
+            background: rgba(26, 26, 26, 0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 8px 3px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            position: fixed;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1300; /* ABOVE overlay container */
+        }
+        .floor-buttons { display: flex; flex-direction: column; gap: 5px; }
+
+        .floor-btn {
+            background: rgba(42, 42, 42, 0.9);
+            border: 1.5px solid #3a3a3a;
+            color: #888;
+            min-height: 35px;
+            padding: 8px 2px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .floor-btn:active { transform: scale(0.92); transition: transform 0.1s ease; }
+
+        .floor-btn.active {
+            background: linear-gradient(135deg, #ff0066, #ff3399);
+            border-color: #ff0066;
+            color: #fff;
+            box-shadow: 0 2px 12px rgba(255, 0, 102, 0.5);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 2px 12px rgba(255, 0, 102, 0.5); }
+            50% { box-shadow: 0 2px 16px rgba(255, 0, 102, 0.7); }
+            100% { box-shadow: 0 2px 12px rgba(255, 0, 102, 0.5); }
+        }
+
+        .floor-indicator {
+            position: absolute;
+            left: 2px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 15px;
+            background: #ff0066;
+            border-radius: 2px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .floor-btn.active .floor-indicator { opacity: 1; animation: glow 1.5s ease-in-out infinite; }
+        @keyframes glow { 0%, 100% { opacity: 0.6; } 50% { opacity: 1; } }
+
+        /* =========================
+           BLUEPRINT AREA (full screen)
+        ==========================*/
+        .main-content {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .floor-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .floor {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 5px;
+        }
+        .floor.active { opacity: 1; visibility: visible; }
+
+        svg {
+            width: 100%;
+            height: 100%;
+            max-width: calc(100vw - 60px); /* leave a sliver for nav */
+            max-height: 100vh;
+            filter: drop-shadow(0 0 15px rgba(0,0,0,0.6));
+        }
+
+        @media (min-width: 768px) {
+            .nav-panel { width: 50px; right: 15px; padding: 10px 4px; gap: 6px; border-radius: 15px; }
+            .floor-btn { min-height: 38px; padding: 10px 3px; font-size: 12px; border-radius: 10px; }
+            .floor-btn:hover { background: #353535; border-color: #555; color: #aaa; transform: scale(1.05); }
+            .floor-btn:active { transform: scale(1); }
+            .floor-indicator { width: 4px; height: 18px; left: 3px; }
+            svg { max-width: 90vw; max-height: 90vh; padding: 10px; }
+        }
+
+        @media (min-width: 1024px) {
+            .nav-panel { width: 50px; right: 25px; padding: 8px 4px; gap: 4px; border-radius: 12px; }
+            .floor-btn { min-height: 36px; padding: 8px 2px; font-size: 11px; border-radius: 8px; border-width: 2px; }
+            .floor-indicator { width: 4px; height: 16px; left: 3px; }
+            svg { max-width: 90vw; max-height: 90vh; }
+        }
+
+        @media (max-height: 500px) and (orientation: landscape) {
+            .nav-panel { width: 36px; right: 6px; padding: 5px 2px; gap: 3px; }
+            .floor-btn { min-height: 30px; padding: 6px 1px; font-size: 10px; }
+            svg { max-width: calc(100vw - 50px); }
+        }
+
+        @supports (-webkit-touch-callout: none) {
+            .nav-panel { -webkit-backdrop-filter: blur(10px); }
+        }
+
+        /* =========================
+           TRANSPARENT PIN OVERLAY
+           - Sits ABOVE blueprint, BELOW nav (z:1200 vs 1300)
+        ==========================*/
+        #pinSystemOverlay {
+            position: fixed;
+            inset: 0;
+            z-index: 1200;
+            pointer-events: none; /* container doesn't block; children can be interactive */
+        }
+
+        .pin {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            cursor: pointer;
+            pointer-events: auto;
+            animation: dropIn 0.5s ease;
+            box-shadow: 0 0 8px currentColor, 0 0 16px currentColor, 0 0 24px currentColor;
+            opacity: 0.9;
+        }
+        .pin::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: inherit;
+            animation: pinGlow 2s ease-in-out infinite;
+        }
+        @keyframes pinGlow {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(2.5); opacity: 0.3; }
+        }
+        @keyframes dropIn {
+            from { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+            to   { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+        }
+
+        .live-person {
+            position: absolute;
+            width: 32px; height: 32px; border-radius: 50%;
+            transform: translate(-50%, -50%);
+            cursor: pointer; pointer-events: auto; z-index: 100;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(0,255,136,0.8);
+            animation: livePulse 2s infinite;
+        }
+        .live-person img {
+            width: 100%; height: 100%; border-radius: 50%; border: 2px solid #00ff88; object-fit: cover;
+        }
+        .live-person .status-dot {
+            position: absolute; bottom: 0; right: 0; width: 10px; height: 10px; background: #00ff88; border-radius: 50%;
+            border: 2px solid #000; animation: pulse 1s infinite;
+        }
+        @keyframes livePulse { 0%,100% { transform: translate(-50%, -50%) scale(1);} 50% { transform: translate(-50%, -50%) scale(1.1);} }
+
+        /* Hover profile card */
+        .profile-hover {
+            position: fixed;
+            background: rgba(20, 20, 20, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 15px;
+            color: white;
+            z-index: 3000;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+            border: 1px solid rgba(255,255,255,0.1);
+            width: 320px;
+            pointer-events: auto;
+            display: none;
+            animation: fadeIn 0.2s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: scale(0.9);} to { opacity: 1; transform: scale(1);} }
+        .profile-header { display:flex; align-items:center; gap:12px; margin-bottom:15px; padding-bottom:12px; border-bottom:1px solid rgba(255,255,255,0.1); }
+        .profile-avatar { width:50px; height:50px; border-radius:50%; overflow:hidden; border:2px solid #ff0066; }
+        .profile-avatar img { width:100%; height:100%; object-fit:cover; }
+        .profile-info { flex:1; }
+        .profile-name { font-size:16px; font-weight:bold; color:#fff; }
+        .profile-status { font-size:12px; color:#00ff88; }
+        .profile-bio { font-size:12px; color:#888; margin-top:3px; }
+
+        .social-actions { display:grid; grid-template-columns: repeat(3,1fr); gap:8px; margin-bottom:12px; }
+        .social-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            padding: 10px; border-radius: 10px; color:#fff; cursor:pointer; transition: all .2s; text-align:center; font-size:11px;
+        }
+        .social-btn:hover { background: rgba(255,0,102,0.2); border-color:#ff0066; transform: translateY(-2px); }
+        .social-btn.primary { background: linear-gradient(135deg, #ff0066, #ff3399); border: none; grid-column: span 2; }
+        .social-btn span { display:block; font-size:16px; margin-bottom:3px; }
+
+        /* Group chat bubble */
+        .group-chat {
+            position: fixed;
+            background: rgba(30, 30, 30, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 15px;
+            color: white;
+            z-index: 4000;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+            border: 2px solid #00ff88;
+            width: 300px;
+            max-height: 400px;
+            display: none;
+            pointer-events: auto;
+        }
+        .group-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; padding-bottom:10px; border-bottom:1px solid rgba(255,255,255,0.1); }
+        .group-members { display:flex; gap:-10px; }
+        .member-avatar { width:30px; height:30px; border-radius:50%; border:2px solid #000; background:#ff0066; display:flex; align-items:center; justify-content:center; font-size:12px; }
+        .chat-messages { max-height:200px; overflow-y:auto; margin-bottom:10px; }
+        .chat-message { background: rgba(255,255,255,0.05); padding:8px; border-radius:10px; margin-bottom:5px; font-size:12px; }
+        .chat-input { display:flex; gap:8px; }
+        .chat-input input { flex:1; background: rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); padding:8px; border-radius:20px; color:#fff; font-size:12px; }
+        .chat-input button { background:#00ff88; border:none; padding:8px 15px; border-radius:20px; color:#000; font-weight:bold; cursor:pointer; }
+
+        /* Video modal / Gift / Toast / Join */
+        .video-chat, .gift-modal { position: fixed; top:50%; left:50%; transform: translate(-50%, -50%); z-index: 5000; display: none; pointer-events:auto; }
+        .video-chat {
+            background: rgba(20,20,20,0.98); backdrop-filter: blur(20px); border-radius: 20px; padding: 20px;
+        }
+        .video-container { display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:15px; }
+        .video-box { width:200px; height:150px; background:#000; border-radius:10px; position:relative; overflow:hidden; }
+        .video-box video { width:100%; height:100%; object-fit:cover; }
+        .video-controls { display:flex; justify-content:center; gap:10px; }
+        .video-btn { width:40px; height:40px; border-radius:50%; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:18px; }
+        .video-btn.end { background:#ff0066; }
+        .video-btn.mute { background: rgba(255,255,255,0.2); }
+
+        .gift-modal {
+            background: rgba(30,30,30,0.98); backdrop-filter: blur(20px); border-radius:20px; padding:25px; text-align:center; color:#fff;
+        }
+        .gift-modal h3 { color:#ff0066; margin-bottom:15px; }
+        .gift-options { display:grid; gap:10px; margin-bottom:15px; }
+        .gift-option { background: rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); padding:15px; border-radius:10px; cursor:pointer; transition:.2s; }
+        .gift-option:hover { background: rgba(255,0,102,0.2); border-color:#ff0066; }
+        .gift-price { color:#00ff88; font-weight:bold; font-size:18px; }
+
+        .toast {
+            position: fixed; top:20px; right:20px;
+            background: linear-gradient(135deg, #ff0066, #ff3399);
+            color:#fff; padding:15px 20px; border-radius:10px; box-shadow:0 10px 30px rgba(255,0,102,0.4); z-index:6000;
+            animation: slideInRight .3s ease; pointer-events:auto;
+        }
+        @keyframes slideInRight { from { transform: translateX(100%);} to { transform: translateX(0);} }
+
+        .join-request {
+            position: fixed; bottom: 100px; right: 20px; background: rgba(0,255,136,0.9); color:#000; padding:12px 16px;
+            border-radius:20px; z-index:3000; animation: bounce .5s ease; cursor:pointer; pointer-events:auto; display:none;
+        }
+        @keyframes bounce { 0%,100% { transform: translateY(0);} 50% { transform: translateY(-10px);} }
+
+        /* Collision zone */
+        .collision-zone {
+            position:absolute; width:60px; height:60px; border-radius:50%;
+            background: radial-gradient(circle, rgba(0,255,136,0.3), transparent);
+            transform: translate(-50%, -50%); pointer-events:none; animation: collisionPulse 1s infinite;
+        }
+        @keyframes collisionPulse { 0%,100% { transform: translate(-50%, -50%) scale(1); opacity: .5;} 50% { transform: translate(-50%, -50%) scale(1.2); opacity: .2;} }
+
+        /* Mode toggle (bottom center) */
+        .mode-toggle {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(10px);
+            border-radius: 30px; padding: 4px; display:flex; z-index: 2000; pointer-events:auto;
+        }
+        .mode-btn { padding:10px 20px; background:transparent; border:none; color:rgba(255,255,255,0.5); font-size:13px; font-weight:600; cursor:pointer; transition:.3s; border-radius:26px; }
+        .mode-btn.active { background: linear-gradient(135deg, #ff0066, #ff3399); color:#fff; }
+
+        /* Mode behavior */
+        .explore-mode #pinSystemOverlay { pointer-events: none; }
+        .explore-mode .pin, .explore-mode .live-person { pointer-events: auto; }
+        .drop-mode #pinSystemOverlay { pointer-events: auto; }
+        .live-mode #pinSystemOverlay { pointer-events: none; }
+        .live-mode .pin, .live-mode .live-person { pointer-events: auto; }
+
+        /* Mobile tweaks */
+        @media (max-width: 768px) {
+            .profile-hover { width: 280px; }
+            .group-chat { width: 90%; max-width: 320px; }
+        }
+    </style>
+</head>
+<body class="explore-mode">
+    <!-- =========================
+         BLUEPRINT STACK
+    ==========================-->
+    <div class="main-content">
+        <div class="floor-container">
+            <!-- Basement -->
+            <div class="floor" id="floor-b">
+                <svg viewBox="0 0 400 520" preserveAspectRatio="xMidYMid meet">
+                    <defs>
+                        <filter id="basementGlow">
+                            <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                            <feMerge>
+                                <feMergeNode in="coloredBlur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+                    </defs>
+                    <rect width="400" height="520" fill="#000"/>
+                    <rect x="5" y="5" width="390" height="510" fill="none" stroke="#333" stroke-width="2" filter="url(#basementGlow)"/>
+                    <rect x="10" y="10" width="380" height="500" fill="#050505" stroke="#222" stroke-width="1"/>
+                    <rect x="30" y="30" width="340" height="460" fill="none" stroke="#444" stroke-width="2"/>
+
+                    <rect x="180" y="35" width="140" height="45" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="185" y="40" width="130" height="35" fill="none" stroke="#333" stroke-width="1"/>
+
+                    <rect x="35" y="35" width="60" height="80" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="40" y="40" width="50" height="70" fill="none" stroke="#333" stroke-width="1"/>
+
+                    <rect x="35" y="120" width="60" height="60" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="35" y="320" width="60" height="60" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="35" y="385" width="60" height="100" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="40" y="390" width="50" height="90" fill="none" stroke="#333" stroke-width="1"/>
+
+                    <rect x="110" y="100" width="180" height="320" fill="none" stroke="#333" stroke-width="1" stroke-dasharray="5,5" opacity="0.5"/>
+
+                    <rect x="140" y="140" width="20" height="20" fill="#000" stroke="#444" stroke-width="2"/>
+                    <rect x="240" y="140" width="20" height="20" fill="#000" stroke="#444" stroke-width="2"/>
+                    <rect x="140" y="240" width="20" height="20" fill="#000" stroke="#444" stroke-width="2"/>
+                    <rect x="240" y="240" width="20" height="20" fill="#000" stroke="#444" stroke-width="2"/>
+                    <rect x="140" y="340" width="20" height="20" fill="#000" stroke="#444" stroke-width="2"/>
+                    <rect x="240" y="340" width="20" height="20" fill="#000" stroke="#444" stroke-width="2"/>
+
+                    <rect x="305" y="120" width="60" height="60" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="310" y="125" width="50" height="50" fill="none" stroke="#333" stroke-width="1"/>
+
+                    <rect x="305" y="185" width="60" height="60" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="305" y="250" width="60" height="60" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="310" y="255" width="50" height="50" fill="none" stroke="#333" stroke-width="1"/>
+
+                    <rect x="305" y="315" width="60" height="60" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="305" y="380" width="60" height="60" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="310" y="385" width="50" height="50" fill="none" stroke="#333" stroke-width="1"/>
+
+                    <rect x="120" y="440" width="160" height="45" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="125" y="445" width="150" height="35" fill="none" stroke="#333" stroke-width="1"/>
+
+                    <path d="M180,485 L180,475 L220,475 L220,485" stroke="#666" stroke-width="2" fill="none" stroke-dasharray="2,2"/>
+                </svg>
+            </div>
+
+            <!-- Main Floor (DEFAULT ACTIVE) -->
+            <div class="floor active" id="floor-mf">
+                <svg viewBox="0 0 400 520" preserveAspectRatio="xMidYMid meet">
+                    <defs>
+                        <linearGradient id="perimeterGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#333;stop-opacity:1" />
+                            <stop offset="50%" style="stop-color:#666;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#333;stop-opacity:1" />
+                        </linearGradient>
+                        <filter id="glow">
+                            <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                            <feMerge>
+                                <feMergeNode in="coloredBlur"/>
+                                <feMergeNode in="SourceGraphic"/>
+                            </feMerge>
+                        </filter>
+                    </defs>
+                    <rect width="400" height="520" fill="#000"/>
+                    <rect x="5" y="5" width="390" height="510" fill="none" stroke="url(#perimeterGrad1)" stroke-width="3" filter="url(#glow)"/>
+                    <rect x="10" y="10" width="380" height="500" fill="#050505" stroke="#444" stroke-width="2"/>
+
+                    <rect x="100" y="20" width="95" height="65" fill="#0a0a0a" stroke="#555" stroke-width="2"/>
+                    <rect x="205" y="20" width="95" height="65" fill="#0a0a0a" stroke="#555" stroke-width="2"/>
+
+                    <rect x="45" y="30" width="40" height="45" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="315" y="30" width="40" height="45" fill="#000" stroke="#555" stroke-width="2"/>
+
+                    <rect x="20" y="110" width="45" height="350" fill="#000" stroke="#555" stroke-width="2"/>
+
+                    <g opacity="0.9" filter="url(#glow)">
+                        <rect x="90" y="140" width="35" height="35" fill="#000" stroke="#444" stroke-width="2" rx="2"/>
+                        <rect x="182" y="140" width="35" height="35" fill="#000" stroke="#444" stroke-width="2" rx="2"/>
+                        <rect x="275" y="140" width="35" height="35" fill="#000" stroke="#444" stroke-width="2" rx="2"/>
+
+                        <rect x="90" y="210" width="35" height="35" fill="#000" stroke="#444" stroke-width="2" rx="2"/>
+                        <rect x="182" y="210" width="35" height="35" fill="#000" stroke="#444" stroke-width="2" rx="2"/>
+                        <rect x="275" y="210" width="35" height="35" fill="#000" stroke="#444" stroke-width="2" rx="2"/>
+
+                        <rect x="90" y="280" width="35" height="35" fill="#000" stroke="#444" stroke-width="2" rx="2"/>
+                        <rect x="182" y="280" width="35" height="35" fill="#000" stroke="#444" stroke-width="2" rx="2"/>
+                        <rect x="275" y="280" width="35" height="35" fill="#000" stroke="#444" stroke-width="2" rx="2"/>
+
+                        <rect x="90" y="350" width="35" height="35" fill="#000" stroke="#444" stroke-width="2" rx="2"/>
+                        <rect x="182" y="350" width="35" height="35" fill="#000" stroke="#444" stroke-width="2" rx="2"/>
+                        <rect x="275" y="350" width="35" height="35" fill="#000" stroke="#444" stroke-width="2" rx="2"/>
+                    </g>
+
+                    <rect x="100" y="420" width="200" height="50" fill="#000" stroke="#666" stroke-width="2"/>
+
+                    <g stroke="#666" stroke-width="2" fill="none">
+                        <path d="M100,505 L100,485 L120,485 L120,505" stroke-dasharray="2,2"/>
+                        <path d="M190,505 L190,485 L210,485 L210,505" stroke-dasharray="2,2"/>
+                        <path d="M280,505 L280,485 L300,485 L300,505" stroke-dasharray="2,2"/>
+                    </g>
+                </svg>
+            </div>
+
+            <!-- Mezzanine -->
+            <div class="floor" id="floor-mz">
+                <svg viewBox="0 0 400 520" preserveAspectRatio="xMidYMid meet">
+                    <rect width="400" height="520" fill="#000"/>
+                    <rect x="5" y="5" width="390" height="510" fill="none" stroke="#555" stroke-width="3"/>
+                    <rect x="10" y="10" width="380" height="500" fill="#050505" stroke="#555" stroke-width="2"/>
+                    <rect x="35" y="35" width="330" height="450" fill="#0a0a0a" stroke="#666" stroke-width="3"/>
+                    <rect x="100" y="100" width="200" height="250" fill="#000" stroke="#444" stroke-width="2"/>
+                    <text x="200" y="225" font-family="Arial" font-size="11" fill="#666" text-anchor="middle" opacity="0.8">OPEN TO BELOW</text>
+                    <rect x="175" y="45" width="50" height="50" fill="#0f0f0f" stroke="#777" stroke-width="2"/>
+                    <rect x="175" y="425" width="50" height="50" fill="#0f0f0f" stroke="#777" stroke-width="2"/>
+                    <rect x="250" y="170" width="50" height="70" fill="#0f0f0f" stroke="#666" stroke-width="2"/>
+                    <rect x="320" y="45" width="35" height="35" fill="#1a0000" stroke="#aa3333" stroke-width="2" opacity="0.8"/>
+                    <rect x="45" y="130" width="45" height="30" fill="none" stroke="#555" stroke-width="2" rx="2"/>
+                    <rect x="45" y="170" width="45" height="30" fill="none" stroke="#555" stroke-width="2" rx="2"/>
+                    <rect x="45" y="210" width="45" height="30" fill="none" stroke="#555" stroke-width="2" rx="2"/>
+                    <rect x="45" y="250" width="45" height="30" fill="none" stroke="#555" stroke-width="2" rx="2"/>
+                    <rect x="45" y="290" width="45" height="30" fill="none" stroke="#555" stroke-width="2" rx="2"/>
+                    <rect x="310" y="130" width="45" height="30" fill="none" stroke="#555" stroke-width="2" rx="2"/>
+                    <rect x="310" y="170" width="45" height="30" fill="none" stroke="#555" stroke-width="2" rx="2"/>
+                    <rect x="310" y="210" width="45" height="30" fill="none" stroke="#555" stroke-width="2" rx="2"/>
+                    <rect x="310" y="250" width="45" height="30" fill="none" stroke="#555" stroke-width="2" rx="2"/>
+                    <rect x="310" y="290" width="45" height="30" fill="none" stroke="#555" stroke-width="2" rx="2"/>
+                    <circle cx="75" cy="95" r="6" fill="#000" stroke="#666" stroke-width="2"/>
+                    <circle cx="325" cy="95" r="6" fill="#000" stroke="#666" stroke-width="2"/>
+                    <circle cx="75" cy="355" r="6" fill="#000" stroke="#666" stroke-width="2"/>
+                    <circle cx="325" cy="355" r="6" fill="#000" stroke="#666" stroke-width="2"/>
+                </svg>
+            </div>
+
+            <!-- Second Floor -->
+            <div class="floor" id="floor-2">
+                <svg viewBox="0 0 400 520" preserveAspectRatio="xMidYMid meet">
+                    <rect width="400" height="520" fill="#000"/>
+                    <rect x="5" y="5" width="390" height="510" fill="none" stroke="#888" stroke-width="4"/>
+                    <rect x="10" y="10" width="380" height="500" fill="#000" stroke="#666" stroke-width="3"/>
+                    <rect x="30" y="30" width="140" height="100" fill="#000" stroke="#666" stroke-width="2"/>
+                    <rect x="30" y="30" width="140" height="35" fill="#0a0a0a" stroke="#555" stroke-width="1"/>
+                    <rect x="30" y="65" width="70" height="65" fill="none" stroke="#444" stroke-width="1"/>
+                    <rect x="100" y="65" width="70" height="65" fill="none" stroke="#444" stroke-width="1"/>
+                    <rect x="170" y="50" width="60" height="80" fill="#0a0a0a" stroke="#777" stroke-width="2"/>
+                    <rect x="230" y="50" width="60" height="80" fill="#0a0a0a" stroke="#777" stroke-width="2"/>
+                    <rect x="290" y="30" width="80" height="100" fill="#000" stroke="#666" stroke-width="2"/>
+                    <line x1="290" y1="60" x2="370" y2="60" stroke="#444" stroke-width="1"/>
+                    <line x1="290" y1="90" x2="370" y2="90" stroke="#444" stroke-width="1"/>
+                    <line x1="330" y1="30" x2="330" y2="130" stroke="#444" stroke-width="1"/>
+                    <rect x="30" y="150" width="60" height="300" fill="#000" stroke="#666" stroke-width="2"/>
+                    <rect x="120" y="180" width="160" height="160" fill="none" stroke="#555" stroke-width="2" stroke-dasharray="4,4"/>
+                    <text x="200" y="260" font-family="Arial" font-size="11" fill="#666" text-anchor="middle" opacity="0.8">OPEN SPACE</text>
+                    <circle cx="105" cy="165" r="8" fill="#000" stroke="#666" stroke-width="2"/>
+                    <circle cx="105" cy="220" r="8" fill="#000" stroke="#666" stroke-width="2"/>
+                    <circle cx="105" cy="275" r="8" fill="#000" stroke="#666" stroke-width="2"/>
+                    <circle cx="105" cy="330" r="8" fill="#000" stroke="#666" stroke-width="2"/>
+                    <circle cx="295" cy="165" r="8" fill="#000" stroke="#666" stroke-width="2"/>
+                    <circle cx="295" cy="220" r="8" fill="#000" stroke="#666" stroke-width="2"/>
+                    <circle cx="295" cy="275" r="8" fill="#000" stroke="#666" stroke-width="2"/>
+                    <circle cx="295" cy="330" r="8" fill="#000" stroke="#666" stroke-width="2"/>
+                    <rect x="310" y="180" width="60" height="160" fill="#000" stroke="#666" stroke-width="2"/>
+                    <rect x="320" y="190" width="40" height="30" fill="none" stroke="#444" stroke-width="1" rx="2"/>
+                    <rect x="320" y="230" width="40" height="30" fill="none" stroke="#444" stroke-width="1" rx="2"/>
+                    <rect x="320" y="270" width="40" height="30" fill="none" stroke="#444" stroke-width="1" rx="2"/>
+                    <rect x="320" y="310" width="40" height="30" fill="none" stroke="#444" stroke-width="1" rx="2"/>
+                    <rect x="120" y="390" width="160" height="80" fill="#0a0a0a" stroke="#777" stroke-width="2"/>
+                    <rect x="310" y="410" width="60" height="60" fill="#000" stroke="#666" stroke-width="2"/>
+                    <line x1="325" y1="425" x2="355" y2="455" stroke="#555" stroke-width="2"/>
+                    <line x1="355" y1="425" x2="325" y2="455" stroke="#555" stroke-width="2"/>
+                    <rect x="310" y="480" width="20" height="10" fill="none" stroke="#777" stroke-width="2" stroke-dasharray="2,2"/>
+                    <rect x="350" y="480" width="20" height="10" fill="none" stroke="#777" stroke-width="2" stroke-dasharray="2,2"/>
+                </svg>
+            </div>
+
+            <!-- Third Floor -->
+            <div class="floor" id="floor-3">
+                <svg viewBox="0 0 400 520" preserveAspectRatio="xMidYMid meet">
+                    <rect width="400" height="520" fill="#000"/>
+                    <rect x="5" y="5" width="390" height="510" fill="none" stroke="#555" stroke-width="3"/>
+                    <rect x="10" y="10" width="380" height="500" fill="#050505" stroke="#444" stroke-width="2"/>
+                    <rect x="30" y="30" width="340" height="460" fill="none" stroke="#666" stroke-width="2"/>
+                    <rect x="100" y="140" width="200" height="180" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="150" y="35" width="100" height="80" fill="#000" stroke="#666" stroke-width="2"/>
+                    <path d="M170,70 Q200,60 230,70" fill="none" stroke="#555" stroke-width="2"/>
+                    <path d="M170,90 Q200,80 230,90" fill="none" stroke="#555" stroke-width="2"/>
+                    <rect x="35" y="35" width="60" height="80" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="35" y="180" width="60" height="80" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="35" y="350" width="60" height="80" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="305" y="35" width="60" height="80" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="305" y="180" width="60" height="80" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="305" y="350" width="60" height="80" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="120" y="390" width="160" height="80" fill="#000" stroke="#666" stroke-width="2"/>
+                    <rect x="35" y="440" width="40" height="40" fill="#000" stroke="#555" stroke-width="2"/>
+                    <line x1="45" y1="450" x2="65" y2="470" stroke="#444" stroke-width="2"/>
+                    <line x1="65" y1="450" x2="45" y2="470" stroke="#444" stroke-width="2"/>
+                    <rect x="325" y="440" width="40" height="40" fill="#000" stroke="#555" stroke-width="2"/>
+                    <path d="M180,485 L180,475 L220,475 L220,485" stroke="#666" stroke-width="2" fill="none" stroke-dasharray="2,2"/>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================
+         TRANSPARENT SOCIAL OVERLAY
+    ==========================-->
+    <div id="pinSystemOverlay"></div>
+
+    <!-- Mode toggle -->
+    <div class="mode-toggle">
+        <button class="mode-btn active" onclick="setMode('explore', event)">🔍 Explore</button>
+        <button class="mode-btn" onclick="setMode('drop', event)">📍 Drop</button>
+        <button class="mode-btn" onclick="setMode('live', event)">🟢 Live</button>
+    </div>
+
+    <!-- Pin creation removed -->
+
+    <!-- Hover card -->
+    <div class="profile-hover" id="profileHover">
+        <div class="profile-header">
+            <div class="profile-avatar">
+                <img id="hoverAvatar" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%23ff0066'/%3E%3C/svg%3E" alt="">
+            </div>
+            <div class="profile-info">
+                <div class="profile-name" id="hoverName">Party Person</div>
+                <div class="profile-status">🟢 At the venue</div>
+                <div class="profile-bio">Living for the music 🎵</div>
+            </div>
+        </div>
+
+        <div style="display:flex; justify-content:space-around; padding:10px; background: rgba(255,255,255,0.05); border-radius:10px; margin-bottom:10px;">
+            <div style="text-align:center;"><div style="font-size:16px; font-weight:bold; color:#ff0066;">12</div><div style="font-size:10px; color:#888;">Pins</div></div>
+            <div style="text-align:center;"><div style="font-size:16px; font-weight:bold; color:#00ff88;">89</div><div style="font-size:10px; color:#888;">Likes</div></div>
+            <div style="text-align:center;"><div style="font-size:16px; font-weight:bold; color:#ffcc00;">5</div><div style="font-size:10px; color:#888;">Friends</div></div>
+        </div>
+
+        <div class="social-actions">
+            <button class="social-btn" onclick="sendDrink()"><span>🍹</span>Buy Drink</button>
+            <button class="social-btn" onclick="inviteToTable()"><span>🍾</span>Table Invite</button>
+            <button class="social-btn" onclick="giftTicket()"><span>🎟️</span>Gift Ticket</button>
+            <button class="social-btn primary" onclick="startChat()"><span>💬</span>Start Chat</button>
+            <button class="social-btn" onclick="startVideo()"><span>📹</span>Video</button>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin-bottom: 10px;">
+            <button class="mini-action" onclick="sendVibe('fire')" style="background: rgba(255,0,102,0.2); border: 1px solid rgba(255,0,102,0.3); padding: 8px; border-radius: 8px; color: white; cursor: pointer; font-size: 16px;">🔥</button>
+            <button class="mini-action" onclick="sendVibe('heart')" style="background: rgba(255,0,102,0.2); border: 1px solid rgba(255,0,102,0.3); padding: 8px; border-radius: 8px; color: white; cursor: pointer; font-size: 16px;">❤️</button>
+            <button class="mini-action" onclick="sendVibe('dance')" style="background: rgba(255,0,102,0.2); border: 1px solid rgba(255,0,102,0.3); padding: 8px; border-radius: 8px; color: white; cursor: pointer; font-size: 16px;">💃</button>
+            <button class="mini-action" onclick="sendVibe('cheers')" style="background: rgba(255,0,102,0.2); border: 1px solid rgba(255,0,102,0.3); padding: 8px; border-radius: 8px; color: white; cursor: pointer; font-size: 16px;">🥂</button>
+        </div>
+
+        <div style="display:grid; grid-template-columns: repeat(2, 1fr); gap:6px; margin-bottom:10px;">
+            <button class="special-btn" onclick="challengeDance()" style="background: linear-gradient(135deg, #9933ff, #6600cc); border: none; padding: 10px; border-radius: 10px; color: white; cursor: pointer; font-size: 11px; font-weight: bold;">⚡ Dance Battle</button>
+            <button class="special-btn" onclick="sendSecret()" style="background: linear-gradient(135deg, #00ff88, #00cc66); border: none; padding: 10px; border-radius: 10px; color: white; cursor: pointer; font-size: 11px; font-weight: bold;">🤫 Secret Message</button>
+        </div>
+
+        <div style="display:flex; gap:6px;">
+            <button class="social-btn" style="flex:1;" onclick="shareProfile()"><span>📤</span> Share</button>
+            <button class="social-btn" style="flex:1;" onclick="followUser()"><span>➕</span> Follow</button>
+            <button class="social-btn" style="flex:1; background: rgba(255,0,0,0.1);" onclick="blockUser()"><span>🚫</span> Block</button>
+        </div>
+
+        <div style="margin-top:10px; padding:8px; background: rgba(255,255,255,0.05); border-radius:10px;">
+            <div style="font-size:10px; color:#888; margin-bottom:5px;">Vibe Level</div>
+            <div style="height:4px; background:#333; border-radius:2px; overflow:hidden;">
+                <div id="vibeBar" style="width: 75%; height: 100%; background: linear-gradient(90deg, #ff0066, #ffcc00, #00ff88); transition: width 0.3s;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Group chat bubble -->
+    <div class="group-chat" id="groupChat">
+        <div class="group-header">
+            <div class="group-members" id="groupMembers">
+                <div class="member-avatar">👤</div>
+                <div class="member-avatar">👤</div>
+            </div>
+            <div style="display:flex; gap:8px;">
+                <button onclick="inviteToGroup()" style="background:none; border:none; color:#00ff88; cursor:pointer;">➕ Invite</button>
+                <button onclick="closeGroupChat()" style="background:none; border:none; color:#ff0066; cursor:pointer;">✕</button>
+            </div>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+            <div class="chat-message"><strong>You:</strong> Hey! This DJ is fire! 🔥</div>
+            <div class="chat-message"><strong>Alex:</strong> Right?! Let's meet at the bar!</div>
+        </div>
+        <div class="chat-input">
+            <input type="text" placeholder="Type a message..." id="chatInput" onkeypress="if(event.key==='Enter') sendMessage()">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <!-- Video chat modal -->
+    <div class="video-chat" id="videoChat">
+        <div class="video-container">
+            <div class="video-box"><video id="localVideo" autoplay muted></video></div>
+            <div class="video-box"><video id="remoteVideo" autoplay></video></div>
+        </div>
+        <div class="video-controls">
+            <button class="video-btn mute" onclick="toggleMute()">🔇</button>
+            <button class="video-btn mute" onclick="toggleVideo()">📹</button>
+            <button class="video-btn end" onclick="endVideo()">📞</button>
+        </div>
+    </div>
+
+    <!-- Gift modal -->
+    <div class="gift-modal" id="giftModal">
+        <h3>🎁 Send a Gift</h3>
+        <div class="gift-options">
+            <div class="gift-option" onclick="sendGift('ticket')"><div>🎟️ Event Ticket</div><div class="gift-price">$60</div></div>
+            <div class="gift-option" onclick="sendGift('vip')"><div>⭐ VIP Upgrade</div><div class="gift-price">$150</div></div>
+            <div class="gift-option" onclick="sendGift('bottle')"><div>🍾 Bottle Service</div><div class="gift-price">$300</div></div>
+        </div>
+        <button onclick="closeGiftModal()" style="background: rgba(255,255,255,0.1); border: none; color: white; padding: 10px 20px; border-radius: 10px; cursor: pointer;">Cancel</button>
+    </div>
+
+    <!-- Join request -->
+    <div class="join-request" id="joinRequest"><strong>Sarah</strong> wants to join your group!
+        <div style="display:flex; gap:8px; margin-top:5px;">
+            <button onclick="acceptJoin()" style="background:#fff; color:#00ff88; border:none; padding:5px 10px; border-radius:5px; cursor:pointer;">✓ Accept</button>
+            <button onclick="denyJoin()" style="background: rgba(0,0,0,0.3); color:#fff; border:none; padding:5px 10px; border-radius:5px; cursor:pointer;">✗</button>
+        </div>
+    </div>
+
+    <!-- =========================
+         RIGHT NAV (fixed)
+    ==========================-->
+    <div class="nav-panel">
+        <div class="floor-buttons">
+            <button class="floor-btn" data-floor="3" aria-label="Third Floor">
+                <span class="floor-indicator"></span>3F
+            </button>
+            <button class="floor-btn" data-floor="2" aria-label="Second Floor">
+                <span class="floor-indicator"></span>2F
+            </button>
+            <button class="floor-btn" data-floor="mz" aria-label="Mezzanine">
+                <span class="floor-indicator"></span>MZ
+            </button>
+            <button class="floor-btn active" data-floor="mf" aria-label="Main Floor">
+                <span class="floor-indicator"></span>MF
+            </button>
+            <button class="floor-btn" data-floor="b" aria-label="Basement">
+                <span class="floor-indicator"></span>B
+            </button>
+        </div>
+    </div>
+
+    <script>
+        /* =========================
+           FLOOR SWITCHING
+        ==========================*/
+        const floorButtons = document.querySelectorAll('.floor-btn');
+        const floors = document.querySelectorAll('.floor');
+        const floorMap = { 'b':'floor-b', 'mf':'floor-mf', 'mz':'floor-mz', '2':'floor-2', '3':'floor-3' };
+
+        floorButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                floorButtons.forEach(btn => btn.classList.remove('active'));
+                this.classList.add('active');
+
+                const floorId = floorMap[this.getAttribute('data-floor')];
+                floors.forEach(floor => floor.classList.remove('active'));
+                const selectedFloor = document.getElementById(floorId);
+                if (selectedFloor) selectedFloor.classList.add('active');
+            });
+        });
+
+        // Touch swipe between floors
+        let touchStartY = 0, touchEndY = 0;
+        document.addEventListener('touchstart', e => { touchStartY = e.changedTouches[0].screenY; }, false);
+        document.addEventListener('touchend', e => { touchEndY = e.changedTouches[0].screenY; handleSwipe(); }, false);
+
+        function handleSwipe() {
+            const activeButton = document.querySelector('.floor-btn.active');
+            let nextButton = null;
+            if (touchEndY < touchStartY - 50) nextButton = activeButton.previousElementSibling; // up
+            if (touchEndY > touchStartY + 50) nextButton = activeButton.nextElementSibling;     // down
+            if (nextButton && nextButton.classList.contains('floor-btn')) nextButton.click();
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            const activeButton = document.querySelector('.floor-btn.active');
+            let nextButton = null;
+            if (e.key === 'ArrowUp') nextButton = activeButton.previousElementSibling;
+            else if (e.key === 'ArrowDown') nextButton = activeButton.nextElementSibling;
+            if (nextButton && nextButton.classList.contains('floor-btn')) nextButton.click();
+        });
+
+        // Prevent iOS pinch zoom
+        document.addEventListener('gesturestart', e => e.preventDefault());
+
+        /* =========================
+           PIN / LIVE OVERLAY LOGIC
+        ==========================*/
+        let currentMode = 'explore';
+        let pins = [];
+        let livePeople = [];
+        let activeGroups = [];
+        let myPosition = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+        let selectedType = null, selectedColor = null, pendingPosition = null, selectedImage = null;
+        const MAX_PINS = 5;
+
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('imagePreview').style.display = 'block';
+                    document.getElementById('previewImg').src = e.target.result;
+                    document.getElementById('uploadText').textContent = '✅ Photo Added';
+                    selectedImage = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function selectType(btn) {
+            document.querySelectorAll('.pin-type-btn').forEach(b => {
+                b.style.transform = 'scale(1)';
+                b.style.boxShadow = 'none';
+            });
+            btn.style.transform = 'scale(1.1)';
+            btn.style.boxShadow = '0 0 15px ' + btn.dataset.color;
+            selectedType = btn.dataset.type;
+            selectedColor = btn.dataset.color;
+        }
+
+        function closePopup() {
+            document.getElementById('pin-popup').style.display = 'none';
+            document.getElementById('imagePreview').style.display = 'none';
+            document.getElementById('uploadText').textContent = '📷 Add Photo';
+            document.getElementById('pinImage').value = '';
+            document.getElementById('pinCaption').value = '';
+            selectedType = null; selectedColor = null; selectedImage = null;
+        }
+
+        function dropPin() {
+            if (!selectedType) { showToast('Select a pin type!'); return; }
+            const caption = document.getElementById('pinCaption').value;
+
+            const pin = document.createElement('div');
+            pin.className = 'pin';
+            pin.style.left = pendingPosition.x + 'px';
+            pin.style.top = pendingPosition.y + 'px';
+            pin.style.background = selectedColor;
+            pin.style.color = selectedColor;
+            pin.dataset.type = selectedType;
+            pin.dataset.caption = caption;
+
+            if (selectedImage) {
+                pin.dataset.image = selectedImage;
+                pin.style.width = '10px';
+                pin.style.height = '10px';
+                pin.innerHTML = '<span style="position: absolute; top: -15px; left: -5px; font-size: 8px;">📷</span>';
+            }
+
+            pin.addEventListener('mouseenter', (e) => showPinInfo(e, pin));
+            pin.addEventListener('mouseleave', hidePinInfo);
+            pin.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (pin.dataset.image) showPinImage(pin);
+                else showPinEngagement(pin);
+            });
+
+            document.getElementById('pinSystemOverlay').appendChild(pin);
+            pins.push({ element: pin, type: selectedType, color: selectedColor, caption, image: selectedImage });
+
+            document.getElementById('pinCount').textContent = pins.length;
+            closePopup();
+            showToast(selectedImage ? '📷 Photo pin dropped!' : '📍 Pin dropped!');
+        }
+
+        function showPinImage(pin) {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed; inset: 0; background: rgba(0,0,0,0.9); z-index: 5000;
+                display:flex; align-items:center; justify-content:center; cursor:pointer;
+            `;
+            const img = document.createElement('img');
+            img.src = pin.dataset.image;
+            img.style.cssText = `max-width: 90%; max-height: 90%; border-radius:10px; box-shadow:0 0 30px rgba(255,0,102,0.5);`;
+            const caption = document.createElement('div');
+            caption.textContent = pin.dataset.caption || '';
+            caption.style.cssText = `position:absolute; bottom:30px; left:50%; transform:translateX(-50%); color:#fff; padding:10px 20px; background: rgba(0,0,0,0.8); border-radius:20px; font-size:14px;`;
+            modal.appendChild(img); modal.appendChild(caption);
+            modal.onclick = () => modal.remove();
+            document.body.appendChild(modal);
+        }
+
+        function showPinInfo(e, pin) {
+            const hover = document.getElementById('profileHover');
+            const rect = pin.getBoundingClientRect();
+            document.getElementById('hoverName').textContent = pin.dataset.caption || `${pin.dataset.type} pin`;
+            hover.style.display = 'block';
+            hover.style.left = rect.left + 'px';
+            hover.style.top = (rect.bottom + 10) + 'px';
+        }
+        function hidePinInfo() { setTimeout(() => { document.getElementById('profileHover').style.display = 'none'; }, 200); }
+        function showPinEngagement(pin) { showToast(`❤️ Liked ${pin.dataset.type} pin!`); }
+
+        // Live people simulation
+        function initLivePeople() { for (let i=0; i<3; i++) createLivePerson(i); }
+        function createLivePerson(id) {
+            const person = document.createElement('div');
+            person.className = 'live-person';
+            person.id = 'person-' + id;
+            person.innerHTML = `
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23${Math.floor(Math.random()*16777215).toString(16)}'/%3E%3C/svg%3E" alt="">
+                <div class="status-dot"></div>
+            `;
+            const x = Math.random()*window.innerWidth, y = Math.random()*window.innerHeight;
+            person.style.left = x + 'px'; person.style.top = y + 'px';
+            person.addEventListener('mouseenter', (e) => showProfileHover(e, person));
+            person.addEventListener('mouseleave', hideProfileHover);
+            person.addEventListener('click', (e) => { e.stopPropagation(); checkCollision(person); });
+            document.getElementById('pinSystemOverlay').appendChild(person);
+            livePeople.push({ element: person, x, y, id });
+            animatePerson(person, id);
+        }
+        function animatePerson(person, id) {
+            setInterval(() => {
+                const currentX = parseFloat(person.style.left);
+                const currentY = parseFloat(person.style.top);
+                const newX = currentX + (Math.random() - 0.5) * 20;
+                const newY = currentY + (Math.random() - 0.5) * 20;
+                person.style.left = Math.max(30, Math.min(window.innerWidth - 30, newX)) + 'px';
+                person.style.top = Math.max(30, Math.min(window.innerHeight - 30, newY)) + 'px';
+                checkProximity(person);
+            }, 1000);
+        }
+
+        function getDistance(x1, y1, x2, y2) { return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2)); }
+        function showCollisionZone(person1, person2) {
+            const existing = document.querySelector('.collision-zone'); if (existing) return;
+            const zone = document.createElement('div');
+            zone.className = 'collision-zone';
+            zone.style.left = person1.style.left; zone.style.top = person1.style.top;
+            document.getElementById('pinSystemOverlay').appendChild(zone);
+            setTimeout(() => { zone.remove(); if (Math.random()>0.5) createGroupChat([person1, person2]); }, 2000);
+        }
+        function checkProximity(person1) {
+            livePeople.forEach(p => {
+                if (p.element === person1) return;
+                const dist = getDistance(parseFloat(person1.style.left), parseFloat(person1.style.top), parseFloat(p.element.style.left), parseFloat(p.element.style.top));
+                if (dist < 50) showCollisionZone(person1, p.element);
+            });
+        }
+        function checkCollision(person) {
+            livePeople.forEach(p => {
+                if (p.element === person) return;
+                const dist = getDistance(parseFloat(person.style.left), parseFloat(person.style.top), parseFloat(p.element.style.left), parseFloat(p.element.style.top));
+                if (dist < 80) { createGroupChat([person, p.element]); showToast('💥 Connection made!'); }
+            });
+        }
+
+        function showProfileHover(e, person) {
+            const hover = document.getElementById('profileHover');
+            const rect = person.getBoundingClientRect();
+            hover.style.display = 'block';
+            hover.style.left = rect.left + 'px';
+            hover.style.top = (rect.bottom + 10) + 'px';
+            const hoverRect = hover.getBoundingClientRect();
+            if (hoverRect.bottom > window.innerHeight) hover.style.top = (rect.top - hoverRect.height - 10) + 'px';
+            if (hoverRect.right > window.innerWidth) hover.style.left = (window.innerWidth - hoverRect.width - 10) + 'px';
+        }
+        function hideProfileHover() { setTimeout(() => { document.getElementById('profileHover').style.display = 'none'; }, 200); }
+
+        // Social actions
+        function sendDrink() { showToast('🍹 Drink sent! They\'ll love it!'); hideProfileHover(); animateSend('🍹'); }
+        function inviteToTable() { showToast('🍾 Table invite sent!'); hideProfileHover(); animateSend('🍾'); }
+        function giftTicket() { document.getElementById('giftModal').style.display = 'block'; }
+        function startChat() { createGroupChat([{ id: 'user-1' }]); hideProfileHover(); }
+        async function startVideo() { document.getElementById('videoChat').style.display = 'block'; await initVideo(); }
+        function shareProfile() { showToast('📤 Profile link copied!'); navigator.clipboard.writeText('soundfactory.com/user/123'); }
+        function followUser() { showToast('➕ Following!'); event.target.textContent = '✓ Following'; }
+        function blockUser() { if (confirm('Block this user?')) { showToast('🚫 User blocked'); hideProfileHover(); } }
+
+        function sendVibe(type) {
+            const vibes = { fire:{emoji:'🔥',msg:'Sent fire vibes!'}, heart:{emoji:'❤️',msg:'Sent love!'}, dance:{emoji:'💃',msg:'Dance request sent!'}, cheers:{emoji:'🥂',msg:'Cheers sent!'} };
+            showToast(vibes[type].emoji + ' ' + vibes[type].msg);
+            animateSend(vibes[type].emoji);
+            const bar = document.getElementById('vibeBar'); const w = parseInt(bar.style.width) || 75; bar.style.width = Math.min(100, w + 5) + '%';
+        }
+
+        function challengeDance() {
+            showToast('⚡ Dance battle challenge sent!'); hideProfileHover();
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed; inset:0; display:flex; align-items:center; justify-content:center; z-index:5000;
+                background: rgba(0,0,0,0.7);
+            `;
+            modal.innerHTML = `
+                <div style="background: linear-gradient(135deg, #9933ff, #ff0066); padding: 30px; border-radius: 20px; color: white; text-align: center; animation: shake 0.5s;">
+                    <h2>⚡ DANCE BATTLE ⚡</h2>
+                    <p>Waiting for response...</p>
+                    <div style="font-size: 40px; margin: 20px;">💃 VS 🕺</div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            setTimeout(() => {
+                modal.firstElementChild.innerHTML = `
+                    <h2>⚡ DANCE BATTLE ⚡</h2>
+                    <p>ACCEPTED!</p>
+                    <div style="font-size: 40px; margin: 20px;">💃 🔥 🕺</div>
+                    <button onclick="this.parentElement.parentElement.parentElement.remove()" style="padding: 10px 20px; background: white; color: #9933ff; border: none; border-radius: 10px; font-weight: bold; cursor: pointer;">START!</button>
+                `;
+            }, 2000);
+        }
+        (function addShakeKeyframes(){
+            const shakeStyle = document.createElement('style');
+            shakeStyle.textContent = `
+                @keyframes shake { 0%,100% { transform: rotate(0deg);} 25% { transform: rotate(-2deg);} 75% { transform: rotate(2deg);} }
+            `;
+            document.head.appendChild(shakeStyle);
+        })();
+
+        function sendSecret() {
+            const secret = prompt('Enter secret message:');
+            if (secret) {
+                showToast('🤫 Secret message sent!');
+                const encrypted = document.createElement('div');
+                encrypted.style.cssText = `
+                    position: fixed; top:50%; left:50%; transform: translate(-50%, -50%);
+                    color:#00ff88; font-family:monospace; font-size:12px; z-index:9999; pointer-events:none;
+                `;
+                encrypted.textContent = btoa(secret).substring(0, 20) + '...';
+                document.body.appendChild(encrypted);
+                encrypted.animate([
+                    { opacity:1, transform:'translate(-50%, -50%) scale(1)'},
+                    { opacity:0, transform:'translate(-50%, -200px) scale(0.5)'}
+                ], { duration:2000, easing:'ease-out' }).onfinish = () => encrypted.remove();
+            }
+        }
+
+        function animateSend(emoji) {
+            const el = document.createElement('div');
+            el.style.cssText = `position: fixed; top:50%; left:50%; transform: translate(-50%, -50%); font-size:50px; z-index:9999; pointer-events:none;`;
+            el.textContent = emoji; document.body.appendChild(el);
+            el.animate([
+                { transform:'translate(-50%, -50%) scale(0) rotate(0deg)', opacity:0 },
+                { transform:'translate(-50%, -50%) scale(1.5) rotate(180deg)', opacity:1 },
+                { transform:'translate(-50%, -50%) scale(1) rotate(360deg)', opacity:0 }
+            ], { duration:1500, easing:'cubic-bezier(0.25, 0.46, 0.45, 0.94)'}).onfinish = () => el.remove();
+        }
+
+        // Group chat
+        function createGroupChat(members) {
+            const chat = document.getElementById('groupChat');
+            chat.style.display = 'block'; chat.style.bottom = '100px'; chat.style.right = '20px';
+            const membersDiv = document.getElementById('groupMembers');
+            membersDiv.innerHTML = members.map(m => `<div class="member-avatar">👤</div>`).join('');
+            showToast('💬 Group chat created!');
+        }
+        function sendMessage() {
+            const input = document.getElementById('chatInput'); if (!input.value) return;
+            const messages = document.getElementById('chatMessages');
+            messages.innerHTML += `<div class="chat-message"><strong>You:</strong> ${input.value}</div>`;
+            input.value = ''; messages.scrollTop = messages.scrollHeight;
+        }
+        function inviteToGroup() { showToast('➕ Invite sent!'); setTimeout(() => { document.getElementById('joinRequest').style.display = 'block'; }, 3000); }
+        function closeGroupChat() { document.getElementById('groupChat').style.display = 'none'; }
+        function acceptJoin() {
+            showToast('✅ Sarah joined the group!'); document.getElementById('joinRequest').style.display = 'none';
+            document.getElementById('groupMembers').innerHTML += '<div class="member-avatar">👤</div>';
+        }
+        function denyJoin() { document.getElementById('joinRequest').style.display = 'none'; }
+
+        // Gifts / Video
+        function sendGift(type) { const prices = { ticket:60, vip:150, bottle:300 }; showToast(`🎁 ${type} sent! $${prices[type]} charged to your card`); document.getElementById('giftModal').style.display = 'none'; }
+        function closeGiftModal() { document.getElementById('giftModal').style.display = 'none'; }
+        async function initVideo() {
+            try { const localStream = await navigator.mediaDevices.getUserMedia({ video:true, audio:true }); document.getElementById('localVideo').srcObject = localStream; }
+            catch (err) { console.log('Camera not available'); }
+        }
+        function toggleMute() { showToast('🔇 Muted'); }
+        function toggleVideo() { showToast('📹 Video toggled'); }
+        function endVideo() { document.getElementById('videoChat').style.display = 'none'; showToast('📞 Call ended'); }
+
+        // Mode management
+        function setMode(mode, ev) {
+            currentMode = mode;
+            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+            if (ev && ev.target) ev.target.classList.add('active');
+            document.body.className = mode + '-mode';
+
+            if (mode === 'live') { showToast('🟢 Live Mode - You are now visible to others!'); createMyLiveAvatar(); }
+            else if (mode === 'explore') showToast('🔍 Explore Mode - Tap pins to interact!');
+            else if (mode === 'drop') showToast('📍 Drop Mode - Tap anywhere to create pins!');
+        }
+
+        function createMyLiveAvatar() {
+            if (document.getElementById('my-avatar')) return;
+            const me = document.createElement('div');
+            me.className = 'live-person'; me.id = 'my-avatar';
+            me.innerHTML = `
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='50' fill='%23ff0066'/%3E%3C/svg%3E" alt="">
+                <div class="status-dot"></div>
+            `;
+            me.style.left = myPosition.x + 'px'; me.style.top = myPosition.y + 'px';
+            document.getElementById('pinSystemOverlay').appendChild(me);
+            makeDraggable(me);
+        }
+
+        function makeDraggable(element) {
+            let pos1=0,pos2=0,pos3=0,pos4=0;
+            element.onmousedown = dragMouseDown;
+            element.ontouchstart = dragTouchStart;
+
+            function dragMouseDown(e){ e.preventDefault(); pos3=e.clientX; pos4=e.clientY; document.onmouseup=closeDrag; document.onmousemove=elementDrag; }
+            function dragTouchStart(e){ pos3=e.touches[0].clientX; pos4=e.touches[0].clientY; document.ontouchend=closeDrag; document.ontouchmove=elementTouchDrag; }
+            function elementDrag(e){ e.preventDefault(); pos1=pos3-e.clientX; pos2=pos4-e.clientY; pos3=e.clientX; pos4=e.clientY; element.style.top=(element.offsetTop-pos2)+"px"; element.style.left=(element.offsetLeft-pos1)+"px"; checkProximity(element); }
+            function elementTouchDrag(e){ pos1=pos3-e.touches[0].clientX; pos2=pos4-e.touches[0].clientY; pos3=e.touches[0].clientX; pos4=e.touches[0].clientY; element.style.top=(element.offsetTop-pos2)+"px"; element.style.left=(element.offsetLeft-pos1)+"px"; checkProximity(element); }
+            function closeDrag(){ document.onmouseup=null; document.onmousemove=null; document.ontouchend=null; document.ontouchmove=null; }
+        }
+
+        // Toasts
+        function showToast(message) {
+            const existing = document.querySelector('.toast'); if (existing) existing.remove();
+            const toast = document.createElement('div'); toast.className='toast'; toast.textContent = message;
+            document.body.appendChild(toast); setTimeout(() => toast.remove(), 3000);
+        }
+
+        // Click to drop pins
+        document.getElementById('pinSystemOverlay').addEventListener('click', function(e) {
+            if (currentMode === 'drop') {
+                if (pins.length >= MAX_PINS) { showToast('Max 5 pins! Delete one first'); return; }
+                pendingPosition = { x: e.clientX, y: e.clientY };
+                const popup = document.getElementById('pin-popup');
+                popup.style.display = 'block';
+                popup.style.left = Math.min(e.clientX - 140, window.innerWidth - 300) + 'px';
+                popup.style.top = Math.min(e.clientY - 100, window.innerHeight - 250) + 'px';
+            }
+        });
+
+        // WOW onboarding
+        function initFirstTimeExperience() {
+            setTimeout(showFloatingWelcome, 1000);
+            setTimeout(showLiveCount, 2000);
+            setTimeout(showWelcomeGift, 4000);
+            setTimeout(showNearbyActivity, 6000);
+            setTimeout(dropGoldenPin, 10000);
+        }
+        function showFloatingWelcome() {
+            const wrap = document.createElement('div');
+            wrap.style.cssText = `position: fixed; top:50%; left:50%; transform: translate(-50%, -50%); color:#fff; font-size:24px; font-weight:bold; text-align:center; z-index:6000; animation: welcomeFade 3s ease; pointer-events:none;`;
+            wrap.innerHTML = `
+                <div style="background: linear-gradient(135deg, #ff0066, #9933ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Welcome to the Séance</div>
+                <div style="font-size: 14px; margin-top: 10px; color: #888;">Tilt your phone to explore</div>
+            `;
+            const style = document.createElement('style');
+            style.textContent = `@keyframes welcomeFade { 0%{opacity:0; transform:translate(-50%,-50%) scale(.5);} 50%{opacity:1; transform:translate(-50%,-50%) scale(1);} 100%{opacity:0; transform:translate(-50%,-50%) scale(1.1);} }`;
+            document.head.appendChild(style);
+            document.body.appendChild(wrap); setTimeout(()=>wrap.remove(), 3000);
+        }
+        function showLiveCount() {
+            const count = Math.floor(Math.random()*100)+200;
+            const liveIndicator = document.createElement('div');
+            liveIndicator.style.cssText = `position: fixed; top:60px; left:20px; background: rgba(255,0,102,0.9); color:#fff; padding:8px 15px; border-radius:20px; font-size:12px; z-index:2000; animation: pulse 2s infinite;`;
+            liveIndicator.innerHTML = `🔴 ${count} people here now`;
+            document.body.appendChild(liveIndicator);
+        }
+        function showWelcomeGift() {
+            const gift = document.createElement('div');
+            gift.style.cssText = `position: fixed; top:50%; left:50%; transform: translate(-50%, -50%); width:100px; height:100px; z-index:6000; animation: giftBounce 1s ease;`;
+            gift.innerHTML = `<div style="font-size:60px; animation: rotate 2s linear infinite;">🎁</div>`;
+            document.body.appendChild(gift);
+            setTimeout(() => {
+                gift.remove(); showToast('🍹 Sound Factory sent you a welcome drink!');
+                const counter = document.createElement('div');
+                counter.style.cssText = `position: fixed; top:20px; left:20px; background: rgba(0,255,136,0.9); color:#000; padding:5px 10px; border-radius:15px; font-size:11px; font-weight:bold;`;
+                counter.textContent = '🍹 x1'; document.body.appendChild(counter);
+            }, 1000);
+        }
+        function showNearbyActivity() {
+            const activities = ['🔥 DJ just dropped a sick beat!','📸 Someone tagged a moment near you','💃 Dance circle forming at main floor','🎉 VIP table sending free shots!'];
+            const activity = activities[Math.floor(Math.random()*activities.length)];
+            const notification = document.createElement('div');
+            notification.style.cssText = `position: fixed; bottom: 100px; left:20px; right:20px; background: linear-gradient(135deg, rgba(255,0,102,0.9), rgba(153,51,255,0.9)); color:#fff; padding:15px; border-radius:15px; font-size:13px; z-index:3000; animation: slideUp .5s ease;`;
+            notification.innerHTML = `<div style="font-weight:bold; margin-bottom:5px;">Nearby Activity</div><div>${activity}</div>`;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 4000);
+        }
+        function dropGoldenPin() {
+            const x = Math.random()*window.innerWidth, y = Math.random()*window.innerHeight;
+            const goldenPin = document.createElement('div');
+            goldenPin.className = 'pin golden';
+            goldenPin.style.cssText = `
+                position:absolute; left:${x}px; top:${y}px; width:15px; height:15px;
+                background: linear-gradient(135deg, #FFD700, #FFA500); border-radius:50%;
+                cursor:pointer; pointer-events:auto; animation: goldenGlow 1s ease infinite;
+                box-shadow: 0 0 20px #FFD700, 0 0 40px #FFD700, 0 0 60px #FFD700; z-index: 1000;
+            `;
+            goldenPin.innerHTML = '<span style="position: absolute; top: -20px; left: -5px; font-size: 20px;">🏆</span>';
+            goldenPin.addEventListener('click', (e) => { e.stopPropagation(); goldenPin.remove(); showGoldenReward(); });
+            document.getElementById('pinSystemOverlay').appendChild(goldenPin);
+            showToast('🏆 GOLDEN PIN APPEARED! First to tap wins!');
+        }
+        function showGoldenReward() {
+            const rewards = ['🍾 You won a FREE VIP table!','🎟️ You won 2 FREE tickets!','🍹 You won unlimited drinks!','💎 You won VIP status!'];
+            const reward = rewards[Math.floor(Math.random()*rewards.length)];
+            const modal = document.createElement('div');
+            modal.style.cssText = `position: fixed; inset:0; background: rgba(0,0,0,0.9); z-index:7000; display:flex; align-items:center; justify-content:center;`;
+            modal.innerHTML = `
+                <div style="background: linear-gradient(135deg, #FFD700, #FFA500); padding: 30px; border-radius: 20px; text-align:center; max-width: 300px;">
+                    <div style="font-size: 50px; margin-bottom: 20px

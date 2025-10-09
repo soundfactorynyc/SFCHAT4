@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>Sound Factory NYC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        html, body {
+            background: #000;
+            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+            overflow: hidden;
+            height: 100vh;
+            height: 100dvh;
+            width: 100vw;
+            position: fixed;
+        }
+        
+        .blueprint-bg {
+            position: fixed;
+            inset: 0;
+            background: 
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 20px 20px;
+            z-index: 1;
+        }
+        
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50px;
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            z-index: 900;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 15px;
+        }
+        
+        .logo {
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+        
+        .header-links {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .header-link {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        .header-link:active {
+            color: #fff;
+        }
+        
+        .blueprint-area {
+            position: fixed;
+            top: 50px;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 3px;
+        }
+        
+        svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        
+        .character {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #ff0066, #ff3399);
+            border-radius: 50%;
+            font-size: 7px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            box-shadow: 0 0 15px rgba(255,0,102,0.6);
+            z-index: 100;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            cursor: move;
+            touch-action: none;
+        }
+        
+        /* FLOATING + BUTTONS - ALWAYS ON TOP */
+        .plus-btn {
+            position: fixed;
+            left: 15px;
+            width: 44px;
+            height: 44px;
+            background: #000;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: #fff;
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.2s;
+        }
+        
+        .plus-btn:active {
+            transform: scale(0.9);
+        }
+        
+        .plus-btn.active {
+            background: #fff;
+            color: #000;
+            transform: rotate(45deg);
+        }
+        
+        #topBtn { top: 70px; }
+        #middleBtn { top: 50%; transform: translateY(-50%); }
+        #middleBtn.active { transform: translateY(-50%) rotate(45deg); }
+        #bottomBtn { bottom: 20px; }
+        
+        /* FULL SCREEN OVERLAY - BEHIND BUTTONS */
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.97);
+            backdrop-filter: blur(20px);
+            z-index: 950;
+            display: none;
+            flex-direction: column;
+            padding: 20px;
+            padding-left: 80px;
+        }
+        
+        .overlay.active {
+            display: flex;
+        }
+        
+        .overlay-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .overlay-title {
+            font-size: 20px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* 64 BUTTON GRID */
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            overflow-y: auto;
+            padding-bottom: 20px;
+        }
+        
+        .grid-btn {
+            aspect-ratio: 1;
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 9px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 4px;
+            line-height: 1.2;
+        }
+        
+        .grid-btn:active {
+            transform: scale(0.95);
+            background: rgba(255,255,255,0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="blueprint-bg"></div>
+    
+    <div class="header">
+        <div class="logo">SOUND FACTORY</div>
+        <div class="header-links">
+            <a class="header-link">TICKETS</a>
+            <a class="header-link">TABLES</a>
+        </div>
+    </div>
+    
+    <div class="blueprint-area">
+        <svg viewBox="0 0 400 520" preserveAspectRatio="none">
+            <rect width="400" height="520" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+            <rect x="30" y="30" width="340" height="460" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+            <rect x="30" y="420" width="70" height="70" fill="none" stroke="rgba(255,0,102,0.3)" stroke-width="1"/>
+            <text x="65" y="460" font-size="8" fill="rgba(255,0,102,0.6)" text-anchor="middle">DJ</text>
+            <rect x="30" y="120" width="40" height="280" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+            <rect x="120" y="80" width="30" height="30" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+            <rect x="215" y="80" width="30" height="30" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+            <rect x="310" y="80" width="30" height="30" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+            <rect x="120" y="160" width="30" height="30" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+            <rect x="215" y="160" width="30" height="30" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+            <rect x="310" y="160" width="30" height="30" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+            <rect x="120" y="240" width="30" height="30" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+            <rect x="215" y="240" width="30" height="30" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+            <rect x="310" y="240" width="30" height="30" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+            <rect x="120" y="320" width="30" height="30" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+            <rect x="215" y="320" width="30" height="30" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+            <rect x="310" y="320" width="30" height="30" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+            <rect x="120" y="400" width="30" height="30" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+            <rect x="215" y="400" width="30" height="30" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+            <rect x="310" y="400" width="30" height="30" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+            <text x="200" y="20" font-size="9" fill="rgba(255,255,255,0.4)" text-anchor="middle">MAIN FLOOR</text>
+        </svg>
+        <div class="character" id="character">YOU</div>
+    </div>
+    
+    <!-- FLOATING + BUTTONS (ALWAYS VISIBLE) -->
+    <div class="plus-btn" id="topBtn" onclick="toggleOverlay('social')">+</div>
+    <div class="plus-btn" id="middleBtn" onclick="toggleOverlay('reactions')">+</div>
+    <div class="plus-btn" id="bottomBtn" onclick="toggleOverlay('effects')">+</div>
+    
+    <!-- SOCIAL OVERLAY -->
+    <div class="overlay" id="socialOverlay">
+        <div class="overlay-header">
+            <div class="overlay-title">SOCIAL</div>
+        </div>
+        <div class="button-grid" id="socialGrid"></div>
+    </div>
+    
+    <!-- REACTIONS OVERLAY -->
+    <div class="overlay" id="reactionsOverlay">
+        <div class="overlay-header">
+            <div class="overlay-title">REACTIONS</div>
+        </div>
+        <div class="button-grid" id="reactionsGrid"></div>
+    </div>
+    
+    <!-- EFFECTS OVERLAY -->
+    <div class="overlay" id="effectsOverlay">
+        <div class="overlay-header">
+            <div class="overlay-title">EFFECTS</div>
+        </div>
+        <div class="button-grid" id="effectsGrid"></div>
+    </div>
+    
+    <script>
+        // 64 BUTTON DATA
+        const socialButtons = [
+            'CHAT', 'MESSAGE', 'FOLLOW', 'FRIEND', 'LIKE', 'SHARE', 'COMMENT', 
+            'POST', 'STORY', 'LIVE', 'VIDEO', 'PHOTO', 'ALBUM', 'TAG',
+            'MENTION', 'REPLY', 'QUOTE', 'REPOST', 'SAVE', 'BOOKMARK', 'FAVORITE',
+            'GROUP', 'PAGE', 'EVENT', 'INVITE', 'JOIN', 'LEAVE', 'BLOCK',
+            'MUTE', 'REPORT', 'HIDE', 'ARCHIVE', 'DELETE', 'EDIT', 'PIN',
+            'HIGHLIGHT', 'FEATURE', 'BOOST', 'PROMOTE', 'SPONSOR', 'ADS', 'SHOP',
+            'BUY', 'SELL', 'TRADE', 'OFFER', 'DEAL', 'COUPON', 'DISCOUNT',
+            'GIFT', 'TIP', 'DONATE', 'SUBSCRIBE', 'PREMIUM', 'VIP', 'GOLD',
+            'BADGE', 'AWARD', 'TROPHY', 'MEDAL', 'RANK', 'LEVEL', 'POINTS',
+            'COINS'
+        ];
+        
+        const reactionsButtons = [
+            'LOVE', 'FIRE', 'LAUGH', 'PARTY', 'STAR', 'SPARKLE', 'CLAP',
+            'HANDS', 'STRONG', 'ROCK', 'EYES', 'SKULL', 'HEART', 'CELEBRATE',
+            'MUSIC', 'NOTE', 'MIC', 'HEADPHONE', 'GUITAR', 'PIANO', 'DRUM',
+            'TRUMPET', 'DANCE', 'DISCO', 'STAR2', 'DIAMOND', 'CROWN', 'TROPHY',
+            'TARGET', 'BLAST', 'BOOM', 'ZAP', 'FLASH', 'SPARKLES', 'GLOW',
+            'SHINE', 'BRIGHT', 'NEON', 'RAINBOW', 'CLOUD', 'STORM', 'THUNDER',
+            'SNOW', 'ICE', 'FREEZE', 'MELT', 'FIRE2', 'SMOKE', 'FOG',
+            'WAVE', 'OCEAN', 'DROP', 'SPLASH', 'BUBBLE', 'CRYSTAL', 'GEM',
+            'PEARL', 'GOLD2', 'SILVER', 'BRONZE', 'COPPER', 'STEEL', 'IRON',
+            'STONE'
+        ];
+        
+        const effectsButtons = [
+            'GLOW', 'SMOOTH', 'VINTAGE', 'GLAMOUR', 'BEAUTY', 'YOUNGER', 'BRIGHTEN',
+            'CONTRAST', 'SATURATE', 'FADE', 'SHARP', 'BLUR', 'VIGNETTE', 'GRAIN',
+            'SEPIA', 'BW', 'NOIR', 'RETRO', 'FILM', 'KODAK', 'POLAROID',
+            'WARM', 'COOL', 'NEON2', 'CYBER', 'GLITCH', 'PIXEL', 'MOSAIC',
+            'MIRROR', 'FLIP', 'ROTATE', 'ZOOM', 'PAN', 'TILT', 'SHIFT',
+            'WARP', 'BEND', 'TWIST', 'SWIRL', 'RIPPLE', 'WAVE2', 'DISTORT',
+            'STRETCH', 'SQUEEZE', 'EXPAND', 'SHRINK', 'GROW', 'MORPH', 'MELT2',
+            'DRIP', 'FLOW', 'LIQUID', 'PAINT', 'BRUSH', 'SPRAY', 'SPLATTER',
+            'INK', 'SKETCH', 'CARTOON', 'COMIC', 'POP', 'GRAFFITI', 'STREET',
+            'URBAN'
+        ];
+        
+        // GENERATE BUTTON GRIDS
+        function generateGrid(containerId, buttons) {
+            const container = document.getElementById(containerId);
+            buttons.forEach(btn => {
+                const button = document.createElement('button');
+                button.className = 'grid-btn';
+                button.textContent = btn;
+                button.onclick = () => console.log(btn);
+                container.appendChild(button);
+            });
+        }
+        
+        generateGrid('socialGrid', socialButtons);
+        generateGrid('reactionsGrid', reactionsButtons);
+        generateGrid('effectsGrid', effectsButtons);
+        
+        // TOGGLE OVERLAY
+        let activeOverlay = null;
+        
+        function toggleOverlay(type) {
+            const overlayId = type + 'Overlay';
+            const overlay = document.getElementById(overlayId);
+            const btnMap = {
+                'social': 'topBtn',
+                'reactions': 'middleBtn',
+                'effects': 'bottomBtn'
+            };
+            const btn = document.getElementById(btnMap[type]);
+            
+            // Close if already open
+            if (activeOverlay === overlayId) {
+                overlay.classList.remove('active');
+                btn.classList.remove('active');
+                activeOverlay = null;
+            } else {
+                // Close other overlays
+                document.querySelectorAll('.overlay').forEach(o => o.classList.remove('active'));
+                document.querySelectorAll('.plus-btn').forEach(b => b.classList.remove('active'));
+                
+                // Open this one
+                overlay.classList.add('active');
+                btn.classList.add('active');
+                activeOverlay = overlayId;
+            }
+        }
+        
+        // CHARACTER DRAG
+        const char = document.getElementById('character');
+        let isDragging = false;
+        
+        char.addEventListener('mousedown', () => isDragging = true);
+        char.addEventListener('touchstart', (e) => {
+            isDragging = true;
+            e.preventDefault();
+        });
+        
+        document.addEventListener('mouseup', () => isDragging = false);
+        document.addEventListener('touchend', () => isDragging = false);
+        
+        document.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                char.style.left = e.clientX + 'px';
+                char.style.top = e.clientY + 'px';
+            }
+        });
+        
+        document.addEventListener('touchmove', (e) => {
+            if (isDragging && e.touches[0]) {
+                char.style.left = e.touches[0].clientX + 'px';
+                char.style.top = e.touches[0].clientY + 'px';
+                e.preventDefault();
+            }
+        });
+    </script>
+</body>
+</html>

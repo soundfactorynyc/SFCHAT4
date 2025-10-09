@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sound Factory - Retractable Panels System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #000;
+            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* BLUEPRINT GRID BACKGROUND */
+        #blueprint-bg {
+            position: fixed;
+            inset: 0;
+            background: 
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 20px 20px;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        /* MAIN CONTAINER */
+        .main-container {
+            position: relative;
+            z-index: 10;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* TOP BAR */
+        .top-bar {
+            padding: 10px 20px;
+            border-bottom: 0.5px solid rgba(255,255,255,0.12);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(20px);
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+        }
+        
+        .logo {
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+        
+        .top-nav {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .top-btn {
+            background: rgba(255,255,255,0.08);
+            border: 0.5px solid rgba(255,255,255,0.15);
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 10px;
+            font-weight: 600;
+            color: #fff;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.2s;
+        }
+        
+        .top-btn:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateY(-2px);
+        }
+        
+        /* CONTENT AREA - FULL OPEN FLOOR */
+        .content {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .main-floor {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        svg {
+            width: 100%;
+            height: 100%;
+            max-width: 95vw;
+            max-height: 95vh;
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.1));
+        }
+        
+        /* CHARACTER */
+        .character {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #ff0066, #ff3399);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 8px;
+            font-weight: 700;
+            color: #fff;
+            cursor: move;
+            box-shadow: 0 0 20px rgba(255, 0, 102, 0.8);
+            z-index: 100;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        /* ========== RETRACTABLE PANELS ========== */
+        
+        /* LEFT PANEL - REACTIONS */
+        .panel-left {
+            position: fixed;
+            left: -350px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 350px;
+            height: 80vh;
+            background: rgba(10,10,10,0.98);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-left: none;
+            border-radius: 0 16px 16px 0;
+            backdrop-filter: blur(20px);
+            transition: left 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 800;
+            overflow: hidden;
+        }
+        
+        .panel-left.open {
+            left: 0;
+        }
+        
+        /* LEFT TRIGGER TAB */
+        .trigger-left {
+            position: fixed;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 100px;
+            background: rgba(255,0,102,0.9);
+            border-radius: 0 12px 12px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 900;
+            transition: all 0.3s;
+            writing-mode: vertical-rl;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+        
+        .trigger-left:hover {
+            width: 50px;
+            background: rgba(255,0,102,1);
+        }
+        
+        /* RIGHT PANEL - MONEY SHOOTER */
+        .panel-right {
+            position: fixed;
+            right: -350px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 350px;
+            height: 80vh;
+            background: rgba(10,10,10,0.98);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-right: none;
+            border-radius: 16px 0 0 16px;
+            backdrop-filter: blur(20px);
+            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 800;
+            overflow: hidden;
+        }
+        
+        .panel-right.open {
+            right: 0;
+        }
+        
+        /* RIGHT TRIGGER TAB */
+        .trigger-right {
+            position: fixed;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 40px;
+            height: 100px;
+            background: rgba(0,255,136,0.9);
+            border-radius: 12px 0 0 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 900;
+            transition: all 0.3s;
+            writing-mode: vertical-rl;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: #000;
+        }
+        
+        .trigger-right:hover {
+            width: 50px;
+            background: rgba(0,255,136,1);
+        }
+        
+        /* TOP PANEL - AI VOCAL */
+        .panel-top {
+            position: fixed;
+            top: -300px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 600px;
+            max-width: 90vw;
+            height: 280px;
+            background: rgba(10,10,10,0.98);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-top: none;
+            border-radius: 0 0 16px 16px;
+            backdrop-filter: blur(20px);
+            transition: top 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 800;
+            overflow: hidden;
+        }
+        
+        .panel-top.open {
+            top: 60px;
+        }
+        
+        /* TOP TRIGGER TAB */
+        .trigger-top {
+            position: fixed;
+            top: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 40px;
+            background: rgba(153,51,255,0.9);
+            border-radius: 0 0 12px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 900;
+            transition: all 0.3s;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+        
+        .trigger-top:hover {
+            height: 50px;
+            background: rgba(153,51,255,1);
+        }
+        
+        /* PANEL CONTENT STYLING */
+        .panel-header {
+            padding: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .panel-title {
+            font-size: 16px;
+            font-weight: 700;
+        }
+        
+        .panel-close {
+            background: rgba(255,255,255,0.05);
+            border: none;
+            color: rgba(255,255,255,0.6);
+            font-size: 18px;
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .panel-close:hover {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+        }
+        
+        .panel-body {
+            padding: 20px;
+            overflow-y: auto;
+            height: calc(100% - 80px);
+        }
+        
+        /* REACTION GRID */
+        .reaction-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        
+        .reaction-item {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .reaction-item:hover {
+            background: rgba(255,255,255,0.1);
+            transform: scale(1.05);
+        }
+        
+        .reaction-icon {
+            font-size: 32px;
+            margin-bottom: 8px;
+        }
+        
+        .reaction-label {
+            font-size: 9px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: rgba(255,255,255,0.7);
+        }
+        
+        /* MONEY SHOOTER */
+        .money-controls {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .money-amount {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
+        
+        .money-btn {
+            background: rgba(0,255,136,0.2);
+            border: 2px solid rgba(0,255,136,0.4);
+            border-radius: 12px;
+            padding: 20px;
+            font-size: 24px;
+            font-weight: 700;
+            color: #00ff88;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .money-btn:hover {
+            background: rgba(0,255,136,0.4);
+            transform: scale(1.05);
+        }
+        
+        .shoot-input {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 12px;
+            padding: 15px;
+            color: #fff;
+            font-size: 14px;
+            font-family: inherit;
+            width: 100%;
+        }
+        
+        .shoot-input::placeholder {
+            color: rgba(255,255,255,0.4);
+        }
+        
+        .shoot-input:focus {
+            outline: none;
+            border-color: rgba(0,255,136,0.5);
+            background: rgba(255,255,255,0.08);
+        }
+        
+        .shoot-btn {
+            background: linear-gradient(135deg, #00ff88, #00cc66);
+            border: none;
+            border-radius: 12px;
+            padding: 15px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #000;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.2s;
+        }
+        
+        .shoot-btn:hover {
+            transform: scale(1.02);
+        }
+        
+        /* AI VOCAL SAMPLER */
+        .ai-input {
+            width: 100%;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 12px;
+            padding: 15px;
+            color: #fff;
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .ai-input::placeholder {
+            color: rgba(255,255,255,0.4);
+        }
+        
+        .ai-input:focus {
+            outline: none;
+            border-color: rgba(153,51,255,0.5);
+            background: rgba(255,255,255,0.08);
+        }
+        
+        .ai-chain {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .ai-btn {
+            flex: 1;
+            background: rgba(153,51,255,0.2);
+            border: 1px solid rgba(153,51,255,0.4);
+            border-radius: 10px;
+            padding: 10px;
+            font-size: 11px;
+            font-weight: 600;
+            color: #9933ff;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .ai-btn:hover {
+            background: rgba(153,51,255,0.4);
+        }
+        
+        /* MINIMAL CHAT - ALWAYS VISIBLE */
+        .chat-minimal {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 500px;
+            max-width: 90vw;
+            display: flex;
+            gap: 8px;
+            z-index: 700;
+        }
+        
+        .chat-input {
+            flex: 1;
+            background: rgba(0,0,0,0.8);
+            border: 0.5px solid rgba(255,255,255,0.15);
+            border-radius: 20px;
+            padding: 10px 15px;
+            font-size: 12px;
+            color: #fff;
+            font-family: inherit;
+            backdrop-filter: blur(20px);
+        }
+        
+        .chat-input::placeholder {
+            color: rgba(255,255,255,0.4);
+        }
+        
+        .chat-input:focus {
+            outline: none;
+            border-color: rgba(255,255,255,0.3);
+            background: rgba(0,0,0,0.9);
+        }
+        
+        .chat-send {
+            background: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+        
+        .chat-send:hover {
+            transform: scale(1.1);
+        }
+        
+        /* TOAST */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #ff0066, #ff3399);
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            box-shadow: 0 10px 30px rgba(255, 0, 102, 0.4);
+            z-index: 10000;
+            display: none;
+        }
+        
+        .toast.active {
+            display: block;
+            animation: slideIn 0.3s;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(400px); }
+            to { transform: translateX(0); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Blueprint Background -->
+    <div id="blueprint-bg"></div>
+    
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- TOP BAR -->
+        <div class="top-bar">
+            <div class="logo">SOUND FACTORY</div>
+            <div class="top-nav">
+                <button class="top-btn">🎟️ TICKETS</button>
+                <button class="top-btn">🍾 TABLES</button>
+                <button class="top-btn">🔴 LIVE</button>
+            </div>
+        </div>
+        
+        <!-- CONTENT - FULL OPEN FLOOR -->
+        <div class="content">
+            <div class="main-floor">
+                <svg viewBox="0 0 400 520" preserveAspectRatio="xMidYMid meet">
+                    <rect width="400" height="520" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="2"/>
+                    <rect x="30" y="30" width="340" height="460" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+                    
+                    <!-- DJ BOOTH -->
+                    <line x1="30" y1="30" x2="100" y2="100" stroke="rgba(255,0,102,0.8)" stroke-width="3"/>
+                    <rect x="30" y="30" width="70" height="70" fill="none" stroke="rgba(255,0,102,0.5)" stroke-width="1.5"/>
+                    <text x="65" y="70" font-family="Arial" font-size="9" fill="rgba(255,0,102,0.8)" text-anchor="middle" font-weight="bold">DJ</text>
+                    
+                    <!-- Bar -->
+                    <rect x="30" y="120" width="40" height="300" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"/>
+                    <text x="50" y="270" font-family="Arial" font-size="8" fill="rgba(255,255,255,0.4)" text-anchor="middle" transform="rotate(-90 50,270)">BAR</text>
+                    
+                    <!-- Columns -->
+                    <rect x="90" y="140" width="35" height="35" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1" rx="2"/>
+                    <rect x="182" y="140" width="35" height="35" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1" rx="2"/>
+                    <rect x="275" y="140" width="35" height="35" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1" rx="2"/>
+                    <rect x="90" y="210" width="35" height="35" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1" rx="2"/>
+                    <rect x="182" y="210" width="35" height="35" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1" rx="2"/>
+                    <rect x="275" y="210" width="35" height="35" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1" rx="2"/>
+                    <rect x="90" y="280" width="35" height="35" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1" rx="2"/>
+                    <rect x="182" y="280" width="35" height="35" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1" rx="2"/>
+                    <rect x="275" y="280" width="35" height="35" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1" rx="2"/>
+                    <rect x="90" y="350" width="35" height="35" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1" rx="2"/>
+                    <rect x="182" y="350" width="35" height="35" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1" rx="2"/>
+                    <rect x="275" y="350" width="35" height="35" fill="none" stroke="rgba(255,255,255,0.25)" stroke-width="1" rx="2"/>
+                    
+                    <!-- Dance floor -->
+                    <rect x="90" y="140" width="230" height="260" fill="none" stroke="rgba(0,255,136,0.2)" stroke-width="1" stroke-dasharray="5,5"/>
+                    <text x="205" y="270" font-family="Arial" font-size="10" fill="rgba(0,255,136,0.3)" text-anchor="middle">DANCE FLOOR</text>
+                    
+                    <text x="200" y="25" font-family="Arial" font-size="11" fill="rgba(255,255,255,0.5)" text-anchor="middle" font-weight="bold">MAIN FLOOR</text>
+                </svg>
+            </div>
+            
+            <!-- Character -->
+            <div class="character" id="myCharacter">YOU</div>
+        </div>
+    </div>
+    
+    <!-- ========== RETRACTABLE PANELS ========== -->
+    
+    <!-- LEFT PANEL - REACTIONS -->
+    <div class="trigger-left" onclick="togglePanel('left')">REACTIONS</div>
+    <div class="panel-left" id="panelLeft">
+        <div class="panel-header">
+            <div class="panel-title">❤️ REACTIONS</div>
+            <button class="panel-close" onclick="togglePanel('left')">×</button>
+        </div>
+        <div class="panel-body">
+            <div class="reaction-grid">
+                <div class="reaction-item" onclick="sendReaction('❤️')">
+                    <div class="reaction-icon">❤️</div>
+                    <div class="reaction-label">LOVE</div>
+                </div>
+                <div class="reaction-item" onclick="sendReaction('🔥')">
+                    <div class="reaction-icon">🔥</div>
+                    <div class="reaction-label">FIRE</div>
+                </div>
+                <div class="reaction-item" onclick="sendReaction('😂')">
+                    <div class="reaction-icon">😂</div>
+                    <div class="reaction-label">LAUGH</div>
+                </div>
+                <div class="reaction-item" onclick="sendReaction('🎉')">
+                    <div class="reaction-icon">🎉</div>
+                    <div class="reaction-label">PARTY</div>
+                </div>
+                <div class="reaction-item" onclick="sendReaction('⭐')">
+                    <div class="reaction-icon">⭐</div>
+                    <div class="reaction-label">STAR</div>
+                </div>
+                <div class="reaction-item" onclick="sendReaction('✨')">
+                    <div class="reaction-icon">✨</div>
+                    <div class="reaction-label">SPARKLE</div>
+                </div>
+                <div class="reaction-item" onclick="sendReaction('👏')">
+                    <div class="reaction-icon">👏</div>
+                    <div class="reaction-label">CLAP</div>
+                </div>
+                <div class="reaction-item" onclick="sendReaction('🙌')">
+                    <div class="reaction-icon">🙌</div>
+                    <div class="reaction-label">HANDS UP</div>
+                </div>
+                <div class="reaction-item" onclick="sendReaction('💃')">
+                    <div class="reaction-icon">💃</div>
+                    <div class="reaction-label">DANCE</div>
+                </div>
+                <div class="reaction-item" onclick="sendReaction('🎵')">
+                    <div class="reaction-icon">🎵</div>
+                    <div class="reaction-label">MUSIC</div>
+                </div>
+                <div class="reaction-item" onclick="sendReaction('🎤')">
+                    <div class="reaction-icon">🎤</div>
+                    <div class="reaction-label">MIC</div>
+                </div>
+                <div class="reaction-item" onclick="sendReaction('🎧')">
+                    <div class="reaction-icon">🎧</div>
+                    <div class="reaction-label">HEADPHONE</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- RIGHT PANEL - MONEY SHOOTER -->
+    <div class="trigger-right" onclick="togglePanel('right')">MONEY SHOOT</div>
+    <div class="panel-right" id="panelRight">
+        <div class="panel-header">
+            <div class="panel-title">💰 MONEY SHOOTER</div>
+            <button class="panel-close" onclick="togglePanel('right')">×</button>
+        </div>
+        <div class="panel-body">
+            <div class="money-controls">
+                <div>
+                    <label style="font-size: 12px; color: rgba(255,255,255,0.6); margin-bottom: 10px; display: block;">What to shoot?</label>
+                    <input type="text" class="shoot-input" id="shootInput" placeholder="money, roses, fire, champagne..." value="money">
+                </div>
+                
+                <div>
+                    <label style="font-size: 12px; color: rgba(255,255,255,0.6); margin-bottom: 10px; display: block;">Select Amount:</label>
+                    <div class="money-amount">
+                        <button class="money-btn" onclick="shootMoney(1)">$1</button>
+                        <button class="money-btn" onclick="shootMoney(5)">$5</button>
+                        <button class="money-btn" onclick="shootMoney(10)">$10</button>
+                        <button class="money-btn" onclick="shootMoney(20)">$20</button>
+                    </div>
+                </div>
+                
+                <button class="shoot-btn" onclick="customShoot()">🚀 SHOOT NOW!</button>
+                
+                <div style="margin-top: 20px; padding: 15px; background: rgba(0,255,136,0.1); border: 1px solid rgba(0,255,136,0.3); border-radius: 12px;">
+                    <div style="font-size: 11px; color: rgba(255,255,255,0.6); margin-bottom: 8px;">💡 More Money = More Power!</div>
+                    <div style="font-size: 10px; color: rgba(255,255,255,0.5);">Higher amounts = bigger, faster, more items</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- TOP PANEL - AI VOCAL SAMPLER -->
+    <div class="trigger-top" onclick="togglePanel('top')">AI VOCAL</div>
+    <div class="panel-top" id="panelTop">
+        <div class="panel-header">
+            <div class="panel-title">🤖 AI VOCAL SAMPLER</div>
+            <button class="panel-close" onclick="togglePanel('top')">×</button>
+        </div>
+        <div class="panel-body">
+            <textarea class="ai-input" id="aiInput" placeholder="Type what you want to say... AI will transform it through different voices!"></textarea>
+            
+            <div class="ai-chain">
+                <button class="ai-btn" onclick="runAIChain('happy')">😊 HAPPY</button>
+                <button class="ai-btn" onclick="runAIChain('sarcastic')">😏 SARCASTIC</button>
+                <button class="ai-btn" onclick="runAIChain('dramatic')">🎭 DRAMATIC</button>
+                <button class="ai-btn" onclick="runAIChain('bubble')">🫧 BUBBLE</button>
+            </div>
+            
+            <div style="margin-top: 15px; padding: 12px; background: rgba(153,51,255,0.1); border: 1px solid rgba(153,51,255,0.3); border-radius: 10px;">
+                <div style="font-size: 10px; color: rgba(255,255,255,0.6);">
+                    ✨ AI chains your text through multiple personalities and displays each transformation!
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- MINIMAL CHAT - ALWAYS VISIBLE -->
+    <div class="chat-minimal">
+        <input type="text" class="chat-input" id="chatInput" placeholder="Type a message...">
+        <button class="chat-send" onclick="sendMessage()">→</button>
+    </div>
+    
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+    
+    <script>
+        // ========== PANEL TOGGLE ==========
+        function togglePanel(side) {
+            const panel = document.getElementById('panel' + side.charAt(0).toUpperCase() + side.slice(1));
+            panel.classList.toggle('open');
+        }
+        
+        // ========== CHARACTER MOVEMENT ==========
+        const myCharacter = document.getElementById('myCharacter');
+        let isDragging = false;
+        
+        myCharacter.addEventListener('mousedown', () => isDragging = true);
+        document.addEventListener('mouseup', () => isDragging = false);
+        document.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                myCharacter.style.left = e.clientX + 'px';
+                myCharacter.style.top = e.clientY + 'px';
+            }
+        });
+        
+        // ========== REACTIONS ==========
+        function sendReaction(emoji) {
+            showToast(`${emoji} Sent!`);
+            // TODO: Animate reaction flying across screen
+        }
+        
+        // ========== MONEY SHOOTER ==========
+        function shootMoney(amount) {
+            const item = document.getElementById('shootInput').value || 'money';
+            showToast(`💸 Shooting ${amount} ${item}!`);
+            // TODO: Animate items shooting with intensity based on amount
+        }
+        
+        function customShoot() {
+            const item = document.getElementById('shootInput').value;
+            if (!item) {
+                showToast('⚠️ Enter what to shoot!');
+                return;
+            }
+            showToast(`🚀 Shooting ${item}!`);
+        }
+        
+        // ========== AI VOCAL CHAIN ==========
+        function runAIChain(voice) {
+            const text = document.getElementById('aiInput').value;
+            if (!text) {
+                showToast('⚠️ Enter text first!');
+                return;
+            }
+            showToast(`🤖 Running AI ${voice} chain...`);
+            // TODO: Transform text through AI chain and display each version
+        }
+        
+        // ========== CHAT ==========
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (message) {
+                showToast(`💬 "${message}"`);
+                input.value = '';
+            }
+        }
+        
+        // ========== TOAST ==========
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('active');
+            setTimeout(() => toast.classList.remove('active'), 2500);
+        }
+        
+        // Close panels on ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.panel-left, .panel-right, .panel-top').forEach(p => p.classList.remove('open'));
+            }
+        });
+        
+        console.log('🎉 RETRACTABLE PANEL SYSTEM READY!');
+        console.log('✅ Left: Reactions panel');
+        console.log('✅ Right: Money shooter');
+        console.log('✅ Top: AI vocal sampler');
+        console.log('✅ Dance floor: WIDE OPEN!');
+        console.log('✅ Fans control everything!');
+    </script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+[build]
+  publish = "."
+  command = ""
+
+# Optional: add a shortlink once domain is live
+# [[redirects]]
+#   from = "/go"
+#   to = "/"
+#   status = 301
+#   force = true
+
+# Light headers to avoid stale content while ads are iterating
+[[headers]]
+  for = "/index.html"
+  [headers.values]
+    Cache-Control = "public, max-age=60"

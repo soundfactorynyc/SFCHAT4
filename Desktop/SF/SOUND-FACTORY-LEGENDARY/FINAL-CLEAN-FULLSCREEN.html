@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Sound Factory NYC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            background: #000;
+            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+            overflow: hidden;
+            position: fixed;
+            width: 100%;
+            height: 100vh;
+        }
+        
+        /* BLUEPRINT BG */
+        .blueprint-bg {
+            position: fixed;
+            inset: 0;
+            background: 
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 20px 20px;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        /* UNIVERSAL CLEAN BUTTON STYLE */
+        .clean-box {
+            background: #1a1a1a;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+        
+        .clean-box:active {
+            transform: scale(0.95);
+            background: #222;
+        }
+        
+        /* TOP BAR */
+        .top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 12px 15px;
+            background: #000;
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            z-index: 900;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 14px;
+            font-weight: 700;
+        }
+        
+        .stats {
+            display: flex;
+            gap: 12px;
+            font-size: 10px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.6);
+        }
+        
+        .stat-value {
+            color: #fff;
+            font-weight: 700;
+        }
+        
+        /* CONTROL PANEL */
+        .control-panel {
+            position: fixed;
+            top: 60px;
+            left: 0;
+            right: 0;
+            padding: 10px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            justify-content: center;
+            z-index: 850;
+        }
+        
+        .control-btn {
+            padding: 10px 16px;
+            background: #1a1a1a;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .control-btn:active {
+            transform: scale(0.95);
+            background: #222;
+        }
+        
+        .control-btn.active {
+            background: #fff;
+            color: #000;
+        }
+        
+        /* MAIN FLOOR - FULLSCREEN */
+        .content {
+            position: fixed;
+            top: 120px;
+            bottom: 120px;
+            left: 0;
+            right: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        svg {
+            width: 95%;
+            height: 95%;
+            max-width: 800px;
+        }
+        
+        .character {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #ff0066, #ff3399);
+            border-radius: 50%;
+            font-size: 7px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            box-shadow: 0 0 15px rgba(255,0,102,0.6);
+            z-index: 100;
+            left: 50%;
+            top: 40%;
+            transform: translate(-50%, -50%);
+            touch-action: none;
+            cursor: move;
+        }
+        
+        /* BOTTOM SECTION - COMPACT */
+        .bottom-section {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #000;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            z-index: 900;
+            padding: 10px;
+        }
+        
+        .reaction-row {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+        
+        .reaction-btn {
+            padding: 10px 14px;
+            background: #1a1a1a;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .reaction-btn:active {
+            transform: scale(0.9);
+            background: #222;
+        }
+        
+        .money-btn-bottom {
+            padding: 10px 14px;
+            background: #1a1a1a;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .money-btn-bottom:active {
+            transform: scale(0.9);
+            background: #222;
+        }
+        
+        .chat-row {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+        }
+        
+        .chat-input {
+            flex: 1;
+            max-width: 300px;
+            padding: 10px 14px;
+            background: #1a1a1a;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 12px;
+            outline: none;
+        }
+        
+        .chat-input::placeholder {
+            color: rgba(255,255,255,0.3);
+        }
+        
+        .chat-send {
+            padding: 10px 18px;
+            background: #1a1a1a;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .chat-send:active {
+            transform: scale(0.95);
+            background: #222;
+        }
+        
+        /* ANIMATIONS */
+        @keyframes reactionFloat {
+            0% {
+                transform: translateY(0) scale(0);
+                opacity: 0;
+            }
+            20% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-250px) scale(1.2);
+                opacity: 0;
+            }
+        }
+        
+        .reaction-particle {
+            position: fixed;
+            pointer-events: none;
+            z-index: 10000;
+            animation: reactionFloat 1.5s ease-out forwards;
+        }
+    </style>
+</head>
+<body>
+    <div class="blueprint-bg"></div>
+    
+    <!-- TOP BAR -->
+    <div class="top-bar">
+        <div class="logo">SOUND FACTORY</div>
+        <div class="stats">
+            <span><span class="stat-value" id="onlineCount">842</span> ONLINE</span>
+            <span><span class="stat-value" id="pinCount">3</span>/3 PINS</span>
+            <span>$<span class="stat-value" id="tippedAmount">47</span> TIPPED</span>
+        </div>
+    </div>
+    
+    <!-- CONTROL PANEL -->
+    <div class="control-panel">
+        <button class="control-btn">SOCIAL</button>
+        <button class="control-btn">REACTIONS</button>
+        <button class="control-btn">EFFECTS</button>
+        <button class="control-btn active">AI CHAIN</button>
+        <button class="control-btn">DROP PIN</button>
+    </div>
+    
+    <!-- MAIN FLOOR - FULLSCREEN -->
+    <div class="content">
+        <svg viewBox="0 0 400 520">
+            <rect width="400" height="520" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+            <rect x="30" y="30" width="340" height="460" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+            <rect x="30" y="30" width="70" height="70" fill="none" stroke="rgba(255,0,102,0.3)" stroke-width="1"/>
+            <text x="65" y="70" font-size="8" fill="rgba(255,0,102,0.6)" text-anchor="middle">DJ</text>
+            <rect x="30" y="120" width="40" height="300" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+            <rect x="90" y="140" width="30" height="30" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+            <rect x="185" y="140" width="30" height="30" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+            <rect x="280" y="140" width="30" height="30" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+            <rect x="90" y="210" width="30" height="30" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+            <rect x="185" y="210" width="30" height="30" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+            <rect x="280" y="210" width="30" height="30" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+            <rect x="90" y="280" width="30" height="30" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+            <rect x="185" y="280" width="30" height="30" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+            <rect x="280" y="280" width="30" height="30" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+            <text x="200" y="20" font-size="9" fill="rgba(255,255,255,0.4)" text-anchor="middle">MAIN FLOOR</text>
+        </svg>
+        <div class="character" id="myCharacter">YOU</div>
+    </div>
+    
+    <!-- BOTTOM SECTION -->
+    <div class="bottom-section">
+        <div class="reaction-row">
+            <button class="reaction-btn" onclick="shootReaction('❤️')">❤️</button>
+            <button class="reaction-btn" onclick="shootReaction('🔥')">🔥</button>
+            <button class="reaction-btn" onclick="shootReaction('😂')">😂</button>
+            <button class="reaction-btn" onclick="shootReaction('🎉')">🎉</button>
+            <button class="reaction-btn" onclick="shootReaction('👠')">👠</button>
+            <button class="reaction-btn" onclick="shootReaction('🏳️‍🌈')">🏳️‍🌈</button>
+            <button class="money-btn-bottom" onclick="shootMoney(1)">$1</button>
+            <button class="money-btn-bottom" onclick="shootMoney(5)">$5</button>
+            <button class="money-btn-bottom" onclick="shootMoney(10)">$10</button>
+            <button class="money-btn-bottom" onclick="shootMoney(20)">$20</button>
+        </div>
+        <div class="chat-row">
+            <input type="text" class="chat-input" id="chatInput" placeholder="Type a message...">
+            <button class="chat-send" onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+    
+    <script>
+        let totalMoney = 0;
+        let tippedAmount = 47;
+        
+        // CHARACTER DRAG
+        const char = document.getElementById('myCharacter');
+        let isDragging = false;
+        
+        char.addEventListener('mousedown', () => isDragging = true);
+        char.addEventListener('touchstart', () => isDragging = true);
+        
+        document.addEventListener('mouseup', () => isDragging = false);
+        document.addEventListener('touchend', () => isDragging = false);
+        
+        document.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                char.style.left = e.clientX + 'px';
+                char.style.top = e.clientY + 'px';
+            }
+        });
+        
+        document.addEventListener('touchmove', (e) => {
+            if (isDragging && e.touches[0]) {
+                char.style.left = e.touches[0].clientX + 'px';
+                char.style.top = e.touches[0].clientY + 'px';
+            }
+        });
+        
+        // SHOOT REACTION
+        function shootReaction(emoji) {
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    const p = document.createElement('div');
+                    p.className = 'reaction-particle';
+                    p.textContent = emoji;
+                    p.style.cssText = `
+                        left: ${Math.random() * window.innerWidth}px;
+                        bottom: 120px;
+                        font-size: 28px;
+                    `;
+                    document.body.appendChild(p);
+                    setTimeout(() => p.remove(), 1500);
+                }, i * 100);
+            }
+        }
+        
+        // SHOOT MONEY
+        function shootMoney(amount) {
+            totalMoney += amount;
+            tippedAmount += amount;
+            document.getElementById('tippedAmount').textContent = tippedAmount;
+            
+            for (let i = 0; i < 10; i++) {
+                setTimeout(() => {
+                    const p = document.createElement('div');
+                    p.className = 'reaction-particle';
+                    p.textContent = '💵';
+                    p.style.cssText = `
+                        left: ${Math.random() * window.innerWidth}px;
+                        bottom: 120px;
+                        font-size: 32px;
+                    `;
+                    document.body.appendChild(p);
+                    setTimeout(() => p.remove(), 1500);
+                }, i * 80);
+            }
+        }
+        
+        // SEND MESSAGE
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            if (input.value.trim()) {
+                console.log('Message:', input.value);
+                input.value = '';
+            }
+        }
+        
+        console.log('🚀 SOUND FACTORY - FULLSCREEN BLUEPRINT!');
+    </script>
+</body>
+</html>

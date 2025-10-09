@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SOUND FACTORY NYC - LEGENDARY</title>
+    <style>
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; 
+            user-select: none;
+        }
+        
+        html, body { 
+            background: #000; 
+            color: #fff; 
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; 
+            overflow: hidden; 
+            height: 100vh; 
+            width: 100vw; 
+            position: fixed; 
+        }
+        
+        /* BLUEPRINT */
+        .blueprint-bg { 
+            position: fixed; 
+            inset: 0; 
+            background: #000;
+            z-index: 1; 
+        }
+        
+        .blueprint-bg::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: 
+                linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), 
+                linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+            background-size: 30px 30px;
+            animation: gridPulse 12s ease-in-out infinite;
+        }
+        
+        @keyframes gridPulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.4; }
+        }
+        
+        .blueprint-area { 
+            position: fixed; 
+            inset: 0;
+            z-index: 10; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+        }
+        
+        /* ═══════════════════════════════════════════════════════════════ */
+        /* DANCING CHARACTERS - THE STARS OF THE SHOW! */
+        /* ═══════════════════════════════════════════════════════════════ */
+        
+        .character {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            z-index: 90;
+            cursor: move;
+            transition: transform 0.1s ease;
+        }
+        
+        .character-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transform-style: preserve-3d;
+        }
+        
+        /* HEAD - with face */
+        .character-head {
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            background: radial-gradient(circle, rgba(255,255,255,0.9), rgba(200,200,200,0.8));
+            border: 1.5px solid #000;
+            border-radius: 50%;
+            top: 2px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 3;
+            overflow: hidden;
+        }
+        
+        /* Face features */
+        .character-head::before {
+            content: '• •';
+            position: absolute;
+            top: 3px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 6px;
+            color: #000;
+            letter-spacing: 2px;
+        }
+        
+        /* BODY/TORSO */
+        .character-body {
+            position: absolute;
+            width: 16px;
+            height: 10px;
+            background: linear-gradient(180deg, #333 0%, #000 100%);
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 4px;
+            top: 14px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+        }
+        
+        /* ARMS */
+        .character-arms {
+            position: absolute;
+            width: 24px;
+            height: 2px;
+            background: #222;
+            border: 0.5px solid rgba(255,255,255,0.2);
+            border-radius: 2px;
+            top: 17px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1;
+        }
+        
+        /* LEGS/FEET */
+        .character-legs {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 3px;
+        }
+        
+        .leg {
+            width: 3px;
+            height: 6px;
+            background: #111;
+            border: 0.5px solid rgba(255,255,255,0.2);
+            border-radius: 0 0 2px 2px;
+        }
+        
+        /* SPECIAL CHARACTER - ME */
+        .character.me .character-head {
+            background: radial-gradient(circle, #00ff88, #00cc66);
+            box-shadow: 0 0 15px rgba(0,255,136,0.5);
+            border-color: #00ff88;
+        }
+        
+        .character.me .character-body {
+            background: linear-gradient(180deg, #00ff88 0%, #006633 100%);
+            border-color: #00ff88;
+        }
+        
+        /* ═══════════════════════════════════════════════════════════════ */
+        /* DANCE MOVES & ANIMATIONS */
+        /* ═══════════════════════════════════════════════════════════════ */
+        
+        /* WALKING */
+        @keyframes walk {
+            0% { transform: translateX(-50%) translateY(0) rotate(0deg); }
+            25% { transform: translateX(-50%) translateY(-1px) rotate(-2deg); }
+            50% { transform: translateX(-50%) translateY(0) rotate(0deg); }
+            75% { transform: translateX(-50%) translateY(-1px) rotate(2deg); }
+            100% { transform: translateX(-50%) translateY(0) rotate(0deg); }
+        }
+        
+        @keyframes walkArms {
+            0%, 100% { transform: translateX(-50%) rotate(-5deg); }
+            50% { transform: translateX(-50%) rotate(5deg); }
+        }
+        
+        @keyframes walkLegs {
+            0%, 100% { transform: translateX(-50%) scaleY(1); }
+            25% { transform: translateX(-50%) scaleY(1.1) translateY(-1px); }
+            75% { transform: translateX(-50%) scaleY(0.9) translateY(1px); }
+        }
+        
+        .character.walking .character-body {
+            animation: walk 0.5s ease-in-out infinite;
+        }
+        
+        .character.walking .character-arms {
+            animation: walkArms 0.5s ease-in-out infinite;
+        }
+        
+        .character.walking .character-legs {
+            animation: walkLegs 0.25s ease-in-out infinite;
+        }
+        
+        /* RUNWAY WALK - FIERCE! */
+        @keyframes runwayBody {
+            0% { transform: translateX(-50%) rotate(0deg) scale(1, 1); }
+            25% { transform: translateX(-50%) rotate(-8deg) scale(0.95, 1.05); }
+            50% { transform: translateX(-50%) rotate(0deg) scale(1, 1); }
+            75% { transform: translateX(-50%) rotate(8deg) scale(0.95, 1.05); }
+            100% { transform: translateX(-50%) rotate(0deg) scale(1, 1); }
+        }
+        
+        @keyframes runwayHead {
+            0%, 100% { transform: translateX(-50%) rotate(0deg); }
+            25% { transform: translateX(-50%) rotate(5deg) translateX(-2px); }
+            75% { transform: translateX(-50%) rotate(-5deg) translateX(2px); }
+        }
+        
+        @keyframes runwayArms {
+            0% { transform: translateX(-50%) rotate(-15deg) scaleX(0.9); }
+            50% { transform: translateX(-50%) rotate(15deg) scaleX(1.1); }
+            100% { transform: translateX(-50%) rotate(-15deg) scaleX(0.9); }
+        }
+        
+        .character.runway .character-body {
+            animation: runwayBody 0.8s ease-in-out infinite;
+        }
+        
+        .character.runway .character-head {
+            animation: runwayHead 0.8s ease-in-out infinite;
+        }
+        
+        .character.runway .character-arms {
+            animation: runwayArms 0.8s ease-in-out infinite;
+        }
+        
+        /* BREAKDANCE - SPIN! */
+        @keyframes breakdanceSpin {
+            0% { transform: rotate(0deg) scale(1); }
+            25% { transform: rotate(180deg) scale(0.8); }
+            50% { transform: rotate(360deg) scale(1); }
+            75% { transform: rotate(540deg) scale(1.2); }
+            100% { transform: rotate(720deg) scale(1); }
+        }
+        
+        @keyframes breakdanceBody {
+            0%, 100% { transform: translateX(-50%) rotateX(0deg); }
+            25% { transform: translateX(-50%) rotateX(45deg) translateY(5px); }
+            50% { transform: translateX(-50%) rotateX(0deg) translateY(-5px); }
+            75% { transform: translateX(-50%) rotateX(-45deg) translateY(5px); }
+        }
+        
+        @keyframes breakdanceArms {
+            0% { transform: translateX(-50%) rotate(0deg) scaleX(1); }
+            25% { transform: translateX(-50%) rotate(90deg) scaleX(1.5); }
+            50% { transform: translateX(-50%) rotate(180deg) scaleX(1); }
+            75% { transform: translateX(-50%) rotate(270deg) scaleX(1.5); }
+            100% { transform: translateX(-50%) rotate(360deg) scaleX(1); }
+        }
+        
+        .character.breakdance .character-container {
+            animation: breakdanceSpin 1s ease-in-out infinite;
+        }
+        
+        .character.breakdance .character-body {
+            animation: breakdanceBody 0.5s ease-in-out infinite;
+        }
+        
+        .character.breakdance .character-arms {
+            animation: breakdanceArms 0.25s linear infinite;
+        }
+        
+        /* VOGUING - POSE! */
+        @keyframes vogueBody {
+            0%, 100% { transform: translateX(-50%) rotate(0deg) scale(1, 1); }
+            20% { transform: translateX(-50%) rotate(-30deg) scale(0.9, 1.1); }
+            40% { transform: translateX(-50%) rotate(30deg) scale(1.1, 0.9); }
+            60% { transform: translateX(-50%) rotate(0deg) scale(1, 1.2); }
+            80% { transform: translateX(-50%) rotate(0deg) scale(1.2, 1); }
+        }
+        
+        @keyframes vogueArms {
+            0% { transform: translateX(-50%) rotate(0deg); }
+            20% { transform: translateX(-50%) rotate(90deg) translateY(-10px); }
+            40% { transform: translateX(-50%) rotate(-90deg) translateY(-10px); }
+            60% { transform: translateX(-50%) rotate(45deg) translateY(-5px); }
+            80% { transform: translateX(-50%) rotate(-45deg) translateY(-5px); }
+            100% { transform: translateX(-50%) rotate(0deg); }
+        }
+        
+        @keyframes vogueHead {
+            0%, 100% { transform: translateX(-50%) rotate(0deg); }
+            20%, 40%, 60%, 80% { transform: translateX(-50%) rotate(0deg) scale(1.1); }
+        }
+        
+        .character.vogue .character-body {
+            animation: vogueBody 2s ease-in-out infinite;
+        }
+        
+        .character.vogue .character-arms {
+            animation: vogueArms 2s ease-in-out infinite;
+        }
+        
+        .character.vogue .character-head {
+            animation: vogueHead 2s ease-in-out infinite;
+        }
+        
+        /* BOUNCE DANCE */
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0) scale(1, 1); }
+            25% { transform: translateX(-50%) translateY(-8px) scale(0.9, 1.1); }
+            50% { transform: translateX(-50%) translateY(0) scale(1.1, 0.9); }
+            75% { transform: translateX(-50%) translateY(-4px) scale(0.95, 1.05); }
+        }
+        
+        @keyframes bounceArms {
+            0%, 100% { transform: translateX(-50%) translateY(0) rotate(0deg); }
+            25% { transform: translateX(-50%) translateY(-5px) rotate(-20deg); }
+            50% { transform: translateX(-50%) translateY(0) rotate(0deg); }
+            75% { transform: translateX(-50%) translateY(-3px) rotate(20deg); }
+        }
+        
+        .character.bounce .character-body {
+            animation: bounce 0.5s ease-in-out infinite;
+        }
+        
+        .character.bounce .character-arms {
+            animation: bounceArms 0.5s ease-in-out infinite;
+        }
+        
+        /* SPIN MOVE */
+        @keyframes spinMove {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .character.spin .character-container {
+            animation: spinMove 0.5s linear infinite;
+        }
+        
+        /* DEATH DROP! */
+        @keyframes deathDrop {
+            0% { transform: scale(1) translateY(0); }
+            40% { transform: scale(1.2) translateY(-20px); }
+            50% { transform: scale(1.3) translateY(-25px) rotate(180deg); }
+            70% { transform: scale(0.8) translateY(10px) rotate(360deg); }
+            100% { transform: scale(1) translateY(0) rotate(360deg); }
+        }
+        
+        .character.deathdrop .character-container {
+            animation: deathDrop 1s ease-in-out;
+        }
+        
+        /* WAVE ANIMATION */
+        @keyframes wave {
+            0%, 100% { transform: translateX(-50%) skewX(0deg); }
+            25% { transform: translateX(-50%) skewX(-10deg); }
+            75% { transform: translateX(-50%) skewX(10deg); }
+        }
+        
+        .character.wave .character-body {
+            animation: wave 1s ease-in-out infinite;
+        }
+        
+        /* ═══════════════════════════════════════════════════════════════ */
+        /* DANCE FLOOR EFFECTS */
+        /* ═══════════════════════════════════════════════════════════════ */
+        
+        .dance-effect {
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 5;
+        }
+        
+        @keyframes danceRipple {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 1;
+                border: 2px solid #00ff88;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(3);
+                opacity: 0;
+                border: 1px solid rgba(0,255,136,0);
+            }
+        }
+        
+        /* Control Panel for Dance Moves */
+        .dance-controls {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 5px;
+            padding: 8px;
+            background: rgba(0,0,0,0.8);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            z-index: 1000;
+        }
+        
+        .dance-btn {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 50%;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .dance-btn:hover {
+            background: rgba(0,255,136,0.2);
+            border-color: #00ff88;
+            transform: scale(1.1);
+        }
+        
+        .dance-btn.active {
+            background: rgba(0,255,136,0.3);
+            border-color: #00ff88;
+            box-shadow: 0 0 20px rgba(0,255,136,0.5);
+        }
+        
+        /* Reaction Canvas */
+        #reaction-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+        }
+    </style>
+</head>
+<body>
+    <!-- Blueprint background -->
+    <div class="blueprint-bg"></div>
+    
+    <!-- Blueprint area -->
+    <div class="blueprint-area" id="blueprintArea">
+        <!-- Simple floor plan -->
+        <svg viewBox="0 0 800 600" style="width: 100%; height: 100%; max-width: 900px;">
+            <rect x="50" y="50" width="700" height="500" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/>
+            <rect x="100" y="100" width="600" height="400" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+            
+            <!-- DJ Booth -->
+            <rect x="325" y="450" width="150" height="40" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1"/>
+            <text x="400" y="475" fill="rgba(255,255,255,0.3)" font-size="10" text-anchor="middle">DJ</text>
+            
+            <!-- Dance Floor -->
+            <rect x="200" y="200" width="400" height="200" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/>
+            <text x="400" y="300" fill="rgba(255,255,255,0.2)" font-size="14" text-anchor="middle">DANCE FLOOR</text>
+        </svg>
+        
+        <!-- DANCING CHARACTERS! -->
+        <div class="character me" id="myCharacter" style="left: 400px; top: 300px;">
+            <div class="character-container">
+                <div class="character-head"></div>
+                <div class="character-body"></div>
+                <div class="character-arms"></div>
+                <div class="character-legs">
+                    <div class="leg"></div>
+                    <div class="leg"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Dance Control Panel -->
+    <div class="dance-controls">
+        <button class="dance-btn" onclick="setDanceMode('walk')" title="Walk">🚶</button>
+        <button class="dance-btn" onclick="setDanceMode('runway')" title="Runway">💃</button>
+        <button class="dance-btn" onclick="setDanceMode('breakdance')" title="Breakdance">🤸</button>
+        <button class="dance-btn" onclick="setDanceMode('vogue')" title="Vogue">🙌</button>
+        <button class="dance-btn" onclick="setDanceMode('bounce')" title="Bounce">🎵</button>
+        <button class="dance-btn" onclick="setDanceMode('spin')" title="Spin">🌀</button>
+        <button class="dance-btn" onclick="setDanceMode('wave')" title="Wave">🌊</button>
+        <button class="dance-btn" onclick="triggerDeathDrop()" title="Death Drop!">💥</button>
+    </div>
+    
+    <!-- Reaction Canvas -->
+    <canvas id="reaction-canvas"></canvas>
+    
+    <script>
+        // Character dance control
+        const character = document.getElementById('myCharacter');
+        let currentDance = null;
+        let isDragging = false;
+        let dragOffset = { x: 0, y: 0 };
+        
+        // Dance mode functions
+        function setDanceMode(mode) {
+            // Remove all dance classes
+            character.classList.remove('walking', 'runway', 'breakdance', 'vogue', 'bounce', 'spin', 'wave');
+            
+            // Update button states
+            document.querySelectorAll('.dance-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Add new dance class
+            if (mode && mode !== 'none') {
+                character.classList.add(mode);
+                currentDance = mode;
+                createDanceEffect();
+            } else {
+                currentDance = null;
+            }
+        }
+        
+        // Special death drop move
+        function triggerDeathDrop() {
+            character.classList.add('deathdrop');
+            createSpecialEffect('deathdrop');
+            setTimeout(() => {
+                character.classList.remove('deathdrop');
+            }, 1000);
+        }
+        
+        // Create dance floor effect
+        function createDanceEffect() {
+            const effect = document.createElement('div');
+            effect.className = 'dance-effect';
+            const rect = character.getBoundingClientRect();
+            effect.style.left = rect.left + rect.width/2 + 'px';
+            effect.style.top = rect.top + rect.height/2 + 'px';
+            effect.style.animation = 'danceRipple 1s ease-out';
+            document.body.appendChild(effect);
+            
+            setTimeout(() => effect.remove(), 1000);
+        }
+        
+        // Create special effects
+        function createSpecialEffect(type) {
+            for (let i = 0; i < 10; i++) {
+                setTimeout(() => {
+                    const spark = document.createElement('div');
+                    spark.style.cssText = `
+                        position: absolute;
+                        width: 4px;
+                        height: 4px;
+                        background: #00ff88;
+                        border-radius: 50%;
+                        left: ${character.style.left};
+                        top: ${character.style.top};
+                        z-index: 1000;
+                        pointer-events: none;
+                    `;
+                    document.getElementById('blueprintArea').appendChild(spark);
+                    
+                    const angle = (Math.PI * 2 / 10) * i;
+                    const distance = 50 + Math.random() * 50;
+                    const endX = parseInt(character.style.left) + Math.cos(angle) * distance;
+                    const endY = parseInt(character.style.top) + Math.sin(angle) * distance;
+                    
+                    spark.animate([
+                        { transform: 'translate(-50%, -50%) scale(1)', opacity: 1 },
+                        { 
+                            transform: `translate(${endX - parseInt(character.style.left)}px, ${endY - parseInt(character.style.top)}px) scale(0)`, 
+                            opacity: 0 
+                        }
+                    ], {
+                        duration: 1000,
+                        easing: 'ease-out'
+                    });
+                    
+                    setTimeout(() => spark.remove(), 1000);
+                }, i * 50);
+            }
+        }
+        
+        // Character dragging with dance
+        character.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            const rect = character.getBoundingClientRect();
+            dragOffset.x = e.clientX - rect.left;
+            dragOffset.y = e.clientY - rect.top;
+            
+            // Start walking when dragging
+            if (!currentDance) {
+                character.classList.add('walking');
+            }
+        });
+        
+        document.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                const blueprintRect = document.getElementById('blueprintArea').getBoundingClientRect();
+                let x = e.clientX - blueprintRect.left - dragOffset.x;
+                let y = e.clientY - blueprintRect.top - dragOffset.y;
+                
+                // Keep character in bounds
+                x = Math.max(20, Math.min(blueprintRect.width - 20, x));
+                y = Math.max(20, Math.min(blueprintRect.height - 20, y));
+                
+                character.style.left = x + 'px';
+                character.style.top = y + 'px';
+            }
+        });
+        
+        document.addEventListener('mouseup', () => {
+            if (isDragging && !currentDance) {
+                character.classList.remove('walking');
+            }
+            isDragging = false;
+        });
+        
+        // Touch support for mobile
+        character.addEventListener('touchstart', (e) => {
+            isDragging = true;
+            const touch = e.touches[0];
+            const rect = character.getBoundingClientRect();
+            dragOffset.x = touch.clientX - rect.left;
+            dragOffset.y = touch.clientY - rect.top;
+            
+            if (!currentDance) {
+                character.classList.add('walking');
+            }
+        });
+        
+        document.addEventListener('touchmove', (e) => {
+            if (isDragging) {
+                const touch = e.touches[0];
+                const blueprintRect = document.getElementById('blueprintArea').getBoundingClientRect();
+                let x = touch.clientX - blueprintRect.left - dragOffset.x;
+                let y = touch.clientY - blueprintRect.top - dragOffset.y;
+                
+                x = Math.max(20, Math.min(blueprintRect.width - 20, x));
+                y = Math.max(20, Math.min(blueprintRect.height - 20, y));
+                
+                character.style.left = x + 'px';
+                character.style.top = y + 'px';
+            }
+        });
+        
+        document.addEventListener('touchend', () => {
+            if (isDragging && !currentDance) {
+                character.classList.remove('walking');
+            }
+            isDragging = false;
+        });
+        
+        // Auto dance demo
+        function startAutoDanceDemo() {
+            const dances = ['runway', 'breakdance', 'vogue', 'bounce', 'spin', 'wave'];
+            let index = 0;
+            
+            setInterval(() => {
+                // Random movement
+                const blueprintRect = document.getElementById('blueprintArea').getBoundingClientRect();
+                const randomX = Math.random() * (blueprintRect.width - 100) + 50;
+                const randomY = Math.random() * (blueprintRect.height - 100) + 50;
+                
+                // Move character
+                character.style.transition = 'left 2s ease, top 2s ease';
+                character.style.left = randomX + 'px';
+                character.style.top = randomY + 'px';
+                
+                // Change dance
+                setDanceMode(dances[index % dances.length]);
+                index++;
+                
+                // Sometimes do a death drop
+                if (Math.random() > 0.8) {
+                    setTimeout(() => triggerDeathDrop(), 1000);
+                }
+            }, 3000);
+        }
+        
+        // Add more characters
+        function addDancer(name, x, y) {
+            const dancer = document.createElement('div');
+            dancer.className = 'character';
+            dancer.style.left = x + 'px';
+            dancer.style.top = y + 'px';
+            dancer.innerHTML = `
+                <div class="character-container">
+                    <div class="character-head"></div>
+                    <div class="character-body"></div>
+                    <div class="character-arms"></div>
+                    <div class="character-legs">
+                        <div class="leg"></div>
+                        <div class="leg"></div>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('blueprintArea').appendChild(dancer);
+            
+            // Make them dance randomly
+            const dances = ['runway', 'breakdance', 'vogue', 'bounce', 'spin'];
+            setInterval(() => {
+                const randomDance = dances[Math.floor(Math.random() * dances.length)];
+                dancer.className = 'character ' + randomDance;
+                
+                // Random movement
+                const blueprintRect = document.getElementById('blueprintArea').getBoundingClientRect();
+                dancer.style.transition = 'left 3s ease, top 3s ease';
+                dancer.style.left = (Math.random() * (blueprintRect.width - 100) + 50) + 'px';
+                dancer.style.top = (Math.random() * (blueprintRect.height - 100) + 50) + 'px';
+            }, 3000 + Math.random() * 2000);
+            
+            return dancer;
+        }
+        
+        // Keyboard controls
+        document.addEventListener('keypress', (e) => {
+            switch(e.key) {
+                case '1': setDanceMode('walk'); break;
+                case '2': setDanceMode('runway'); break;
+                case '3': setDanceMode('breakdance'); break;
+                case '4': setDanceMode('vogue'); break;
+                case '5': setDanceMode('bounce'); break;
+                case '6': setDanceMode('spin'); break;
+                case '7': setDanceMode('wave'); break;
+                case ' ': triggerDeathDrop(); break;
+                case 'd': startAutoDanceDemo(); break;
+                case 'a': 
+                    // Add random dancer
+                    addDancer('DJ', Math.random() * 600 + 100, Math.random() * 400 + 100);
+                    break;
+            }
+        });
+        
+        console.log('🕺 DANCE SYSTEM LOADED!');
+        console.log('Click buttons or use number keys 1-7 for dances');
+        console.log('Press SPACE for Death Drop!');
+        console.log('Press D for auto demo, A to add dancers');
+        console.log('Drag character to move around');
+    </script>
+</body>
+</html>

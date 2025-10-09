@@ -1,0 +1,10 @@
+{
+  "name": "sms-auth-functions",
+  "version": "1.0.0",
+  "description": "SMS authentication serverless functions",
+  "dependencies": {
+    "@supabase/supabase-js": "^2.39.0",
+    "twilio": "^4.20.0",
+    "stripe": "^14.10.0"
+  }
+}

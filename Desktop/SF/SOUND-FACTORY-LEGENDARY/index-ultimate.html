@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SOUND FACTORY NYC - LEGENDARY</title>
+    <style>
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; 
+            user-select: none;
+        }
+        
+        html, body { 
+            background: #000; 
+            color: #fff; 
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; 
+            overflow: hidden; 
+            height: 100vh; 
+            width: 100vw; 
+            position: fixed; 
+        }
+        
+        /* ENHANCED Blueprint Background */
+        .blueprint-bg { 
+            position: fixed; 
+            inset: 0; 
+            background: #000;
+            z-index: 1; 
+        }
+        
+        .blueprint-bg::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: 
+                linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), 
+                linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+            background-size: 30px 30px;
+            animation: gridBreathe 10s ease-in-out infinite;
+        }
+        
+        @keyframes gridBreathe {
+            0%, 100% { 
+                opacity: 0.3; 
+                transform: scale(1);
+            }
+            50% { 
+                opacity: 0.5; 
+                transform: scale(1.01);
+            }
+        }
+        
+        /* Blueprint Container */
+        .blueprint-area { 
+            position: fixed; 
+            inset: 0;
+            z-index: 10; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+        }
+        
+        /* Blueprint SVG with glow */
+        .blueprint-svg { 
+            width: 95%; 
+            height: 95%; 
+            max-width: 900px;
+            filter: drop-shadow(0 0 30px rgba(255,255,255,0.03));
+        }
+        
+        /* Reaction Canvas - FULL SCREEN */
+        #reaction-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+        }
+        
+        /* Pin Overlay */
+        #pinOverlay {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 100;
+        }
+        
+        #pinOverlay .sf-pin {
+            pointer-events: all;
+        }
+        
+        /* SMS Login Modal */
+        .sms-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.95);
+            backdrop-filter: blur(20px);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .sms-content {
+            background: rgba(10,10,10,0.98);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 25px;
+            max-width: 320px;
+            width: 90%;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.8);
+        }
+        
+        /* DRAWER SYSTEM - Ultra Minimal */
+        .drawer {
+            position: fixed;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 0.5px solid rgba(255,255,255,0.08);
+            z-index: 1000;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Bottom drawer - Reactions */
+        .drawer-bottom {
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 85px;
+            transform: translateY(calc(100% - 10px));
+            border-radius: 20px 20px 0 0;
+        }
+        
+        .drawer-bottom.open {
+            transform: translateY(0);
+        }
+        
+        /* Side drawers */
+        .drawer-right {
+            right: 0;
+            top: 50%;
+            transform: translate(calc(100% - 10px), -50%);
+            width: 65px;
+            height: auto;
+            border-radius: 20px 0 0 20px;
+            padding: 8px 5px;
+        }
+        
+        .drawer-left {
+            left: 0;
+            top: 50%;
+            transform: translate(calc(-100% + 10px), -50%);
+            width: 65px;
+            height: auto;
+            border-radius: 0 20px 20px 0;
+            padding: 8px 5px;
+        }
+        
+        .drawer-right.open { transform: translate(0, -50%); }
+        .drawer-left.open { transform: translate(0, -50%); }
+        
+        /* Drawer handles - TINY */
+        .drawer-handle {
+            position: absolute;
+            cursor: grab;
+            touch-action: none;
+        }
+        
+        .drawer-bottom .drawer-handle {
+            top: 2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 3px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 3px;
+        }
+        
+        .drawer-right .drawer-handle,
+        .drawer-left .drawer-handle {
+            top: 50%;
+            transform: translateY(-50%);
+            width: 3px;
+            height: 30px;
+            background: rgba(255,255,255,0.15);
+            border-radius: 3px;
+        }
+        
+        .drawer-right .drawer-handle { left: 2px; }
+        .drawer-left .drawer-handle { right: 2px; }
+        
+        /* Reaction Grid - 8x8 */
+        .reactions-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 1px;
+            padding: 10px 6px;
+            height: 100%;
+        }
+        
+        .reaction-btn {
+            width: 100%;
+            aspect-ratio: 1;
+            background: rgba(0,0,0,0.5);
+            border: 0.5px solid rgba(255,255,255,0.08);
+            border-radius: 3px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .reaction-btn:active {
+            background: rgba(255,255,255,0.15);
+            transform: scale(0.85);
+            border-color: rgba(255,255,255,0.3);
+        }
+        
+        /* Money & Action buttons */
+        .money-stack, .action-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .money-btn, .action-btn {
+            width: 48px;
+            height: 28px;
+            background: rgba(0,0,0,0.6);
+            border: 0.5px solid rgba(255,255,255,0.1);
+            border-radius: 5px;
+            color: rgba(255,255,255,0.6);
+            font-size: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .action-btn {
+            height: 44px;
+            font-size: 18px;
+        }
+        
+        .money-btn:active, .action-btn:active {
+            background: rgba(255,255,255,0.15);
+            transform: scale(0.92);
+            color: #fff;
+            border-color: rgba(255,255,255,0.25);
+        }
+        
+        /* Characters on floor */
+        .character {
+            position: absolute;
+            width: 26px;
+            height: 26px;
+            background: rgba(0,0,0,0.95);
+            border: 1.5px solid rgba(255,255,255,0.7);
+            border-radius: 50%;
+            font-size: 7px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            z-index: 90;
+            cursor: move;
+            color: rgba(255,255,255,0.9);
+            box-shadow: 0 0 15px rgba(255,255,255,0.1);
+            transition: box-shadow 0.3s ease;
+        }
+        
+        .character.me {
+            border-color: #00ff88;
+            box-shadow: 0 0 20px rgba(0,255,136,0.3);
+        }
+        
+        .character.other {
+            border-color: rgba(255,255,255,0.5);
+        }
+        
+        /* Pin styles */
+        .sf-pin {
+            position: absolute;
+            width: 28px;
+            height: 28px;
+            transform: translate(-50%, -100%);
+            cursor: pointer;
+            z-index: 95;
+            transition: all 0.3s ease;
+        }
+        
+        .pin-shape {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, #00ff88, #00cc66);
+            border-radius: 50% 50% 50% 0;
+            transform: rotate(-45deg);
+            bottom: 3px;
+            left: 4px;
+            box-shadow: 0 3px 15px rgba(0,255,136,0.5);
+            border: 1px solid rgba(255,255,255,0.3);
+            transition: all 0.3s ease;
+        }
+        
+        /* Group Chat Popup */
+        .group-chat {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 280px;
+            max-height: 350px;
+            background: rgba(10,10,10,0.95);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 15px;
+            padding: 12px;
+            z-index: 2000;
+            display: none;
+            flex-direction: column;
+            backdrop-filter: blur(10px);
+        }
+        
+        .group-chat.active {
+            display: flex;
+        }
+        
+        /* Pin Counter */
+        .pin-counter {
+            position: fixed;
+            top: 8px;
+            right: 8px;
+            font-size: 9px;
+            color: rgba(255,255,255,0.4);
+            z-index: 100;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            padding: 4px 8px;
+            background: rgba(0,0,0,0.6);
+            border-radius: 10px;
+            border: 0.5px solid rgba(255,255,255,0.1);
+        }
+        
+        /* Title Badge */
+        .title-badge {
+            position: fixed;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 8px;
+            color: rgba(255,255,255,0.25);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            z-index: 100;
+            font-weight: 300;
+        }
+        
+        /* Toast notifications */
+        .toast {
+            position: fixed;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.9);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 20px;
+            padding: 8px 16px;
+            font-size: 11px;
+            z-index: 9999;
+            animation: toastSlide 0.3s ease;
+        }
+        
+        @keyframes toastSlide {
+            from { transform: translateX(-50%) translateY(-20px); opacity: 0; }
+            to { transform: translateX(-50%) translateY(0); opacity: 1; }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* Collision effect */
+        @keyframes collisionPulse {
+            0% { box-shadow: 0 0 0 0 rgba(255,0,102,0.8); }
+            100% { box-shadow: 0 0 0 30px rgba(255,0,102,0); }
+        }
+        
+        /* Pin animations */
+        @keyframes pinDrop {
+            0% { transform: translate(-50%, -200px) scale(0); opacity: 0; }
+            50% { transform: translate(-50%, -90%) scale(1.1); }
+            100% { transform: translate(-50%, -100%) scale(1); opacity: 1; }
+        }
+        
+        @keyframes pinPulse {
+            0%, 100% { transform: scale(1); opacity: 0.6; }
+            50% { transform: scale(1.2); opacity: 0.3; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Blueprint background -->
+    <div class="blueprint-bg"></div>
+    
+    <!-- Reaction Canvas for cool effects -->
+    <canvas id="reaction-canvas"></canvas>
+    
+    <!-- Pin Overlay -->
+    <div id="pinOverlay"></div>
+    
+    <!-- Minimal title -->
+    <div class="title-badge">SOUND FACTORY</div>
+    
+    <!-- Pin counter -->
+    <div class="pin-counter">PINS: <span id="pinCount">0</span>/3</div>
+    
+    <!-- ENHANCED Blueprint SVG -->
+    <div class="blueprint-area" id="blueprintArea">
+        <svg class="blueprint-svg" viewBox="0 0 900 650">
+            <!-- Outer walls -->
+            <rect x="50" y="50" width="800" height="550" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+            
+            <!-- Inner structure with glow -->
+            <rect x="80" y="80" width="740" height="490" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1" 
+                  filter="url(#glow)"/>
+            
+            <!-- DJ Booth -->
+            <g id="dj-booth">
+                <rect x="375" y="480" width="150" height="70" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+                <line x1="395" y1="500" x2="505" y2="500" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/>
+                <line x1="395" y1="520" x2="505" y2="520" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/>
+                <text x="450" y="515" fill="rgba(255,255,255,0.3)" font-size="9" text-anchor="middle">DJ BOOTH</text>
+            </g>
+            
+            <!-- Main Bar -->
+            <g id="main-bar">
+                <rect x="100" y="150" width="70" height="350" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+                <line x1="110" y1="200" x2="160" y2="200" stroke="rgba(255,255,255,0.08)" stroke-width="0.5"/>
+                <line x1="110" y1="250" x2="160" y2="250" stroke="rgba(255,255,255,0.08)" stroke-width="0.5"/>
+                <line x1="110" y1="300" x2="160" y2="300" stroke="rgba(255,255,255,0.08)" stroke-width="0.5"/>
+                <line x1="110" y1="350" x2="160" y2="350" stroke="rgba(255,255,255,0.08)" stroke-width="0.5"/>
+                <line x1="110" y1="400" x2="160" y2="400" stroke="rgba(255,255,255,0.08)" stroke-width="0.5"/>
+                <line x1="110" y1="450" x2="160" y2="450" stroke="rgba(255,255,255,0.08)" stroke-width="0.5"/>
+                <text x="135" y="325" fill="rgba(255,255,255,0.25)" font-size="8" text-anchor="middle" 
+                      transform="rotate(-90 135 325)">MAIN BAR</text>
+            </g>
+            
+            <!-- VIP Bar -->
+            <g id="vip-bar">
+                <rect x="730" y="200" width="70" height="250" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="1"/>
+                <text x="765" y="325" fill="rgba(255,255,255,0.25)" font-size="8" text-anchor="middle" 
+                      transform="rotate(90 765 325)">VIP BAR</text>
+            </g>
+            
+            <!-- Dance Floor Grid -->
+            <g id="dance-floor">
+                <rect x="220" y="200" width="460" height="260" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+                
+                <!-- Grid lines -->
+                <line x1="335" y1="200" x2="335" y2="460" stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
+                <line x1="450" y1="200" x2="450" y2="460" stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
+                <line x1="565" y1="200" x2="565" y2="460" stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
+                
+                <line x1="220" y1="290" x2="680" y2="290" stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
+                <line x1="220" y1="370" x2="680" y2="370" stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/>
+                
+                <text x="450" y="330" fill="rgba(255,255,255,0.2)" font-size="11" text-anchor="middle" opacity="0.4">
+                    MAIN FLOOR
+                </text>
+            </g>
+            
+            <!-- Stage -->
+            <g id="stage">
+                <rect x="250" y="100" width="400" height="60" fill="none" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+                <text x="450" y="135" fill="rgba(255,255,255,0.25)" font-size="9" text-anchor="middle">STAGE</text>
+            </g>
+            
+            <!-- Entrance -->
+            <g id="entrance">
+                <rect x="400" y="50" width="100" height="30" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="1"/>
+                <text x="450" y="70" fill="rgba(255,255,255,0.25)" font-size="8" text-anchor="middle">ENTRANCE</text>
+            </g>
+            
+            <!-- Bathrooms -->
+            <g id="bathrooms">
+                <rect x="100" y="80" width="60" height="50" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/>
+                <text x="130" y="110" fill="rgba(255,255,255,0.2)" font-size="7" text-anchor="middle">WC</text>
+                
+                <rect x="740" y="80" width="60" height="50" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/>
+                <text x="770" y="110" fill="rgba(255,255,255,0.2)" font-size="7" text-anchor="middle">WC</text>
+            </g>
+            
+            <!-- Glow filter -->
+            <defs>
+                <filter id="glow">
+                    <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                    <feMerge>
+                        <feMergeNode in="coloredBlur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                    </feMerge>
+                </filter>
+            </defs>
+        </svg>
+        
+        <!-- Multiple Characters (will be added dynamically) -->
+        <div class="character me" id="myCharacter" style="left: 450px; top: 300px;">ME</div>
+    </div>
+    
+    <!-- Group Chat (appears on collision) -->
+    <div class="group-chat" id="groupChat">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <h3 style="margin: 0; font-size: 12px; color: #00ff88;">💬 Chat</h3>
+            <button onclick="closeGroupChat()" style="
+                background: none;
+                border: none;
+                color: rgba(255,255,255,0.5);
+                font-size: 18px;
+                cursor: pointer;
+            ">×</button>
+        </div>
+        <div id="chatMessages" style="
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 8px;
+            padding: 8px;
+            background: rgba(255,255,255,0.02);
+            border-radius: 8px;
+            min-height: 100px;
+        "></div>
+        <div style="display: flex; gap: 4px;">
+            <input type="text" id="chatInput" placeholder="Type..." style="
+                flex: 1;
+                padding: 6px;
+                background: rgba(255,255,255,0.05);
+                border: 1px solid rgba(255,255,255,0.1);
+                border-radius: 6px;
+                color: white;
+                font-size: 11px;
+            ">
+            <button onclick="sendMessage()" style="
+                padding: 6px 12px;
+                background: #00ff88;
+                border: none;
+                border-radius: 6px;
+                color: black;
+                font-weight: 700;
+                cursor: pointer;
+                font-size: 11px;
+            ">Send</button>
+        </div>
+    </div>
+    
+    <!-- Bottom drawer - Reactions -->
+    <div class="drawer drawer-bottom" id="reactionsDrawer">
+        <div class="drawer-handle" id="reactionsHandle"></div>
+        <div class="reactions-grid" id="reactionsGrid"></div>
+    </div>
+    
+    <!-- Right drawer - Money -->
+    <div class="drawer drawer-right" id="moneyDrawer">
+        <div class="drawer-handle" id="moneyHandle"></div>
+        <div class="money-stack">
+            <button class="money-btn" data-amount="1">$1</button>
+            <button class="money-btn" data-amount="5">$5</button>
+            <button class="money-btn" data-amount="10">$10</button>
+            <button class="money-btn" data-amount="20">$20</button>
+            <button class="money-btn" data-amount="50">$50</button>
+            <button class="money-btn" data-amount="100">$100</button>
+        </div>
+    </div>
+    
+    <!-- Left drawer - Actions -->
+    <div class="drawer drawer-left" id="actionsDrawer">
+        <div class="drawer-handle" id="actionsHandle"></div>
+        <div class="action-stack">
+            <button class="action-btn" id="dropPin">📍</button>
+            <button class="action-btn" id="openChat">💬</button>
+            <button class="action-btn" id="openMic">🎤</button>
+            <button class="action-btn" id="findFriends">🎯</button>
+        </div>
+    </div>
+    
+    <script>
+        // ════════════════════════════════════════════════════════════
+        // ENHANCED REACTION SYSTEM - FIREWORKS & COOL EFFECTS
+        // ════════════════════════════════════════════════════════════
+        
+        class UltimateReactionSystem {
+            constructor(canvasId) {
+                this.canvas = document.getElementById(canvasId);
+                this.ctx = this.canvas.getContext('2d');
+                this.reactions = [];
+                this.particles = [];
+                this.fireworks = [];
+                this.init();
+            }
+            
+            init() {
+                this.resizeCanvas();
+                window.addEventListener('resize', () => this.resizeCanvas());
+                this.animate();
+            }
+            
+            resizeCanvas() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+            }
+            
+            triggerReaction(type, data = {}) {
+                const startX = data.x || window.innerWidth / 2;
+                const startY = data.y || window.innerHeight - 100;
+                
+                switch(type) {
+                    case 'money':
+                        this.createMoneyExplosion(startX, startY, data.amount || 1);
+                        break;
+                    case 'emoji':
+                        this.createEmojiFirework(startX, startY, data.emoji || '❤️');
+                        break;
+                    case 'special':
+                        this.createSpecialEffect(startX, startY, data.effect);
+                        break;
+                }
+            }
+            
+            createEmojiFirework(x, y, emoji) {
+                // Launch firework
+                this.fireworks.push({
+                    x, 
+                    y: this.canvas.height,
+                    targetY: y,
+                    vx: (Math.random() - 0.5) * 2,
+                    vy: -25,
+                    emoji,
+                    trail: [],
+                    exploded: false,
+                    particles: []
+                });
+            }
+            
+            createMoneyExplosion(x, y, amount) {
+                // Money bills floating up with physics
+                for (let i = 0; i < amount; i++) {
+                    this.reactions.push({
+                        x: x + (Math.random() - 0.5) * 50,
+                        y,
+                        vx: (Math.random() - 0.5) * 15,
+                        vy: -20 - Math.random() * 15,
+                        amount,
+                        type: 'money',
+                        size: 30 + amount * 2,
+                        opacity: 1,
+                        rotation: Math.random() * Math.PI * 2,
+                        rotationSpeed: (Math.random() - 0.5) * 0.5,
+                        gravity: 0.4
+                    });
+                }
+                
+                // Gold sparkles
+                for (let i = 0; i < 30; i++) {
+                    const angle = (Math.PI * 2 / 30) * i;
+                    const speed = 5 + Math.random() * 10;
+                    this.particles.push({
+                        x, y,
+                        vx: Math.cos(angle) * speed,
+                        vy: Math.sin(angle) * speed,
+                        size: Math.random() * 4 + 2,
+                        color: `hsl(${45 + Math.random() * 15}, 100%, ${50 + Math.random() * 30}%)`,
+                        life: 1,
+                        decay: 0.01,
+                        sparkle: true,
+                        trail: []
+                    });
+                }
+            }
+            
+            createSpecialEffect(x, y, effect) {
+                // Rainbow explosion
+                if (effect === 'pride') {
+                    const colors = ['#e40303', '#ff8c00', '#ffed00', '#008026', '#004cff', '#750787'];
+                    for (let i = 0; i < 60; i++) {
+                        const angle = (Math.PI * 2 / 60) * i;
+                        const speed = 8 + Math.random() * 8;
+                        this.particles.push({
+                            x, y,
+                            vx: Math.cos(angle) * speed,
+                            vy: Math.sin(angle) * speed,
+                            size: Math.random() * 5 + 3,
+                            color: colors[Math.floor(Math.random() * colors.length)],
+                            life: 1,
+                            decay: 0.008,
+                            rainbow: true,
+                            trail: []
+                        });
+                    }
+                }
+            }
+            
+            animate() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // Update and draw fireworks
+                for (let i = this.fireworks.length - 1; i >= 0; i--) {
+                    const fw = this.fireworks[i];
+                    
+                    if (!fw.exploded) {
+                        // Rising firework with trail
+                        fw.trail.push({ x: fw.x, y: fw.y, life: 1 });
+                        if (fw.trail.length > 20) fw.trail.shift();
+                        
+                        // Draw trail
+                        fw.trail.forEach((t, idx) => {
+                            this.ctx.save();
+                            this.ctx.globalAlpha = t.life * (idx / fw.trail.length);
+                            this.ctx.fillStyle = '#fff';
+                            this.ctx.fillRect(t.x - 1, t.y - 1, 2, 2);
+                            this.ctx.restore();
+                            t.life -= 0.05;
+                        });
+                        
+                        // Update position
+                        fw.x += fw.vx;
+                        fw.y += fw.vy;
+                        fw.vy += 0.5;
+                        
+                        // Check if reached target
+                        if (fw.vy > 0 || fw.y < fw.targetY) {
+                            fw.exploded = true;
+                            // Create explosion
+                            for (let j = 0; j < 30; j++) {
+                                const angle = (Math.PI * 2 / 30) * j;
+                                const speed = 3 + Math.random() * 5;
+                                fw.particles.push({
+                                    x: fw.x,
+                                    y: fw.y,
+                                    vx: Math.cos(angle) * speed,
+                                    vy: Math.sin(angle) * speed,
+                                    size: 25,
+                                    emoji: fw.emoji,
+                                    life: 1,
+                                    decay: 0.015
+                                });
+                            }
+                        }
+                    } else {
+                        // Draw explosion particles
+                        let allDead = true;
+                        fw.particles.forEach(p => {
+                            if (p.life > 0) {
+                                allDead = false;
+                                this.ctx.save();
+                                this.ctx.globalAlpha = p.life;
+                                this.ctx.font = `${p.size}px Arial`;
+                                this.ctx.textAlign = 'center';
+                                this.ctx.textBaseline = 'middle';
+                                this.ctx.fillText(p.emoji, p.x, p.y);
+                                this.ctx.restore();
+                                
+                                p.x += p.vx;
+                                p.y += p.vy;
+                                p.vy += 0.2;
+                                p.vx *= 0.98;
+                                p.life -= p.decay;
+                            }
+                        });
+                        
+                        if (allDead) {
+                            this.fireworks.splice(i, 1);
+                        }
+                    }
+                }
+                
+                // Update and draw particles with trails
+                for (let i = this.particles.length - 1; i >= 0; i--) {
+                    const p = this.particles[i];
+                    
+                    if (p.life <= 0) {
+                        this.particles.splice(i, 1);
+                        continue;
+                    }
+                    
+                    // Add to trail
+                    if (p.trail) {
+                        p.trail.push({ x: p.x, y: p.y });
+                        if (p.trail.length > 10) p.trail.shift();
+                        
+                        // Draw trail
+                        p.trail.forEach((t, idx) => {
+                            this.ctx.save();
+                            this.ctx.globalAlpha = p.life * (idx / p.trail.length) * 0.3;
+                            this.ctx.fillStyle = p.color;
+                            this.ctx.fillRect(t.x - 1, t.y - 1, 2, 2);
+                            this.ctx.restore();
+                        });
+                    }
+                    
+                    // Draw particle
+                    this.ctx.save();
+                    this.ctx.globalAlpha = p.life;
+                    
+                    if (p.sparkle) {
+                        // Sparkle effect
+                        const sparkle = 1 + Math.sin(Date.now() * 0.01 + i) * 0.5;
+                        this.ctx.shadowBlur = 10 * sparkle;
+                        this.ctx.shadowColor = p.color;
+                    }
+                    
+                    if (p.rainbow) {
+                        // Rainbow glow
+                        this.ctx.shadowBlur = 15;
+                        this.ctx.shadowColor = p.color;
+                    }
+                    
+                    this.ctx.fillStyle = p.color;
+                    this.ctx.beginPath();
+                    this.ctx.arc(p.x, p.y, p.size * (p.sparkle ? sparkle : 1), 0, Math.PI * 2);
+                    this.ctx.fill();
+                    this.ctx.restore();
+                    
+                    // Update physics
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += 0.3;
+                    p.vx *= 0.99;
+                    p.life -= p.decay;
+                }
+                
+                // Update and draw money
+                for (let i = this.reactions.length - 1; i >= 0; i--) {
+                    const r = this.reactions[i];
+                    
+                    if (r.opacity <= 0 || r.y > this.canvas.height) {
+                        this.reactions.splice(i, 1);
+                        continue;
+                    }
+                    
+                    this.ctx.save();
+                    this.ctx.translate(r.x, r.y);
+                    this.ctx.rotate(r.rotation);
+                    this.ctx.globalAlpha = r.opacity;
+                    
+                    if (r.type === 'money') {
+                        // Draw money bill
+                        const gradient = this.ctx.createLinearGradient(-r.size/2, 0, r.size/2, 0);
+                        gradient.addColorStop(0, '#4a7c59');
+                        gradient.addColorStop(0.5, '#85bb65');
+                        gradient.addColorStop(1, '#4a7c59');
+                        
+                        this.ctx.fillStyle = gradient;
+                        this.ctx.fillRect(-r.size/2, -r.size/4, r.size, r.size/2);
+                        
+                        this.ctx.strokeStyle = '#2a5434';
+                        this.ctx.lineWidth = 1;
+                        this.ctx.strokeRect(-r.size/2, -r.size/4, r.size, r.size/2);
+                        
+                        this.ctx.fillStyle = '#fff';
+                        this.ctx.font = `bold ${r.size/3}px Arial`;
+                        this.ctx.textAlign = 'center';
+                        this.ctx.textBaseline = 'middle';
+                        this.ctx.shadowBlur = 5;
+                        this.ctx.shadowColor = '#000';
+                        this.ctx.fillText(`$${r.amount}`, 0, 0);
+                        
+                        r.rotation += r.rotationSpeed;
+                    }
+                    
+                    this.ctx.restore();
+                    
+                    // Update physics
+                    r.x += r.vx;
+                    r.y += r.vy;
+                    r.vy += r.gravity;
+                    r.vx *= 0.98;
+                    r.opacity -= 0.008;
+                }
+                
+                requestAnimationFrame(() => this.animate());
+            }
+        }
+        
+        // ════════════════════════════════════════════════════════════
+        // PIN SYSTEM - Integrated
+        // ════════════════════════════════════════════════════════════
+        
+        const ActivePins = new Map();
+        const CharacterPositions = new Map();
+        let pinCount = 0;
+        const MAX_PINS = 3;
+        
+        function dropPin() {
+            if (pinCount >= MAX_PINS) {
+                showToast('⚠️ Maximum 3 pins! Delete one first.');
+                return;
+            }
+            
+            const blueprintArea = document.getElementById('blueprintArea');
+            const rect = blueprintArea.getBoundingClientRect();
+            const x = rect.width / 2;
+            const y = rect.height / 2;
+            
+            const pinId = `pin_${Date.now()}`;
+            const pin = document.createElement('div');
+            pin.className = 'sf-pin';
+            pin.id = pinId;
+            pin.style.left = x + 'px';
+            pin.style.top = y + 'px';
+            pin.style.animation = 'pinDrop 0.5s ease';
+            
+            pin.innerHTML = `
+                <div class="pin-shape"></div>
+                <div style="
+                    position: absolute;
+                    font-size: 10px;
+                    top: 3px;
+                    left: 50%;
+                    transform: translateX(-50%);
+                    z-index: 2;
+                ">📍</div>
+                <div style="
+                    position: absolute;
+                    width: 30px;
+                    height: 30px;
+                    border-radius: 50%;
+                    background: rgba(0,255,136,0.3);
+                    bottom: 5px;
+                    left: -5px;
+                    animation: pinPulse 2s infinite;
+                "></div>
+            `;
+            
+            document.getElementById('pinOverlay').appendChild(pin);
+            
+            ActivePins.set(pinId, { x, y, element: pin });
+            pinCount++;
+            updatePinCounter();
+            
+            showToast('📍 Pin dropped!');
+            
+            // Make pin draggable
+            let isDragging = false;
+            pin.addEventListener('mousedown', () => isDragging = true);
+            document.addEventListener('mouseup', () => isDragging = false);
+            document.addEventListener('mousemove', (e) => {
+                if (isDragging) {
+                    const rect = blueprintArea.getBoundingClientRect();
+                    pin.style.left = (e.clientX - rect.left) + 'px';
+                    pin.style.top = (e.clientY - rect.top) + 'px';
+                }
+            });
+        }
+        
+        function updatePinCounter() {
+            document.getElementById('pinCount').textContent = pinCount;
+            const counter = document.querySelector('.pin-counter');
+            if (pinCount >= MAX_PINS) {
+                counter.style.color = '#ff0066';
+            } else if (pinCount >= 2) {
+                counter.style.color = '#ffa500';
+            } else {
+                counter.style.color = 'rgba(255,255,255,0.4)';
+            }
+        }
+        
+        // ════════════════════════════════════════════════════════════
+        // CHARACTER COLLISION SYSTEM
+        // ════════════════════════════════════════════════════════════
+        
+        let collisionCooldown = false;
+        
+        function checkCollisions() {
+            const myChar = document.getElementById('myCharacter');
+            const myRect = myChar.getBoundingClientRect();
+            const myCenter = {
+                x: myRect.left + myRect.width/2,
+                y: myRect.top + myRect.height/2
+            };
+            
+            // Check other characters (would be populated from server)
+            document.querySelectorAll('.character.other').forEach(otherChar => {
+                const otherRect = otherChar.getBoundingClientRect();
+                const otherCenter = {
+                    x: otherRect.left + otherRect.width/2,
+                    y: otherRect.top + otherRect.height/2
+                };
+                
+                const distance = Math.sqrt(
+                    Math.pow(myCenter.x - otherCenter.x, 2) +
+                    Math.pow(myCenter.y - otherCenter.y, 2)
+                );
+                
+                if (distance < 50 && !collisionCooldown) {
+                    handleCollision(myChar, otherChar);
+                }
+            });
+            
+            // Check pin proximity
+            ActivePins.forEach((pinData, pinId) => {
+                const pinRect = pinData.element.getBoundingClientRect();
+                const pinCenter = {
+                    x: pinRect.left + pinRect.width/2,
+                    y: pinRect.top + pinRect.height/2
+                };
+                
+                const distance = Math.sqrt(
+                    Math.pow(myCenter.x - pinCenter.x, 2) +
+                    Math.pow(myCenter.y - pinCenter.y, 2)
+                );
+                
+                if (distance < 80) {
+                    pinData.element.querySelector('.pin-shape').style.transform = 'rotate(-45deg) scale(1.2)';
+                    pinData.element.querySelector('.pin-shape').style.boxShadow = '0 5px 25px rgba(0,255,136,0.8)';
+                } else {
+                    pinData.element.querySelector('.pin-shape').style.transform = 'rotate(-45deg) scale(1)';
+                    pinData.element.querySelector('.pin-shape').style.boxShadow = '0 3px 15px rgba(0,255,136,0.5)';
+                }
+            });
+        }
+        
+        function handleCollision(char1, char2) {
+            collisionCooldown = true;
+            
+            // Visual effect
+            char1.style.animation = 'collisionPulse 0.5s ease';
+            char2.style.animation = 'collisionPulse 0.5s ease';
+            
+            // Open chat
+            const groupChat = document.getElementById('groupChat');
+            groupChat.classList.add('active');
+            
+            // Add collision message
+            const msg = document.createElement('div');
+            msg.style.cssText = `
+                background: linear-gradient(135deg, #ff0066, #ff3399);
+                padding: 8px;
+                border-radius: 8px;
+                margin-bottom: 5px;
+                font-size: 10px;
+                text-align: center;
+                color: white;
+            `;
+            msg.textContent = '💥 You bumped into someone!';
+            document.getElementById('chatMessages').appendChild(msg);
+            
+            showToast('💥 Collision! Chat opened!');
+            
+            setTimeout(() => {
+                collisionCooldown = false;
+                char1.style.animation = '';
+                char2.style.animation = '';
+            }, 3000);
+        }
+        
+        // ════════════════════════════════════════════════════════════
+        // INITIALIZATION
+        // ════════════════════════════════════════════════════════════
+        
+        // Initialize reaction system
+        const reactionSystem = new UltimateReactionSystem('reaction-canvas');
+        
+        // Populate reaction grid
+        const reactions = [
+            '❤️', '🔥', '😂', '🎉', '💃', '🕺', '🎵', '🎶',
+            '✨', '💫', '⭐', '🌟', '💥', '💢', '💯', '🔥',
+            '😍', '🥰', '😘', '🤩', '😎', '🤗', '🙌', '👏',
+            '💪', '🤘', '🤟', '👊', '✊', '🤝', '🙏', '👐',
+            '🎊', '🎈', '🎁', '🎀', '🏆', '🥇', '🎯', '🎪',
+            '🌈', '🦄', '🌺', '🌸', '💐', '🌹', '🌷', '🌻',
+            '🍾', '🥂', '🍻', '🍺', '🍹', '🍸', '🍷', '🥃',
+            '🚀', '💎', '💰', '👑', '💍', '🔮', '🎭', '🎨'
+        ];
+        
+        const reactionsGrid = document.getElementById('reactionsGrid');
+        reactions.forEach(emoji => {
+            const btn = document.createElement('button');
+            btn.className = 'reaction-btn';
+            btn.textContent = emoji;
+            btn.onclick = (e) => {
+                reactionSystem.triggerReaction('emoji', { 
+                    emoji,
+                    x: e.clientX,
+                    y: e.clientY
+                });
+            };
+            reactionsGrid.appendChild(btn);
+        });
+        
+        // Money button handlers
+        document.querySelectorAll('.money-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const amount = parseInt(btn.dataset.amount);
+                reactionSystem.triggerReaction('money', { 
+                    amount,
+                    x: e.clientX,
+                    y: e.clientY
+                });
+                showToast(`💸 $${amount} tipped!`);
+            });
+        });
+        
+        // Action button handlers
+        document.getElementById('dropPin').addEventListener('click', dropPin);
+        document.getElementById('openChat').addEventListener('click', () => {
+            document.getElementById('groupChat').classList.toggle('active');
+        });
+        document.getElementById('openMic').addEventListener('click', () => {
+            showToast('🎤 Mic feature coming soon!');
+        });
+        document.getElementById('findFriends').addEventListener('click', () => {
+            showToast('🎯 Finding friends...');
+            // Add other characters for demo
+            addDemoCharacter();
+        });
+        
+        // Drawer handlers
+        const drawers = {
+            bottom: document.getElementById('reactionsDrawer'),
+            right: document.getElementById('moneyDrawer'),
+            left: document.getElementById('actionsDrawer')
+        };
+        
+        Object.values(drawers).forEach(drawer => {
+            const handle = drawer.querySelector('.drawer-handle');
+            handle.addEventListener('click', () => {
+                drawer.classList.toggle('open');
+            });
+        });
+        
+        // Character dragging
+        const myCharacter = document.getElementById('myCharacter');
+        let isDraggingChar = false;
+        
+        myCharacter.addEventListener('mousedown', () => isDraggingChar = true);
+        document.addEventListener('mouseup', () => isDraggingChar = false);
+        document.addEventListener('mousemove', (e) => {
+            if (isDraggingChar) {
+                myCharacter.style.left = e.clientX + 'px';
+                myCharacter.style.top = e.clientY + 'px';
+                checkCollisions();
+            }
+        });
+        
+        // Touch support
+        myCharacter.addEventListener('touchstart', () => isDraggingChar = true);
+        document.addEventListener('touchend', () => isDraggingChar = false);
+        document.addEventListener('touchmove', (e) => {
+            if (isDraggingChar) {
+                myCharacter.style.left = e.touches[0].clientX + 'px';
+                myCharacter.style.top = e.touches[0].clientY + 'px';
+                checkCollisions();
+            }
+        });
+        
+        // Utility functions
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+        
+        function closeGroupChat() {
+            document.getElementById('groupChat').classList.remove('active');
+        }
+        
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            if (input.value.trim()) {
+                const msg = document.createElement('div');
+                msg.style.cssText = `
+                    background: rgba(0,255,136,0.1);
+                    padding: 6px;
+                    border-radius: 6px;
+                    margin-bottom: 4px;
+                    font-size: 10px;
+                `;
+                msg.innerHTML = `<strong>Me:</strong> ${input.value}`;
+                document.getElementById('chatMessages').appendChild(msg);
+                input.value = '';
+            }
+        }
+        
+        function addDemoCharacter() {
+            const char = document.createElement('div');
+            char.className = 'character other';
+            char.textContent = 'DJ';
+            char.style.left = (300 + Math.random() * 200) + 'px';
+            char.style.top = (200 + Math.random() * 200) + 'px';
+            document.getElementById('blueprintArea').appendChild(char);
+            
+            // Make it move randomly
+            setInterval(() => {
+                const newX = parseInt(char.style.left) + (Math.random() - 0.5) * 50;
+                const newY = parseInt(char.style.top) + (Math.random() - 0.5) * 50;
+                char.style.left = Math.max(100, Math.min(600, newX)) + 'px';
+                char.style.top = Math.max(100, Math.min(400, newY)) + 'px';
+                checkCollisions();
+            }, 2000);
+        }
+        
+        // Check for collisions periodically
+        setInterval(checkCollisions, 100);
+        
+        // Special key combos for effects
+        document.addEventListener('keypress', (e) => {
+            if (e.key === '1') {
+                reactionSystem.triggerReaction('special', { 
+                    effect: 'pride',
+                    x: window.innerWidth / 2,
+                    y: window.innerHeight / 2
+                });
+            }
+        });
+        
+        console.log('🔥 SOUND FACTORY LEGENDARY - ULTIMATE SYSTEM LOADED');
+        console.log('📍 Drop pins, 💥 Bump into people, 💸 Send reactions!');
+    </script>
+</body>
+</html>

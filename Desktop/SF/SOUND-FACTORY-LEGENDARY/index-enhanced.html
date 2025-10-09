@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SOUND FACTORY LEGENDARY</title>
+    <style>
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            -webkit-tap-highlight-color: transparent; 
+            user-select: none;
+        }
+        
+        html, body { 
+            background: #000; 
+            color: #fff; 
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif; 
+            overflow: hidden; 
+            height: 100vh; 
+            width: 100vw; 
+            position: fixed; 
+        }
+        
+        /* ENHANCED Blueprint - THE STAR */
+        .blueprint-bg { 
+            position: fixed; 
+            inset: 0; 
+            background: #000;
+            z-index: 1; 
+        }
+        
+        .blueprint-bg::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: 
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px), 
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 20px 20px;
+            animation: gridPulse 8s ease-in-out infinite;
+        }
+        
+        @keyframes gridPulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.6; }
+        }
+        
+        /* Full screen blueprint container */
+        .blueprint-area { 
+            position: fixed; 
+            inset: 0;
+            z-index: 10; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center;
+        }
+        
+        /* ENHANCED SVG Blueprint */
+        .blueprint-svg { 
+            width: 90%; 
+            height: 90%; 
+            max-width: 800px;
+            filter: drop-shadow(0 0 20px rgba(255,255,255,0.05));
+        }
+        
+        .blueprint-line {
+            stroke: rgba(255,255,255,0.15);
+            stroke-width: 1;
+            fill: none;
+        }
+        
+        .blueprint-line-bright {
+            stroke: rgba(255,255,255,0.25);
+            stroke-width: 1.5;
+            fill: none;
+            filter: drop-shadow(0 0 2px rgba(255,255,255,0.2));
+        }
+        
+        .blueprint-text {
+            fill: rgba(255,255,255,0.4);
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .blueprint-glow {
+            stroke: rgba(255,255,255,0.3);
+            stroke-width: 0.5;
+            fill: none;
+            animation: blueprintGlow 3s ease-in-out infinite;
+        }
+        
+        @keyframes blueprintGlow {
+            0%, 100% { 
+                stroke: rgba(255,255,255,0.3);
+                filter: drop-shadow(0 0 3px rgba(255,255,255,0));
+            }
+            50% { 
+                stroke: rgba(255,255,255,0.5);
+                filter: drop-shadow(0 0 8px rgba(255,255,255,0.3));
+            }
+        }
+        
+        /* Reaction Canvas Layer */
+        #reaction-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+        }
+        
+        /* DRAWER SYSTEM - Minimal & Clean */
+        .drawer {
+            position: fixed;
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
+            z-index: 1000;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* Bottom drawer - Reactions */
+        .drawer-bottom {
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            transform: translateY(calc(100% - 12px));
+            border-radius: 16px 16px 0 0;
+        }
+        
+        .drawer-bottom.open {
+            transform: translateY(0);
+        }
+        
+        /* Right drawer - Money */
+        .drawer-right {
+            right: 0;
+            top: 50%;
+            transform: translate(calc(100% - 12px), -50%);
+            width: 70px;
+            height: auto;
+            border-radius: 16px 0 0 16px;
+            padding: 10px 5px;
+        }
+        
+        .drawer-right.open {
+            transform: translate(0, -50%);
+        }
+        
+        /* Left drawer - Actions */
+        .drawer-left {
+            left: 0;
+            top: 50%;
+            transform: translate(calc(-100% + 12px), -50%);
+            width: 70px;
+            height: auto;
+            border-radius: 0 16px 16px 0;
+            padding: 10px 5px;
+        }
+        
+        .drawer-left.open {
+            transform: translate(0, -50%);
+        }
+        
+        /* Drawer handles - Ultra minimal */
+        .drawer-handle {
+            position: absolute;
+            cursor: grab;
+            touch-action: none;
+        }
+        
+        .drawer-handle:active {
+            cursor: grabbing;
+        }
+        
+        .drawer-bottom .drawer-handle {
+            top: 3px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 4px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 2px;
+        }
+        
+        .drawer-right .drawer-handle,
+        .drawer-left .drawer-handle {
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 40px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 2px;
+        }
+        
+        .drawer-right .drawer-handle {
+            left: 3px;
+        }
+        
+        .drawer-left .drawer-handle {
+            right: 3px;
+        }
+        
+        /* Reaction grid - 8x8 = 64 buttons */
+        .reactions-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 2px;
+            padding: 12px 8px;
+            height: 100%;
+        }
+        
+        /* Each reaction button - TINY */
+        .reaction-btn {
+            width: 100%;
+            aspect-ratio: 1;
+            background: rgba(0,0,0,0.8);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .reaction-btn:active {
+            background: rgba(255,255,255,0.1);
+            transform: scale(0.9);
+            border-color: rgba(255,255,255,0.3);
+        }
+        
+        /* Money buttons - Vertical stack */
+        .money-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .money-btn {
+            width: 50px;
+            height: 30px;
+            background: rgba(0,0,0,0.8);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 6px;
+            color: rgba(255,255,255,0.7);
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .money-btn:active {
+            background: rgba(255,255,255,0.1);
+            transform: scale(0.95);
+            color: #fff;
+            border-color: rgba(255,255,255,0.3);
+        }
+        
+        /* Action buttons - Vertical stack */
+        .action-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .action-btn {
+            width: 50px;
+            height: 50px;
+            background: rgba(0,0,0,0.8);
+            border: 1px solid rgba(255,255,255,0.15);
+            border-radius: 6px;
+            color: rgba(255,255,255,0.7);
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        
+        .action-btn:active {
+            background: rgba(255,255,255,0.1);
+            transform: scale(0.95);
+            border-color: rgba(255,255,255,0.3);
+        }
+        
+        /* Character on blueprint */
+        .character { 
+            position: absolute; 
+            width: 30px; 
+            height: 30px; 
+            background: rgba(0,0,0,0.9); 
+            border: 2px solid rgba(255,255,255,0.8); 
+            border-radius: 50%; 
+            font-size: 8px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-weight: 700; 
+            z-index: 100; 
+            left: 50%; 
+            top: 50%; 
+            transform: translate(-50%, -50%); 
+            cursor: move;
+            color: rgba(255,255,255,0.9);
+            box-shadow: 0 0 10px rgba(255,255,255,0.2);
+        }
+        
+        /* Pin counter */
+        .pin-counter {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            font-size: 10px;
+            color: rgba(255,255,255,0.5);
+            z-index: 100;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+        
+        /* Title - Minimal */
+        .title-badge {
+            position: fixed;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 9px;
+            color: rgba(255,255,255,0.3);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            z-index: 100;
+            font-weight: 300;
+        }
+    </style>
+</head>
+<body>
+    <!-- Blueprint background with grid -->
+    <div class="blueprint-bg"></div>
+    
+    <!-- Reaction Canvas -->
+    <canvas id="reaction-canvas"></canvas>
+    
+    <!-- Minimal title -->
+    <div class="title-badge">SOUND FACTORY</div>
+    
+    <!-- Pin counter -->
+    <div class="pin-counter">PINS: 0/3</div>
+    
+    <!-- ENHANCED Blueprint SVG -->
+    <div class="blueprint-area" id="blueprintArea">
+        <svg class="blueprint-svg" viewBox="0 0 800 600">
+            <!-- Outer structure -->
+            <rect x="50" y="50" width="700" height="500" class="blueprint-line-bright"/>
+            
+            <!-- Main floor sections with glow -->
+            <rect x="80" y="80" width="640" height="440" class="blueprint-glow"/>
+            
+            <!-- DJ Booth - Enhanced -->
+            <g id="dj-booth">
+                <rect x="350" y="450" width="100" height="60" class="blueprint-line-bright"/>
+                <line x1="370" y1="470" x2="430" y2="470" class="blueprint-line"/>
+                <line x1="370" y1="490" x2="430" y2="490" class="blueprint-line"/>
+                <text x="400" y="485" class="blueprint-text" text-anchor="middle">DJ</text>
+            </g>
+            
+            <!-- Main Bar - Left -->
+            <g id="main-bar">
+                <rect x="100" y="150" width="60" height="300" class="blueprint-line-bright"/>
+                <line x1="110" y1="200" x2="150" y2="200" class="blueprint-line"/>
+                <line x1="110" y1="250" x2="150" y2="250" class="blueprint-line"/>
+                <line x1="110" y1="300" x2="150" y2="300" class="blueprint-line"/>
+                <line x1="110" y1="350" x2="150" y2="350" class="blueprint-line"/>
+                <line x1="110" y1="400" x2="150" y2="400" class="blueprint-line"/>
+                <text x="130" y="300" class="blueprint-text" text-anchor="middle" transform="rotate(-90 130 300)">MAIN BAR</text>
+            </g>
+            
+            <!-- VIP Bar - Right -->
+            <g id="vip-bar">
+                <rect x="640" y="150" width="60" height="200" class="blueprint-line-bright"/>
+                <text x="670" y="250" class="blueprint-text" text-anchor="middle" transform="rotate(90 670 250)">VIP BAR</text>
+            </g>
+            
+            <!-- Dance Floor Grid -->
+            <g id="dance-floor">
+                <!-- Main dance floor -->
+                <rect x="200" y="180" width="400" height="240" class="blueprint-line-bright"/>
+                
+                <!-- Dance floor sections -->
+                <line x1="300" y1="180" x2="300" y2="420" class="blueprint-line" opacity="0.5"/>
+                <line x1="400" y1="180" x2="400" y2="420" class="blueprint-line" opacity="0.5"/>
+                <line x1="500" y1="180" x2="500" y2="420" class="blueprint-line" opacity="0.5"/>
+                
+                <line x1="200" y1="270" x2="600" y2="270" class="blueprint-line" opacity="0.5"/>
+                <line x1="200" y1="330" x2="600" y2="330" class="blueprint-line" opacity="0.5"/>
+                
+                <text x="400" y="300" class="blueprint-text" text-anchor="middle" font-size="12" opacity="0.3">MAIN FLOOR</text>
+            </g>
+            
+            <!-- Entrance -->
+            <g id="entrance">
+                <rect x="350" y="50" width="100" height="30" class="blueprint-line"/>
+                <text x="400" y="70" class="blueprint-text" text-anchor="middle">ENTRANCE</text>
+            </g>
+            
+            <!-- Bathrooms -->
+            <g id="bathrooms">
+                <rect x="100" y="80" width="60" height="50" class="blueprint-line"/>
+                <text x="130" y="110" class="blueprint-text" text-anchor="middle" font-size="8">WC</text>
+                
+                <rect x="640" y="80" width="60" height="50" class="blueprint-line"/>
+                <text x="670" y="110" class="blueprint-text" text-anchor="middle" font-size="8">WC</text>
+            </g>
+            
+            <!-- Stage/Performance area -->
+            <g id="stage">
+                <rect x="200" y="100" width="400" height="50" class="blueprint-line"/>
+                <text x="400" y="130" class="blueprint-text" text-anchor="middle">STAGE</text>
+            </g>
+        </svg>
+        
+        <!-- Draggable character -->
+        <div class="character" id="character">ME</div>
+    </div>
+    
+    <!-- Bottom drawer - Reactions (64 emojis in 8x8 grid) -->
+    <div class="drawer drawer-bottom" id="reactionsDrawer">
+        <div class="drawer-handle" id="reactionsHandle"></div>
+        <div class="reactions-grid" id="reactionsGrid">
+            <!-- Will be populated by JS -->
+        </div>
+    </div>
+    
+    <!-- Right drawer - Money -->
+    <div class="drawer drawer-right" id="moneyDrawer">
+        <div class="drawer-handle" id="moneyHandle"></div>
+        <div class="money-stack">
+            <button class="money-btn" data-amount="1">$1</button>
+            <button class="money-btn" data-amount="5">$5</button>
+            <button class="money-btn" data-amount="10">$10</button>
+            <button class="money-btn" data-amount="20">$20</button>
+            <button class="money-btn" data-amount="50">$50</button>
+        </div>
+    </div>
+    
+    <!-- Left drawer - Actions -->
+    <div class="drawer drawer-left" id="actionsDrawer">
+        <div class="drawer-handle" id="actionsHandle"></div>
+        <div class="action-stack">
+            <button class="action-btn" id="dropPin">📍</button>
+            <button class="action-btn" id="openChat">💬</button>
+            <button class="action-btn" id="openMic">🎤</button>
+            <button class="action-btn" id="findFriends">🎯</button>
+        </div>
+    </div>
+    
+    <script>
+        // Populate reactions grid with 64 emojis
+        const reactions = [
+            '❤️', '🔥', '😂', '🎉', '💃', '🕺', '🎵', '🎶',
+            '✨', '💫', '⭐', '🌟', '💥', '💢', '💯', '🔥',
+            '😍', '🥰', '😘', '🤩', '😎', '🤗', '🙌', '👏',
+            '💪', '🤘', '🤟', '👊', '✊', '🤝', '🙏', '👐',
+            '🎊', '🎈', '🎁', '🎀', '🏆', '🥇', '🎯', '🎪',
+            '🌈', '🦄', '🌺', '🌸', '💐', '🌹', '🌷', '🌻',
+            '🍾', '🥂', '🍻', '🍺', '🍹', '🍸', '🍷', '🥃',
+            '🚀', '💎', '💰', '👑', '💍', '🔮', '🎭', '🎨'
+        ];
+        
+        const reactionsGrid = document.getElementById('reactionsGrid');
+        reactions.forEach(emoji => {
+            const btn = document.createElement('button');
+            btn.className = 'reaction-btn';
+            btn.textContent = emoji;
+            btn.onclick = () => triggerReaction('emoji', { emoji, emojiType: 'reaction' });
+            reactionsGrid.appendChild(btn);
+        });
+        
+        // Reaction System
+        class ReactionSystem {
+            constructor(canvasId) {
+                this.canvas = document.getElementById(canvasId);
+                this.ctx = this.canvas.getContext('2d');
+                this.reactions = [];
+                this.particles = [];
+                this.init();
+            }
+            
+            init() {
+                this.resizeCanvas();
+                window.addEventListener('resize', () => this.resizeCanvas());
+                this.animate();
+            }
+            
+            resizeCanvas() {
+                this.canvas.width = window.innerWidth;
+                this.canvas.height = window.innerHeight;
+            }
+            
+            triggerReaction(type, data = {}) {
+                const startX = data.x || window.innerWidth / 2;
+                const startY = data.y || window.innerHeight - 100;
+                
+                if (type === 'money') {
+                    this.createMoneyReaction(startX, startY, data.amount || 1);
+                } else if (type === 'emoji') {
+                    this.createEmojiReaction(startX, startY, data.emoji || '❤️');
+                }
+            }
+            
+            createEmojiReaction(x, y, emoji) {
+                this.reactions.push({
+                    x, y,
+                    vx: (Math.random() - 0.5) * 10,
+                    vy: -20 - Math.random() * 10,
+                    emoji,
+                    size: 30,
+                    opacity: 1,
+                    gravity: 0.5
+                });
+                
+                // Add particles
+                for (let i = 0; i < 5; i++) {
+                    this.particles.push({
+                        x, y,
+                        vx: (Math.random() - 0.5) * 5,
+                        vy: (Math.random() - 0.5) * 5,
+                        size: Math.random() * 3 + 1,
+                        color: '#fff',
+                        life: 1,
+                        decay: 0.02
+                    });
+                }
+            }
+            
+            createMoneyReaction(x, y, amount) {
+                this.reactions.push({
+                    x, y,
+                    vx: (Math.random() - 0.5) * 8,
+                    vy: -25 - Math.random() * 10,
+                    amount,
+                    type: 'money',
+                    size: 40,
+                    opacity: 1,
+                    rotation: 0,
+                    rotationSpeed: (Math.random() - 0.5) * 0.3,
+                    gravity: 0.6
+                });
+                
+                // Gold particles
+                for (let i = 0; i < 10; i++) {
+                    this.particles.push({
+                        x, y,
+                        vx: (Math.random() - 0.5) * 10,
+                        vy: (Math.random() - 0.5) * 10,
+                        size: Math.random() * 4 + 2,
+                        color: '#FFD700',
+                        life: 1,
+                        decay: 0.015,
+                        sparkle: true
+                    });
+                }
+            }
+            
+            animate() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // Update and draw particles
+                for (let i = this.particles.length - 1; i >= 0; i--) {
+                    const p = this.particles[i];
+                    if (p.life <= 0) {
+                        this.particles.splice(i, 1);
+                        continue;
+                    }
+                    
+                    this.ctx.save();
+                    this.ctx.globalAlpha = p.life;
+                    this.ctx.fillStyle = p.color;
+                    this.ctx.beginPath();
+                    this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    this.ctx.fill();
+                    this.ctx.restore();
+                    
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += 0.3;
+                    p.life -= p.decay;
+                }
+                
+                // Update and draw reactions
+                for (let i = this.reactions.length - 1; i >= 0; i--) {
+                    const r = this.reactions[i];
+                    if (r.opacity <= 0 || r.y > this.canvas.height) {
+                        this.reactions.splice(i, 1);
+                        continue;
+                    }
+                    
+                    this.ctx.save();
+                    this.ctx.translate(r.x, r.y);
+                    if (r.rotation) this.ctx.rotate(r.rotation);
+                    this.ctx.globalAlpha = r.opacity;
+                    
+                    if (r.type === 'money') {
+                        this.ctx.fillStyle = '#85bb65';
+                        this.ctx.fillRect(-r.size/2, -r.size/4, r.size, r.size/2);
+                        this.ctx.fillStyle = '#2a5434';
+                        this.ctx.font = `bold ${r.size/3}px Arial`;
+                        this.ctx.textAlign = 'center';
+                        this.ctx.textBaseline = 'middle';
+                        this.ctx.fillText(`$${r.amount}`, 0, 0);
+                        r.rotation += r.rotationSpeed;
+                    } else {
+                        this.ctx.font = `${r.size}px Arial`;
+                        this.ctx.textAlign = 'center';
+                        this.ctx.textBaseline = 'middle';
+                        this.ctx.fillText(r.emoji, 0, 0);
+                    }
+                    
+                    this.ctx.restore();
+                    
+                    r.x += r.vx;
+                    r.y += r.vy;
+                    r.vy += r.gravity;
+                    r.vx *= 0.99;
+                    r.opacity -= 0.01;
+                }
+                
+                requestAnimationFrame(() => this.animate());
+            }
+        }
+        
+        // Initialize reaction system
+        const reactionSystem = new ReactionSystem('reaction-canvas');
+        
+        // Global trigger function
+        function triggerReaction(type, data) {
+            reactionSystem.triggerReaction(type, data);
+        }
+        
+        // Money button handlers
+        document.querySelectorAll('.money-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const amount = parseInt(btn.dataset.amount);
+                triggerReaction('money', { 
+                    amount,
+                    x: e.clientX,
+                    y: e.clientY
+                });
+            });
+        });
+        
+        // Drawer system
+        const drawers = {
+            bottom: { 
+                element: document.getElementById('reactionsDrawer'),
+                handle: document.getElementById('reactionsHandle'),
+                isOpen: false
+            },
+            right: {
+                element: document.getElementById('moneyDrawer'),
+                handle: document.getElementById('moneyHandle'),
+                isOpen: false
+            },
+            left: {
+                element: document.getElementById('actionsDrawer'),
+                handle: document.getElementById('actionsHandle'),
+                isOpen: false
+            }
+        };
+        
+        // Add touch/click handlers for drawers
+        Object.values(drawers).forEach(drawer => {
+            drawer.handle.addEventListener('click', () => {
+                drawer.isOpen = !drawer.isOpen;
+                drawer.element.classList.toggle('open', drawer.isOpen);
+            });
+            
+            // Touch support
+            let startY = 0;
+            let startX = 0;
+            
+            drawer.handle.addEventListener('touchstart', (e) => {
+                startY = e.touches[0].clientY;
+                startX = e.touches[0].clientX;
+            });
+            
+            drawer.handle.addEventListener('touchmove', (e) => {
+                const deltaY = e.touches[0].clientY - startY;
+                const deltaX = e.touches[0].clientX - startX;
+                
+                // Detect swipe direction and open drawer
+                if (Math.abs(deltaY) > 30 || Math.abs(deltaX) > 30) {
+                    drawer.isOpen = true;
+                    drawer.element.classList.add('open');
+                }
+            });
+        });
+        
+        // Character dragging
+        const character = document.getElementById('character');
+        let isDragging = false;
+        
+        character.addEventListener('mousedown', () => isDragging = true);
+        document.addEventListener('mouseup', () => isDragging = false);
+        document.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                character.style.left = e.clientX + 'px';
+                character.style.top = e.clientY + 'px';
+            }
+        });
+        
+        // Touch support for character
+        character.addEventListener('touchstart', () => isDragging = true);
+        document.addEventListener('touchend', () => isDragging = false);
+        document.addEventListener('touchmove', (e) => {
+            if (isDragging) {
+                character.style.left = e.touches[0].clientX + 'px';
+                character.style.top = e.touches[0].clientY + 'px';
+            }
+        });
+        
+        console.log('🔥 SOUND FACTORY LEGENDARY - SYSTEM READY');
+    </script>
+</body>
+</html>

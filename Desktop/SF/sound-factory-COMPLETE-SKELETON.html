@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sound Factory - COMPLETE SKELETON</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #000;
+            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, sans-serif;
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* BLUEPRINT BACKGROUND */
+        #blueprint {
+            position: fixed;
+            inset: 0;
+            background: 
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 20px 20px;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        /* MAIN CONTAINER */
+        .main-container {
+            position: relative;
+            z-index: 10;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* ========== TOP BAR ========== */
+        .top-bar {
+            padding: 10px 20px;
+            border-bottom: 0.5px solid rgba(255,255,255,0.12);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(20px);
+            background: rgba(0,0,0,0.9);
+        }
+        
+        .logo {
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+        
+        .top-nav {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .top-btn {
+            background: rgba(255,255,255,0.08);
+            border: 0.5px solid rgba(255,255,255,0.15);
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 10px;
+            font-weight: 600;
+            color: #fff;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.2s;
+        }
+        
+        .top-btn:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateY(-2px);
+        }
+        
+        /* ========== MAIN CONTENT ========== */
+        .content {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* BLUEPRINT AREA */
+        .blueprint-area {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+        
+        .character {
+            position: absolute;
+            width: 32px;
+            height: 32px;
+            background: #fff;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            font-weight: 700;
+            color: #000;
+            cursor: move;
+            z-index: 100;
+        }
+        
+        /* FLOOR SELECTOR - Right Side */
+        .floor-selector {
+            position: fixed;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            z-index: 200;
+        }
+        
+        .floor-btn {
+            background: rgba(255,255,255,0.08);
+            border: 0.5px solid rgba(255,255,255,0.15);
+            border-radius: 8px;
+            width: 40px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.6);
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: all 0.2s;
+        }
+        
+        .floor-btn:hover {
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+        }
+        
+        .floor-btn.active {
+            background: #fff;
+            color: #000;
+            border-color: #fff;
+        }
+        
+        /* ========== LED STRIP ========== */
+        .led-strip {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 4px;
+            padding: 8px 12px;
+            background: rgba(0,0,0,0.8);
+            border: 0.5px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+            z-index: 300;
+        }
+        
+        .led {
+            width: 8px;
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            transition: all 0.3s;
+        }
+        
+        .led.active {
+            background: #00ff88;
+            box-shadow: 0 0 10px #00ff88, 0 0 20px #00ff88;
+            animation: ledPulse 1s infinite;
+        }
+        
+        @keyframes ledPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+        
+        /* ========== BOTTOM SECTION ========== */
+        .bottom-section {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 500;
+        }
+        
+        /* CHAT BOX - Goes across bottom */
+        .chat-container {
+            padding: 10px 20px;
+            background: rgba(0,0,0,0.9);
+            border-top: 0.5px solid rgba(255,255,255,0.12);
+            backdrop-filter: blur(20px);
+        }
+        
+        .chat-input-wrapper {
+            display: flex;
+            gap: 8px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .chat-input {
+            flex: 1;
+            background: rgba(255,255,255,0.08);
+            border: 0.5px solid rgba(255,255,255,0.15);
+            border-radius: 20px;
+            padding: 10px 15px;
+            font-size: 12px;
+            color: #fff;
+            font-family: inherit;
+        }
+        
+        .chat-input::placeholder {
+            color: rgba(255,255,255,0.4);
+        }
+        
+        .chat-input:focus {
+            outline: none;
+            border-color: rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.12);
+        }
+        
+        .chat-send {
+            background: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s;
+        }
+        
+        .chat-send:hover {
+            transform: scale(1.1);
+        }
+        
+        /* CONTROLS BAR */
+        .controls-bar {
+            padding: 12px 20px;
+            background: rgba(0,0,0,0.95);
+            border-top: 0.5px solid rgba(255,255,255,0.12);
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 20px;
+            align-items: center;
+        }
+        
+        /* LEFT: Grid Buttons */
+        .grid-buttons {
+            display: flex;
+            gap: 6px;
+        }
+        
+        .grid-btn {
+            background: rgba(255,255,255,0.08);
+            border: 0.5px solid rgba(255,255,255,0.15);
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 9px;
+            font-weight: 600;
+            color: #fff;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.2s;
+            position: relative;
+        }
+        
+        .grid-btn:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateY(-2px);
+        }
+        
+        .grid-btn.active {
+            background: linear-gradient(135deg, #ff0066, #ff3399);
+            border-color: #ff0066;
+        }
+        
+        /* CENTER: Reactions */
+        .reactions {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .reaction-btn {
+            background: rgba(255,255,255,0.08);
+            border: 0.5px solid rgba(255,255,255,0.15);
+            border-radius: 8px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .reaction-btn:hover {
+            background: rgba(255,255,255,0.15);
+            transform: scale(1.1);
+        }
+        
+        .reaction-btn.active {
+            background: rgba(255,255,255,0.2);
+            transform: scale(1.15);
+        }
+        
+        /* RIGHT: Money Buttons */
+        .money-buttons {
+            display: flex;
+            gap: 6px;
+        }
+        
+        .money-btn {
+            background: rgba(255,255,255,0.08);
+            border: 0.5px solid rgba(255,255,255,0.15);
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-size: 10px;
+            font-weight: 700;
+            color: #fff;
+            cursor: pointer;
+            min-width: 50px;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        
+        .money-btn:hover {
+            background: rgba(0,255,136,0.2);
+            border-color: #00ff88;
+            transform: translateY(-2px);
+        }
+        
+        /* ========== MODALS (3 GRIDS) ========== */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.92);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.2s;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .modal-content {
+            background: rgba(10,10,10,0.98);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 16px;
+            padding: 25px;
+            max-width: 1000px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            position: relative;
+            animation: slideUp 0.3s;
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .modal-header {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 0.5px solid rgba(255,255,255,0.15);
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.05);
+            border: 0.5px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.6);
+            font-size: 20px;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+        
+        .modal-close:hover {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            transform: rotate(90deg);
+        }
+        
+        /* 64 BOX GRID (8x8) */
+        .grid-64 {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 10px;
+        }
+        
+        .grid-box {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            min-height: 90px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .grid-box:hover {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.2);
+            transform: translateY(-3px);
+        }
+        
+        .grid-box.selected {
+            background: rgba(255,255,255,0.15);
+            border-color: rgba(255,255,255,0.4);
+        }
+        
+        .box-number {
+            position: absolute;
+            top: 6px;
+            left: 8px;
+            font-size: 9px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.3);
+        }
+        
+        /* ========== INVISIBLE GRID (Hidden) ========== */
+        .invisible-grid {
+            position: fixed;
+            inset: 0;
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(8, 1fr);
+            pointer-events: none;
+            z-index: 400;
+        }
+        
+        .invisible-box {
+            border: 1px solid transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: all 0.3s;
+        }
+        
+        .invisible-box.revealed {
+            opacity: 1;
+            border-color: rgba(0,255,136,0.5);
+            background: rgba(0,255,136,0.1);
+            pointer-events: auto;
+            animation: boxReveal 0.5s;
+        }
+        
+        @keyframes boxReveal {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        /* ========== TOAST ========== */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #ff0066, #ff3399);
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            box-shadow: 0 10px 30px rgba(255, 0, 102, 0.4);
+            z-index: 10000;
+            display: none;
+            animation: toastSlide 0.3s;
+        }
+        
+        .toast.active {
+            display: block;
+        }
+        
+        @keyframes toastSlide {
+            from { transform: translateX(400px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        /* ========== DEBUG INFO ========== */
+        .debug-panel {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0,0,0,0.9);
+            border: 1px solid rgba(0,255,136,0.3);
+            border-radius: 10px;
+            padding: 12px 15px;
+            font-size: 9px;
+            color: rgba(255,255,255,0.6);
+            z-index: 10000;
+            max-width: 250px;
+        }
+        
+        .debug-panel h4 {
+            color: #00ff88;
+            font-size: 10px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .debug-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+        
+        .debug-label {
+            color: rgba(255,255,255,0.5);
+        }
+        
+        .debug-value {
+            color: #00ff88;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <!-- Blueprint Background -->
+    <div id="blueprint"></div>
+    
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- TOP BAR -->
+        <div class="top-bar">
+            <div class="logo">SOUND FACTORY</div>
+            <div class="top-nav">
+                <button class="top-btn" onclick="alert('Ticket Link')">🎟️ TICKETS</button>
+                <button class="top-btn" onclick="alert('Tables')">🍾 TABLES</button>
+                <button class="top-btn" onclick="alert('Go Live')">🔴 LIVE</button>
+            </div>
+        </div>
+        
+        <!-- CONTENT -->
+        <div class="content">
+            <div class="blueprint-area">
+                <!-- Character -->
+                <div class="character" id="character">YOU</div>
+                
+                <!-- Floor Selector -->
+                <div class="floor-selector">
+                    <div class="floor-btn active" onclick="selectFloor(this, 1)">1F</div>
+                    <div class="floor-btn" onclick="selectFloor(this, 2)">2F</div>
+                    <div class="floor-btn" onclick="selectFloor(this, 3)">3F</div>
+                    <div class="floor-btn" onclick="selectFloor(this, 4)">4F</div>
+                    <div class="floor-btn" onclick="selectFloor(this, 5)">5F</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- LED STRIP -->
+        <div class="led-strip" id="ledStrip">
+            <!-- 64 LEDs generated by JS -->
+        </div>
+        
+        <!-- INVISIBLE GRID (AI-controlled surprise grid) -->
+        <div class="invisible-grid" id="invisibleGrid">
+            <!-- 64 invisible boxes generated by JS -->
+        </div>
+        
+        <!-- BOTTOM SECTION -->
+        <div class="bottom-section">
+            <!-- Chat Box -->
+            <div class="chat-container">
+                <div class="chat-input-wrapper">
+                    <input type="text" class="chat-input" placeholder="Type a message..." id="chatInput">
+                    <button class="chat-send" onclick="sendMessage()">→</button>
+                </div>
+            </div>
+            
+            <!-- Controls Bar -->
+            <div class="controls-bar">
+                <!-- LEFT: Grid Buttons -->
+                <div class="grid-buttons">
+                    <button class="grid-btn" onclick="openGrid('top')">TOP</button>
+                    <button class="grid-btn" onclick="openGrid('middle')">MIDDLE</button>
+                    <button class="grid-btn" onclick="openGrid('bottom')">BOTTOM</button>
+                </div>
+                
+                <!-- CENTER: Quick Reactions -->
+                <div class="reactions">
+                    <button class="reaction-btn" onclick="quickReact(this, '❤️')">❤️</button>
+                    <button class="reaction-btn" onclick="quickReact(this, '🔥')">🔥</button>
+                    <button class="reaction-btn" onclick="quickReact(this, '😂')">😂</button>
+                    <button class="reaction-btn" onclick="quickReact(this, '🎉')">🎉</button>
+                    <button class="reaction-btn" onclick="quickReact(this, '⭐')">⭐</button>
+                </div>
+                
+                <!-- RIGHT: Money Buttons -->
+                <div class="money-buttons">
+                    <button class="money-btn" onclick="tipMoney(1)">$1</button>
+                    <button class="money-btn" onclick="tipMoney(5)">$5</button>
+                    <button class="money-btn" onclick="tipMoney(10)">$10</button>
+                    <button class="money-btn" onclick="tipMoney(20)">$20</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- MODALS (3 Grids) -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeGrid()">×</button>
+            <div class="modal-header" id="modalTitle">GRID</div>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+    
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+    
+    <!-- Debug Panel -->
+    <div class="debug-panel">
+        <h4>🎯 SKELETON DEBUG</h4>
+        <div class="debug-row">
+            <span class="debug-label">Active Grid:</span>
+            <span class="debug-value" id="debugGrid">None</span>
+        </div>
+        <div class="debug-row">
+            <span class="debug-label">Floor:</span>
+            <span class="debug-value" id="debugFloor">1F</span>
+        </div>
+        <div class="debug-row">
+            <span class="debug-label">LED Active:</span>
+            <span class="debug-value" id="debugLED">0/64</span>
+        </div>
+        <div class="debug-row">
+            <span class="debug-label">Invisible Revealed:</span>
+            <span class="debug-value" id="debugInvisible">0/64</span>
+        </div>
+        <div class="debug-row">
+            <span class="debug-label">Selected Boxes:</span>
+            <span class="debug-value" id="debugSelected">0/64</span>
+        </div>
+    </div>
+    
+    <script>
+        // ========== STATE ==========
+        let currentGrid = null;
+        let currentFloor = 1;
+        let selectedBoxes = new Set();
+        let activeLEDs = new Set();
+        let revealedInvisible = new Set();
+        
+        // ========== INITIALIZE ==========
+        function init() {
+            // Generate LED strip (64 LEDs)
+            const ledStrip = document.getElementById('ledStrip');
+            for (let i = 1; i <= 64; i++) {
+                const led = document.createElement('div');
+                led.className = 'led';
+                led.id = `led-${i}`;
+                ledStrip.appendChild(led);
+            }
+            
+            // Generate invisible grid (64 boxes)
+            const invisibleGrid = document.getElementById('invisibleGrid');
+            for (let i = 1; i <= 64; i++) {
+                const box = document.createElement('div');
+                box.className = 'invisible-box';
+                box.id = `invisible-${i}`;
+                box.onclick = () => hideInvisibleBox(i);
+                invisibleGrid.appendChild(box);
+            }
+            
+            showToast('✅ Skeleton initialized!');
+        }
+        
+        // ========== GRID SYSTEM ==========
+        function openGrid(gridName) {
+            currentGrid = gridName;
+            const modal = document.getElementById('modal');
+            const title = document.getElementById('modalTitle');
+            const body = document.getElementById('modalBody');
+            
+            modal.classList.add('active');
+            document.getElementById('debugGrid').textContent = gridName.toUpperCase();
+            
+            const titles = {
+                'top': '🚀 TOP GRID - Social Media Hub (64 boxes)',
+                'middle': '❤️ MIDDLE GRID - 32 Reactions + 32 Effects (64 boxes)',
+                'bottom': '🤖 BOTTOM GRID - AI Chain Reaction (64 boxes)'
+            };
+            title.textContent = titles[gridName];
+            
+            // Generate 64 blank boxes
+            body.innerHTML = `
+                <div class="grid-64">
+                    ${generate64Boxes()}
+                </div>
+            `;
+            
+            // Highlight active grid button
+            document.querySelectorAll('.grid-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            showToast(`✅ ${gridName.toUpperCase()} grid opened!`);
+        }
+        
+        function closeGrid() {
+            document.getElementById('modal').classList.remove('active');
+            document.querySelectorAll('.grid-btn').forEach(btn => btn.classList.remove('active'));
+            currentGrid = null;
+            selectedBoxes.clear();
+            updateDebug();
+            showToast('❌ Grid closed');
+        }
+        
+        function generate64Boxes() {
+            let html = '';
+            for (let i = 1; i <= 64; i++) {
+                html += `
+                    <div class="grid-box" onclick="toggleBox(this, ${i})">
+                        <div class="box-number">${i}</div>
+                    </div>
+                `;
+            }
+            return html;
+        }
+        
+        function toggleBox(element, number) {
+            element.classList.toggle('selected');
+            if (element.classList.contains('selected')) {
+                selectedBoxes.add(number);
+            } else {
+                selectedBoxes.delete(number);
+            }
+            updateDebug();
+        }
+        
+        // ========== FLOOR SELECTOR ==========
+        function selectFloor(element, floor) {
+            document.querySelectorAll('.floor-btn').forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
+            currentFloor = floor;
+            document.getElementById('debugFloor').textContent = floor + 'F';
+            showToast(`📍 Floor ${floor} selected`);
+        }
+        
+        // ========== LED SYSTEM (AI-controlled) ==========
+        function toggleLED(ledNumber) {
+            const led = document.getElementById(`led-${ledNumber}`);
+            led.classList.toggle('active');
+            if (led.classList.contains('active')) {
+                activeLEDs.add(ledNumber);
+            } else {
+                activeLEDs.delete(ledNumber);
+            }
+            updateDebug();
+        }
+        
+        // AI can call this to activate random LEDs
+        function aiActivateLEDs(count = 5) {
+            for (let i = 0; i < count; i++) {
+                const random = Math.floor(Math.random() * 64) + 1;
+                toggleLED(random);
+            }
+            showToast(`🤖 AI activated ${count} LEDs!`);
+        }
+        
+        // ========== INVISIBLE GRID (AI-controlled) ==========
+        function revealInvisibleBox(boxNumber) {
+            const box = document.getElementById(`invisible-${boxNumber}`);
+            box.classList.add('revealed');
+            box.innerHTML = `<div style="font-size: 24px;">🎁</div>`;
+            revealedInvisible.add(boxNumber);
+            updateDebug();
+            showToast(`🎁 Surprise box ${boxNumber} revealed by AI!`);
+        }
+        
+        function hideInvisibleBox(boxNumber) {
+            const box = document.getElementById(`invisible-${boxNumber}`);
+            box.classList.remove('revealed');
+            box.innerHTML = '';
+            revealedInvisible.delete(boxNumber);
+            updateDebug();
+        }
+        
+        // AI can call this to reveal random surprise boxes
+        function aiRevealSurprises(count = 3) {
+            for (let i = 0; i < count; i++) {
+                const random = Math.floor(Math.random() * 64) + 1;
+                setTimeout(() => revealInvisibleBox(random), i * 200);
+            }
+        }
+        
+        // ========== REACTIONS ==========
+        function quickReact(button, emoji) {
+            button.classList.add('active');
+            setTimeout(() => button.classList.remove('active'), 300);
+            showToast(`${emoji} Reaction sent!`);
+        }
+        
+        // ========== MONEY ==========
+        function tipMoney(amount) {
+            showToast(`💰 Tipped $${amount}!`);
+        }
+        
+        // ========== CHAT ==========
+        function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (message) {
+                showToast(`💬 Message sent: "${message}"`);
+                input.value = '';
+            }
+        }
+        
+        // ========== TOAST ==========
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('active');
+            setTimeout(() => toast.classList.remove('active'), 2500);
+        }
+        
+        // ========== DEBUG UPDATE ==========
+        function updateDebug() {
+            document.getElementById('debugGrid').textContent = currentGrid || 'None';
+            document.getElementById('debugLED').textContent = `${activeLEDs.size}/64`;
+            document.getElementById('debugInvisible').textContent = `${revealedInvisible.size}/64`;
+            document.getElementById('debugSelected').textContent = `${selectedBoxes.size}/64`;
+        }
+        
+        // ========== KEYBOARD SHORTCUTS ==========
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && currentGrid) closeGrid();
+            if (e.key === '1' && !currentGrid) openGrid('top');
+            if (e.key === '2' && !currentGrid) openGrid('middle');
+            if (e.key === '3' && !currentGrid) openGrid('bottom');
+            if (e.key === 'l') aiActivateLEDs(5); // Test LED
+            if (e.key === 's') aiRevealSurprises(3); // Test Surprise
+        });
+        
+        // Close modal on background click
+        document.getElementById('modal').addEventListener('click', function(e) {
+            if (e.target === this) closeGrid();
+        });
+        
+        // Initialize on load
+        init();
+        
+        console.log('🎯 COMPLETE SKELETON LOADED!');
+        console.log('✅ All UI elements positioned');
+        console.log('✅ 3 main grids (64 boxes each)');
+        console.log('✅ LED strip (64 LEDs)');
+        console.log('✅ Invisible grid (64 surprise boxes)');
+        console.log('✅ All hooks ready for backend');
+        console.log('');
+        console.log('🎮 KEYBOARD SHORTCUTS:');
+        console.log('   1, 2, 3 = Open grids');
+        console.log('   ESC = Close grid');
+        console.log('   L = Test AI LED activation');
+        console.log('   S = Test AI surprise boxes');
+    </script>
+</body>
+</html>

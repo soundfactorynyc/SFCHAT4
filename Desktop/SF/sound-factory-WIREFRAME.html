@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sound Factory - WIREFRAME (Everything Wired, Nothing Filled)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #000;
+            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', system-ui, sans-serif;
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* BLUEPRINT BACKGROUND */
+        #blueprint {
+            position: fixed;
+            inset: 0;
+            background: 
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 20px 20px;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        /* MAIN CONTAINER */
+        .main-container {
+            position: relative;
+            z-index: 10;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* HEADER */
+        .header {
+            padding: 8px 15px;
+            border-bottom: 0.5px solid rgba(255,255,255,0.12);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(20px);
+            background: rgba(0,0,0,0.8);
+        }
+        
+        .logo {
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+        
+        /* CONTENT */
+        .content {
+            flex: 1;
+            display: grid;
+            grid-template-rows: 1fr auto;
+            overflow: hidden;
+        }
+        
+        /* BLUEPRINT AREA */
+        .blueprint-area {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* CHARACTER */
+        .character {
+            position: absolute;
+            width: 32px;
+            height: 32px;
+            background: #fff;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            font-weight: 700;
+            color: #000;
+            cursor: move;
+        }
+        
+        /* BOTTOM CONTROLS */
+        .bottom-controls {
+            padding: 10px 15px;
+            border-top: 0.5px solid rgba(255,255,255,0.12);
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 15px;
+            align-items: center;
+            backdrop-filter: blur(20px);
+            background: rgba(0,0,0,0.8);
+        }
+        
+        .status-strip {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        
+        .stat-item {
+            font-size: 9px;
+            font-weight: 590;
+            color: rgba(255,255,255,0.6);
+        }
+        
+        .stat-item .value {
+            color: #fff;
+            margin-right: 2px;
+        }
+        
+        .action-strip {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+        }
+        
+        .action-btn {
+            background: rgba(255,255,255,0.08);
+            border: 0.5px solid rgba(255,255,255,0.15);
+            border-radius: 6px;
+            padding: 6px 10px;
+            font-size: 9px;
+            font-weight: 590;
+            color: #fff;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.15s;
+        }
+        
+        .action-btn:hover {
+            background: rgba(255,255,255,0.15);
+            border-color: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+        }
+        
+        .action-btn.primary {
+            background: #fff;
+            color: #000;
+        }
+        
+        .money-strip {
+            display: flex;
+            gap: 4px;
+        }
+        
+        .money-btn {
+            background: rgba(255,255,255,0.08);
+            border: 0.5px solid rgba(255,255,255,0.15);
+            border-radius: 6px;
+            padding: 6px 8px;
+            font-size: 9px;
+            font-weight: 700;
+            color: #fff;
+            cursor: pointer;
+            min-width: 32px;
+            text-align: center;
+            transition: all 0.15s;
+        }
+        
+        .money-btn:hover {
+            background: rgba(255,255,255,0.15);
+        }
+        
+        /* MODAL */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.9);
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.2s ease;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .modal-content {
+            background: rgba(10,10,10,0.98);
+            border: 0.5px solid rgba(255,255,255,0.2);
+            border-radius: 12px;
+            padding: 20px;
+            max-width: 900px;
+            width: 100%;
+            max-height: 85vh;
+            overflow-y: auto;
+            position: relative;
+            animation: slideUp 0.3s ease;
+        }
+        
+        @keyframes slideUp {
+            from { transform: translateY(30px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        
+        .modal-header {
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            letter-spacing: -0.01em;
+            padding-bottom: 10px;
+            border-bottom: 0.5px solid rgba(255,255,255,0.1);
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.05);
+            border: 0.5px solid rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.6);
+            font-size: 16px;
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.2s;
+        }
+        
+        .modal-close:hover {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+            transform: rotate(90deg);
+        }
+        
+        /* GRID - 8x8 = 64 BOXES */
+        .grid-64 {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 8px;
+            margin-top: 15px;
+        }
+        
+        /* BLANK BOX - Ready for content */
+        .grid-box {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 12px;
+            min-height: 85px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .grid-box:hover {
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(255,255,255,0.15);
+            transform: translateY(-2px);
+        }
+        
+        .grid-box.selected {
+            background: rgba(255,255,255,0.15);
+            border-color: rgba(255,255,255,0.3);
+        }
+        
+        /* Box number label */
+        .box-number {
+            font-size: 8px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.3);
+            position: absolute;
+            top: 4px;
+            left: 6px;
+        }
+        
+        /* TOAST NOTIFICATION */
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(135deg, #ff0066, #ff3399);
+            color: #fff;
+            padding: 12px 20px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            box-shadow: 0 10px 30px rgba(255, 0, 102, 0.4);
+            z-index: 10000;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+        
+        .toast.active {
+            display: block;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(400px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        /* DEBUG INFO */
+        .debug-info {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.8);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 8px 12px;
+            font-size: 9px;
+            color: rgba(255,255,255,0.5);
+            z-index: 10000;
+        }
+        
+        .debug-info span {
+            color: #00ff88;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <!-- Blueprint Background -->
+    <div id="blueprint"></div>
+    
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">SOUND FACTORY WIREFRAME</div>
+        </div>
+        
+        <!-- Content -->
+        <div class="content">
+            <!-- Blueprint Area -->
+            <div class="blueprint-area">
+                <div class="character">YOU</div>
+            </div>
+            
+            <!-- Bottom Controls -->
+            <div class="bottom-controls">
+                <!-- Status -->
+                <div class="status-strip">
+                    <div class="stat-item">
+                        <span class="value">842</span> ONLINE
+                    </div>
+                </div>
+                
+                <!-- Actions -->
+                <div class="action-strip">
+                    <button class="action-btn" onclick="openGrid('top')">TOP GRID</button>
+                    <button class="action-btn" onclick="openGrid('middle')">MIDDLE GRID</button>
+                    <button class="action-btn primary" onclick="openGrid('bottom')">BOTTOM GRID</button>
+                </div>
+                
+                <!-- Money -->
+                <div class="money-strip">
+                    <button class="money-btn">$1</button>
+                    <button class="money-btn">$5</button>
+                    <button class="money-btn">$10</button>
+                    <button class="money-btn">$20</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- MODAL -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeGrid()">×</button>
+            <div class="modal-header" id="gridTitle">GRID</div>
+            <div id="gridContainer"></div>
+        </div>
+    </div>
+    
+    <!-- Toast -->
+    <div class="toast" id="toast"></div>
+    
+    <!-- Debug Info -->
+    <div class="debug-info">
+        Active Grid: <span id="activeGrid">None</span> | 
+        Selected: <span id="selectedCount">0</span>/64
+    </div>
+    
+    <script>
+        let currentGrid = null;
+        let selectedBoxes = new Set();
+        
+        // Open a grid (top, middle, or bottom)
+        function openGrid(gridName) {
+            currentGrid = gridName;
+            const modal = document.getElementById('modal');
+            const title = document.getElementById('gridTitle');
+            const container = document.getElementById('gridContainer');
+            
+            // Update UI
+            modal.classList.add('active');
+            document.getElementById('activeGrid').textContent = gridName.toUpperCase();
+            
+            // Set title based on grid
+            const titles = {
+                'top': '🚀 TOP GRID (Social Media + Features)',
+                'middle': '❤️ MIDDLE GRID (32 Reactions + 32 Effects)',
+                'bottom': '🤖 BOTTOM GRID (AI Chain Reaction)'
+            };
+            title.textContent = titles[gridName];
+            
+            // Generate 64 blank boxes
+            container.innerHTML = `
+                <div class="grid-64">
+                    ${generateBlankBoxes(64)}
+                </div>
+            `;
+            
+            showToast(`✅ ${gridName.toUpperCase()} GRID opened!`);
+        }
+        
+        // Close grid
+        function closeGrid() {
+            const modal = document.getElementById('modal');
+            modal.classList.remove('active');
+            currentGrid = null;
+            selectedBoxes.clear();
+            document.getElementById('activeGrid').textContent = 'None';
+            document.getElementById('selectedCount').textContent = '0';
+            showToast('❌ Grid closed');
+        }
+        
+        // Generate 64 blank boxes
+        function generateBlankBoxes(count) {
+            let html = '';
+            for (let i = 1; i <= count; i++) {
+                html += `
+                    <div class="grid-box" onclick="toggleBox(this, ${i})">
+                        <div class="box-number">${i}</div>
+                    </div>
+                `;
+            }
+            return html;
+        }
+        
+        // Toggle box selection
+        function toggleBox(element, number) {
+            element.classList.toggle('selected');
+            
+            if (element.classList.contains('selected')) {
+                selectedBoxes.add(number);
+                showToast(`✅ Box ${number} selected`);
+            } else {
+                selectedBoxes.delete(number);
+                showToast(`❌ Box ${number} deselected`);
+            }
+            
+            document.getElementById('selectedCount').textContent = selectedBoxes.size;
+        }
+        
+        // Show toast notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('active');
+            setTimeout(() => {
+                toast.classList.remove('active');
+            }, 2000);
+        }
+        
+        // Close modal on background click
+        document.getElementById('modal').addEventListener('click', function(e) {
+            if (e.target === this) closeGrid();
+        });
+        
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && currentGrid) {
+                closeGrid();
+            }
+            if (e.key === '1') openGrid('top');
+            if (e.key === '2') openGrid('middle');
+            if (e.key === '3') openGrid('bottom');
+        });
+        
+        console.log('🎯 WIREFRAME LOADED!');
+        console.log('✅ All grids wired up');
+        console.log('✅ 64 boxes per grid');
+        console.log('✅ Open/close working');
+        console.log('✅ Selection tracking working');
+        console.log('');
+        console.log('Press 1, 2, or 3 to open grids!');
+        console.log('Press ESC to close!');
+    </script>
+</body>
+</html>

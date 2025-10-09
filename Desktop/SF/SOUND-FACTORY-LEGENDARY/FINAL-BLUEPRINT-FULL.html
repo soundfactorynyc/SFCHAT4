@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SOUND FACTORY NYC</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+        
+        body {
+            background: #000;
+            color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display', system-ui, sans-serif;
+            overflow: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+        }
+        
+        /* BLUEPRINT BACKGROUND */
+        #blueprint {
+            position: fixed;
+            inset: 0;
+            background: 
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 20px 20px;
+            background-position: -1px -1px;
+            pointer-events: none;
+            z-index: 1;
+        }
+        
+        /* MAIN CONTAINER */
+        .main-container {
+            position: relative;
+            z-index: 10;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* HEADER - Ultra minimal */
+        .header {
+            padding: 8px 15px;
+            border-bottom: 0.5px solid rgba(255,255,255,0.12);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(20px);
+            background: rgba(0,0,0,0.8);
+        }
+        
+        .logo {
+            font-size: 15px;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+        
+        .header-nav {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .header-nav button {
+            background: none;
+            border: none;
+            color: rgba(255,255,255,0.7);
+            font-size: 11px;
+            font-weight: 590;
+            cursor: pointer;
+            padding: 0;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        
+        .header-nav button:hover {
+            color: #fff;
+        }
+        
+        /* CONTENT */
+        .content {
+            flex: 1;
+            display: grid;
+            grid-template-rows: 1fr auto;
+            overflow: hidden;
+        }
+        
+        /* BLUEPRINT AREA - Where character moves */
+        .blueprint-area {
+            position: relative;
+            overflow: hidden;
+            flex: 1;
+        }
+        
+        .floor-container {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .floor {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .floor.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        svg {
+            width: 100%;
+            height: 100%;
+        }
+        
+        /* FLOOR SELECTOR - Right side, iOS style */
+        .floor-selector {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            z-index: 1000;
+        }
+        
+        .floor-btn {
+            background: rgba(255,255,255,0.08);
+            border: 0.5px solid rgba(255,255,255,0.15);
+            border-radius: 6px;
+            width: 32px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            font-weight: 590;
+            color: rgba(255,255,255,0.6);
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: all 0.15s;
+        }
+        
+        .floor-btn:hover {
+            background: rgba(255,255,255,0.15);
+            color: #fff;
+        }
+        
+        .floor-btn.active {
+            background: #fff;
+            color: #000;
+            border-color: #fff;
+        }
+        
+        /* CHARACTER */
+        .character {
+            position: absolute;
+            width: 32px;
+            height: 32px;
+            background: #fff;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 1px solid rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            font-weight: 700;
+            color: #000;
+            cursor: move;
+            z-index: 100;
+        }
+        
+        /* PINS - iOS style text labels */
+        .pin {
+            position: absolute;
+            background: rgba(255,255,255,0.08);
+            border: 0.5px solid rgba(255,255,255,0.2);
+            border-radius: 6px;
+            padding: 4px 8px;
+            font-size: 9px;
+            font-weight: 590;
+            letter-spacing: -0.01em;
+            color: #fff;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: all 0.15s;
+        }
+        
+        .pin:hover {
+            background: rgba(255,255,255,0.15);
+            border-color: rgba(255,255,255,0.4);
+        }
+        
+        /* BOTTOM CONTROLS - Ultra compact iOS style */
+        .bottom-controls {
+            padding: 10px 15px;
+            border-top: 0.5px solid rgba(255,255,255,0.12);
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 15px;
+            align-items: center;
+            backdrop-filter: blur(20px);
+            background: rgba(0,0,0,0.8);
+        }
+        
+        /* LEFT: Status */
+        .status-strip {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        
+        .stat-item {
+            font-size: 9px;
+            font-weight: 590;
+            font-variant-numeric: tabular-nums;
+            color: rgba(255,255,255,0.6);
+            letter-spacing: 0.02em;
+        }
+        
+        .stat-item .value {
+            color: #fff;
+            margin-right: 2px;
+        }
+        
+        .stat-divider {
+            width: 1px;
+            height: 12px;
+            background: rgba(255,255,255,0.12);
+        }
+        
+        /* CENTER: Actions */
+        .action-strip {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        
+        .action-btn {
+            background: rgba(255,255,255,0.08);
+            border: 0.5px solid rgba(255,255,255,0.15);
+            border-radius: 6px;
+            padding: 6px 10px;
+            font-size: 9px;
+            font-weight: 590;
+            color: #fff;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            transition: all 0.15s;
+        }
+        
+        .action-btn:hover {
+            background: rgba(255,255,255,0.15);
+            border-color: rgba(255,255,255,0.3);
+        }
+        
+        .action-btn:active {
+            transform: scale(0.96);
+        }
+        
+        .action-btn.primary {
+            background: #fff;
+            color: #000;
+            border-color: #fff;
+        }
+        
+        .action-btn.primary:hover {
+            background: rgba(255,255,255,0.9);
+        }
+        
+        /* RIGHT: Money */
+        .money-strip {
+            display: flex;
+            gap: 4px;
+        }
+        
+        .money-btn {
+            background: rgba(255,255,255,0.08);
+            border: 0.5px solid rgba(255,255,255,0.15);
+            border-radius: 6px;
+            padding: 6px 8px;
+            font-size: 9px;
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+            color: #fff;
+            cursor: pointer;
+            min-width: 32px;
+            text-align: center;
+            transition: all 0.15s;
+        }
+        
+        .money-btn:hover {
+            background: rgba(255,255,255,0.15);
+            border-color: rgba(255,255,255,0.3);
+        }
+        
+        /* Left drawer - Actions */
+        .drawer-left {
+            left: 0;
+            top: 50%;
+            transform: translate(calc(-100% + 12px), -50%);
+            width: 70px;
+            height: auto;
+            border-radius: 0 16px 16px 0;
+            padding: 8px 4px;
+        }
+        
+        .drawer-left.open {
+            transform: translate(0, -50%);
+        }
+        
+        /* Drawer handles */
+        .drawer-handle {
+            position: absolute;
+            cursor: grab;
+            touch-action: none;
+        }
+        
+        .drawer-bottom .drawer-handle {
+            top: 3px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 4px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 2px;
+        }
+        
+        .drawer-right .drawer-handle,
+        .drawer-left .drawer-handle {
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 30px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 2px;
+        }
+        
+        .drawer-right .drawer-handle {
+            left: 3px;
+        }
+        
+        .drawer-left .drawer-handle {
+            right: 3px;
+        }
+        
+        /* Reaction grid */
+        .reactions-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 2px;
+            padding: 10px 6px;
+            height: 100%;
+        }
+        
+        .reaction-btn {
+            width: 100%;
+            aspect-ratio: 1;
+            background: rgba(0,0,0,0.5);
+            border: 0.5px solid rgba(255,255,255,0.08);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        
+        .reaction-btn:active {
+            background: rgba(255,255,255,0.1);
+            transform: scale(0.9);
+        }
+        
+        /* Money buttons */
+        .money-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .money-btn {
+            width: 55px;
+            height: 28px;
+            background: rgba(0,0,0,0.6);
+            border: 0.5px solid rgba(255,255,255,0.1);
+            border-radius: 6px;
+            color: rgba(255,255,255,0.6);
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        .money-btn:active {
+            background: rgba(255,255,255,0.1);
+            transform: scale(0.95);
+        }
+        
+        /* Action buttons */
+        .action-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .action-btn {
+            width: 55px;
+            height: 44px;
+            background: rgba(0,0,0,0.6);
+            border: 0.5px solid rgba(255,255,255,0.1);
+            border-radius: 6px;
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .action-btn:active {
+            background: rgba(255,255,255,0.1);
+            transform: scale(0.95);
+        }
+        
+        /* Pin counter */
+        .pin-counter {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            font-size: 9px;
+            color: rgba(255,255,255,0.4);
+            z-index: 100;
+        }
+        
+        /* Title */
+        .title {
+            position: fixed;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 9px;
+            color: rgba(255,255,255,0.3);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            z-index: 100;
+        }
+        
+        /* Reaction canvas */
+        #reaction-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+        }
+    </head>
+<body>
+    <!-- Blueprint Grid Background -->
+    <div id="blueprint"></div>
+    
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">SOUND FACTORY</div>
+            <div class="header-nav">
+                <button>TICKETS</button>
+                <button>TABLES</button>
+                <button>LIVE</button>
+            </div>
+        </div>
+        
+        <!-- Content -->
+        <div class="content">
+            <!-- Blueprint Area -->
+            <div class="blueprint-area">
+                <!-- Character -->
+                <div class="character" id="character">YOU</div>
+    
+    <!-- Reaction Canvas -->
+    <canvas id="reaction-canvas"></canvas>
+    
+    <!-- Floor Container -->
+    <div class="floor-container">
+            <!-- Basement -->
+            <div class="floor" id="floor-b">
+                <svg viewBox="0 0 400 520" preserveAspectRatio="xMidYMid meet">
+                    <rect width="400" height="520" fill="#000"/>
+                    <rect x="5" y="5" width="390" height="510" fill="none" stroke="#333" stroke-width="2"/>
+                    <rect x="10" y="10" width="380" height="500" fill="#050505" stroke="#222" stroke-width="1"/>
+                    <rect x="30" y="30" width="340" height="460" fill="none" stroke="#444" stroke-width="2"/>
+                    <rect x="180" y="35" width="140" height="45" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="35" y="35" width="60" height="80" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="35" y="120" width="60" height="60" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="35" y="320" width="60" height="60" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="35" y="385" width="60" height="100" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="110" y="100" width="180" height="320" fill="none" stroke="#333" stroke-width="1" stroke-dasharray="5,5" opacity="0.5"/>
+                    <rect x="305" y="120" width="60" height="60" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="305" y="185" width="60" height="60" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="305" y="250" width="60" height="60" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="305" y="315" width="60" height="60" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="305" y="380" width="60" height="60" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="120" y="440" width="160" height="45" fill="#000" stroke="#555" stroke-width="2"/>
+                    <path d="M180,485 L180,475 L220,475 L220,485" stroke="#666" stroke-width="2" fill="none" stroke-dasharray="2,2"/>
+                </svg>
+            </div>
+
+            <!-- Main Floor (DEFAULT) -->
+            <div class="floor active" id="floor-mf">
+                <svg viewBox="0 0 400 520" preserveAspectRatio="xMidYMid meet">
+                    <rect width="400" height="520" fill="#000"/>
+                    <rect x="5" y="5" width="390" height="510" fill="none" stroke="#666" stroke-width="3"/>
+                    <rect x="10" y="10" width="380" height="500" fill="#050505" stroke="#444" stroke-width="2"/>
+                    <rect x="100" y="20" width="95" height="65" fill="#0a0a0a" stroke="#555" stroke-width="2"/>
+                    <rect x="205" y="20" width="95" height="65" fill="#0a0a0a" stroke="#555" stroke-width="2"/>
+                    <rect x="45" y="30" width="40" height="45" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="315" y="30" width="40" height="45" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="20" y="110" width="45" height="350" fill="#000" stroke="#555" stroke-width="2"/>
+                    <g opacity="0.9">
+                        <rect x="90" y="140" width="35" height="35" fill="#000" stroke="#444" stroke-width="2" rx="2"/>
+                        <rect x="182" y="140" width="35" height="35" fill="#000" stroke="#444" stroke-width="2" rx="2"/>
+                        <rect x="275" y="140" width="35" height="35" fill="#000" stroke="#444" stroke-width="2" rx="2"/>
+                        <rect x="90" y="210" width="35" height="35" fill="#000" stroke="#444" stroke-width="2" rx="2"/>
+                        <rect x="182" y="210" width="35" height="35" fill="#000" stroke="#444" stroke-width="2" rx="2"/>
+                        <rect x="275" y="210" width="35" height="35" fill="#000" stroke="#444" stroke-width="2" rx="2"/>
+                        <rect x="90" y="280" width="35" height="35" fill="#000" stroke="#444" stroke-width="2" rx="2"/>
+                        <rect x="182" y="280" width="35" height="35" fill="#000" stroke="#444" stroke-width="2" rx="2"/>
+                        <rect x="275" y="280" width="35" height="35" fill="#000" stroke="#444" stroke-width="2" rx="2"/>
+                        <rect x="90" y="350" width="35" height="35" fill="#000" stroke="#444" stroke-width="2" rx="2"/>
+                        <rect x="182" y="350" width="35" height="35" fill="#000" stroke="#444" stroke-width="2" rx="2"/>
+                        <rect x="275" y="350" width="35" height="35" fill="#000" stroke="#444" stroke-width="2" rx="2"/>
+                    </g>
+                    <rect x="100" y="420" width="200" height="50" fill="#000" stroke="#666" stroke-width="2"/>
+                    <text x="200" y="445" font-family="Arial" font-size="10" fill="#666" text-anchor="middle">DJ BOOTH</text>
+                </svg>
+            </div>
+
+            <!-- Mezzanine -->
+            <div class="floor" id="floor-mz">
+                <svg viewBox="0 0 400 520" preserveAspectRatio="xMidYMid meet">
+                    <rect width="400" height="520" fill="#000"/>
+                    <rect x="5" y="5" width="390" height="510" fill="none" stroke="#555" stroke-width="3"/>
+                    <rect x="10" y="10" width="380" height="500" fill="#050505" stroke="#555" stroke-width="2"/>
+                    <rect x="35" y="35" width="330" height="450" fill="#0a0a0a" stroke="#666" stroke-width="3"/>
+                    <rect x="100" y="100" width="200" height="250" fill="#000" stroke="#444" stroke-width="2"/>
+                    <text x="200" y="225" font-family="Arial" font-size="11" fill="#666" text-anchor="middle" opacity="0.8">OPEN TO BELOW</text>
+                    <rect x="175" y="45" width="50" height="50" fill="#0f0f0f" stroke="#777" stroke-width="2"/>
+                    <rect x="175" y="425" width="50" height="50" fill="#0f0f0f" stroke="#777" stroke-width="2"/>
+                    <rect x="250" y="170" width="50" height="70" fill="#0f0f0f" stroke="#666" stroke-width="2"/>
+                    <rect x="320" y="45" width="35" height="35" fill="#1a0000" stroke="#aa3333" stroke-width="2" opacity="0.8"/>
+                    <rect x="45" y="130" width="45" height="30" fill="none" stroke="#555" stroke-width="2" rx="2"/>
+                    <rect x="45" y="170" width="45" height="30" fill="none" stroke="#555" stroke-width="2" rx="2"/>
+                    <rect x="45" y="210" width="45" height="30" fill="none" stroke="#555" stroke-width="2" rx="2"/>
+                    <rect x="310" y="130" width="45" height="30" fill="none" stroke="#555" stroke-width="2" rx="2"/>
+                    <rect x="310" y="170" width="45" height="30" fill="none" stroke="#555" stroke-width="2" rx="2"/>
+                    <rect x="310" y="210" width="45" height="30" fill="none" stroke="#555" stroke-width="2" rx="2"/>
+                </svg>
+            </div>
+
+            <!-- Second Floor -->
+            <div class="floor" id="floor-2">
+                <svg viewBox="0 0 400 520" preserveAspectRatio="xMidYMid meet">
+                    <rect width="400" height="520" fill="#000"/>
+                    <rect x="5" y="5" width="390" height="510" fill="none" stroke="#888" stroke-width="4"/>
+                    <rect x="10" y="10" width="380" height="500" fill="#000" stroke="#666" stroke-width="3"/>
+                    <rect x="30" y="30" width="140" height="100" fill="#000" stroke="#666" stroke-width="2"/>
+                    <rect x="170" y="50" width="60" height="80" fill="#0a0a0a" stroke="#777" stroke-width="2"/>
+                    <rect x="230" y="50" width="60" height="80" fill="#0a0a0a" stroke="#777" stroke-width="2"/>
+                    <rect x="290" y="30" width="80" height="100" fill="#000" stroke="#666" stroke-width="2"/>
+                    <rect x="30" y="150" width="60" height="300" fill="#000" stroke="#666" stroke-width="2"/>
+                    <rect x="120" y="180" width="160" height="160" fill="none" stroke="#555" stroke-width="2" stroke-dasharray="4,4"/>
+                    <text x="200" y="260" font-family="Arial" font-size="11" fill="#666" text-anchor="middle" opacity="0.8">OPEN SPACE</text>
+                    <rect x="310" y="180" width="60" height="160" fill="#000" stroke="#666" stroke-width="2"/>
+                    <rect x="120" y="390" width="160" height="80" fill="#0a0a0a" stroke="#777" stroke-width="2"/>
+                    <rect x="310" y="410" width="60" height="60" fill="#000" stroke="#666" stroke-width="2"/>
+                </svg>
+            </div>
+
+            <!-- Third Floor -->
+            <div class="floor" id="floor-3">
+                <svg viewBox="0 0 400 520" preserveAspectRatio="xMidYMid meet">
+                    <rect width="400" height="520" fill="#000"/>
+                    <rect x="5" y="5" width="390" height="510" fill="none" stroke="#555" stroke-width="3"/>
+                    <rect x="10" y="10" width="380" height="500" fill="#050505" stroke="#444" stroke-width="2"/>
+                    <rect x="30" y="30" width="340" height="460" fill="none" stroke="#666" stroke-width="2"/>
+                    <rect x="100" y="140" width="200" height="180" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="150" y="35" width="100" height="80" fill="#000" stroke="#666" stroke-width="2"/>
+                    <rect x="35" y="35" width="60" height="80" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="35" y="180" width="60" height="80" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="35" y="350" width="60" height="80" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="305" y="35" width="60" height="80" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="305" y="180" width="60" height="80" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="305" y="350" width="60" height="80" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="120" y="390" width="160" height="80" fill="#000" stroke="#666" stroke-width="2"/>
+                    <rect x="35" y="440" width="40" height="40" fill="#000" stroke="#555" stroke-width="2"/>
+                    <rect x="325" y="440" width="40" height="40" fill="#000" stroke="#555" stroke-width="2"/>
+                </svg>
+            </div>
+        </div>
+        
+        <!-- Simple character -->
+        <div class="character" id="character">ME</div>
+    </div>
+    
+    <!-- Floor selector -->
+    <div class="floor-selector">
+        <button class="floor-btn" data-floor="3">3F</button>
+        <button class="floor-btn" data-floor="2">2F</button>
+        <button class="floor-btn" data-floor="mz">MZ</button>
+        <button class="floor-btn active" data-floor="mf">MF</button>
+        <button class="floor-btn" data-floor="b">B</button>
+    </div>
+    
+    <!-- Bottom drawer - Reactions -->
+    <div class="drawer drawer-bottom" id="reactionsDrawer">
+        <div class="drawer-handle"></div>
+        <div class="reactions-grid" id="reactionsGrid"></div>
+    </div>
+    
+    <!-- Right drawer - Money -->
+    <div class="drawer drawer-right" id="moneyDrawer">
+        <div class="drawer-handle"></div>
+        <div class="money-stack">
+            <button class="money-btn">$1</button>
+            <button class="money-btn">$5</button>
+            <button class="money-btn">$10</button>
+            <button class="money-btn">$20</button>
+            <button class="money-btn">$50</button>
+        </div>
+    </div>
+    
+    <!-- Left drawer - Actions -->
+    <div class="drawer drawer-left" id="actionsDrawer">
+        <div class="drawer-handle"></div>
+        <div class="action-stack">
+            <button class="action-btn">📍</button>
+            <button class="action-btn">💬</button>
+            <button class="action-btn">🎤</button>
+            <button class="action-btn">🎯</button>
+        </div>
+    </div>
+    
+    <script>
+        // Floor switching
+        const floors = document.querySelectorAll('.floor');
+        const floorBtns = document.querySelectorAll('.floor-btn');
+        const floorMap = { 'b': 'floor-b', 'mf': 'floor-mf', 'mz': 'floor-mz', '2': 'floor-2', '3': 'floor-3' };
+        
+        floorBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                floorBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                floors.forEach(f => f.classList.remove('active'));
+                const floorId = floorMap[btn.dataset.floor];
+                document.getElementById(floorId).classList.add('active');
+            });
+        });
+        
+        // Populate reactions
+        const reactions = ['❤️','🔥','😂','🎉','💃','🕺','🎵','🎶','✨','💫','⭐','🌟','💥','💢','💯','🔥','😍','🥰','😘','🤩','😎','🤗','🙌','👏','💪','🤘','🤟','👊','✊','🤝','🙏','👐','🎊','🎈','🎁','🎀','🏆','🥇','🎯','🎪','🌈','🦄','🌺','🌸','💐','🌹','🌷','🌻','🍾','🥂','🍻','🍺','🍹','🍸','🍷','🥃','🚀','💎','💰','👑','💍','🔮','🎭','🎨'];
+        const grid = document.getElementById('reactionsGrid');
+        reactions.forEach(r => {
+            const btn = document.createElement('button');
+            btn.className = 'reaction-btn';
+            btn.textContent = r;
+            grid.appendChild(btn);
+        });
+        
+        // Drawer handlers
+        document.querySelectorAll('.drawer-handle').forEach(handle => {
+            handle.addEventListener('click', () => {
+                handle.parentElement.classList.toggle('open');
+            });
+        });
+        
+        // Character dragging
+        const character = document.getElementById('character');
+        let isDragging = false;
+        
+        character.addEventListener('mousedown', () => isDragging = true);
+        document.addEventListener('mouseup', () => isDragging = false);
+        document.addEventListener('mousemove', (e) => {
+            if (isDragging) {
+                character.style.left = e.clientX + 'px';
+                character.style.top = e.clientY + 'px';
+            }
+        });
+        
+        // Touch support
+        character.addEventListener('touchstart', () => isDragging = true);
+        document.addEventListener('touchend', () => isDragging = false);
+        document.addEventListener('touchmove', (e) => {
+            if (isDragging) {
+                character.style.left = e.touches[0].clientX + 'px';
+                character.style.top = e.touches[0].clientY + 'px';
+            }
+        });
+    </script>
+</body>
+</html>
