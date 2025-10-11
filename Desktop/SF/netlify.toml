@@ -1,0 +1,56 @@
+[build]
+  functions = "netlify/functions"
+  publish = "."
+  edge_functions = "netlify/edge-functions"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+# Protect tables files from deletion
+[[headers]]
+  for = "/tables/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+    X-Content-Type-Options = "nosniff"
+
+[[headers]]
+  for = "/halloween-tables.html"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+    X-Content-Type-Options = "nosniff"
+
+[[headers]]
+  for = "/promoters/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+    X-Content-Type-Options = "nosniff"
+
+# Redirect for Halloween tables
+[[redirects]]
+  from = "/tables-halloween"
+  to = "/halloween-tables.html"
+  status = 200
+
+[[redirects]]
+  from = "/halloween"
+  to = "/halloween-tables.html"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  conditions = {Role = ["admin", "user"]}
+
+[functions]
+  directory = "netlify/functions"
+
+# Edge function configuration for the SF logo
+[[edge_functions]]
+  path = "/*"
+  function = "inject-sf-logo"
