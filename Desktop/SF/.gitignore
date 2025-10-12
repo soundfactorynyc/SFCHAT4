@@ -38,3 +38,8 @@ yarn-error.log*
 # Temporary files
 *.tmp
 *.temp
+
+# PROTECTED: Do not ignore backups and protected files
+!.backups/
+!PROTECTED_FILES.md
+!halloween-tables.html
