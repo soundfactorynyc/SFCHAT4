@@ -86,16 +86,26 @@ exports.handler = async (event) => {
 
     const base = process.env.PUBLIC_BASE_URL || getBaseUrl(event);
     const returnUrl = `${base}/promoter-dashboard.html?code=${promoCode}&registered=true`;
-    const refreshUrl = `${base}/index.html`;
+    const refreshUrl = `${base}/promoter-signup.html?refresh=true`;
 
+    // Create account link - Stripe will pre-fill email automatically
     const accountLink = await stripe.accountLinks.create({
       account: account.id,
       type: 'account_onboarding',
       return_url: returnUrl,
-      refresh_url: refreshUrl
+      refresh_url: refreshUrl,
+      collect: 'eventually_due' // Only collect required information
     });
 
-    console.log('Promoter created (pending approval):', { email, phone, promoCode });
+    console.log('✅ Promoter created (pending approval):', { 
+      email, 
+      phone, 
+      promoCode,
+      account_id: account.id,
+      stripe_onboarding_url: accountLink.url
+    });
+    
+    console.log('📧 Email will be pre-filled in Stripe:', email);
 
     return {
       statusCode: 200,
