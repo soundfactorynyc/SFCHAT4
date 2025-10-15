@@ -1,0 +1,813 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Sound Factory Official Team Program | Jonathan Peters</title>
+<meta name="description" content="Join the exclusive Sound Factory NYC team program. Professional partnership opportunity with guaranteed commissions and VIP benefits." />
+<meta name="color-scheme" content="dark" />
+<style>
+:root{
+  --bg:#000;
+  --surface:#0a0a0a;
+  --border:rgba(255,255,255,0.08);
+  --text:#fff;
+  --muted:#999;
+  --accent:#fff;
+  --purple:#9333ea;
+  --purple-light:#a855f7;
+  --green:#4CAF50;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;margin:0;padding:0}
+body{
+  background:#000;
+  color:#fff;
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  display:flex;
+  flex-direction:column;
+  min-height:100vh;
+  position:relative;
+}
+
+/* Subtle background */
+body::before{
+  content:'';
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  background:radial-gradient(circle at 50% 50%, rgba(147, 51, 234, 0.03) 0%, transparent 70%);
+  pointer-events:none;
+  z-index:1;
+}
+
+.main-wrapper{
+  flex:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:40px 20px;
+  position:relative;
+  z-index:2;
+}
+
+.container{
+  width:100%;
+  max-width:480px;
+  animation:fadeIn 0.6s ease;
+}
+
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(10px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* Professional Header */
+.header{
+  text-align:center;
+  margin-bottom:40px;
+}
+
+.logo-wrapper{
+  margin:0 auto 20px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100px;
+}
+
+.logo{
+  height:80px;
+  width:auto;
+  object-fit:contain;
+  filter:brightness(0) invert(1);
+  opacity:0.9;
+}
+
+.brand-text{
+  font-size:13px;
+  text-transform:uppercase;
+  letter-spacing:2px;
+  color:#666;
+  margin-bottom:16px;
+  font-weight:500;
+}
+
+h1{
+  font-size:36px;
+  font-weight:300;
+  margin-bottom:12px;
+  letter-spacing:-1px;
+}
+
+.subtitle{
+  color:#999;
+  font-size:16px;
+  line-height:1.5;
+  font-weight:300;
+}
+
+/* Professional Card */
+.main-card{
+  background:rgba(10,10,10,0.6);
+  border:1px solid rgba(255,255,255,0.06);
+  border-radius:12px;
+  padding:36px;
+  backdrop-filter:blur(10px);
+}
+
+/* Commission Structure - Professional */
+.commission-structure{
+  background:#000;
+  border:1px solid rgba(147,51,234,0.15);
+  border-radius:8px;
+  padding:24px;
+  margin-bottom:32px;
+}
+
+.commission-header{
+  font-size:12px;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  color:#888;
+  margin-bottom:20px;
+  text-align:center;
+}
+
+.commission-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+}
+
+.commission-item{
+  text-align:center;
+  padding:16px;
+  background:rgba(255,255,255,0.02);
+  border-radius:6px;
+  border:1px solid rgba(255,255,255,0.04);
+}
+
+.commission-amount{
+  font-size:24px;
+  font-weight:300;
+  margin-bottom:4px;
+  color:#fff;
+}
+
+.commission-label{
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:0.5px;
+  color:#666;
+}
+
+/* Program Benefits - Clean List */
+.benefits-section{
+  margin-bottom:32px;
+}
+
+.benefit-item{
+  display:flex;
+  align-items:flex-start;
+  margin-bottom:16px;
+  font-size:14px;
+  color:#ccc;
+  line-height:1.5;
+}
+
+.benefit-bullet{
+  width:4px;
+  height:4px;
+  background:#666;
+  border-radius:50%;
+  margin-right:12px;
+  margin-top:7px;
+  flex-shrink:0;
+}
+
+.benefit-text{
+  flex:1;
+}
+
+.benefit-text strong{
+  color:#fff;
+  font-weight:500;
+}
+
+/* Form - Professional */
+.form-section{
+  margin-bottom:24px;
+}
+
+.form-group{
+  margin-bottom:20px;
+}
+
+label{
+  display:block;
+  font-size:11px;
+  font-weight:500;
+  margin-bottom:8px;
+  color:#666;
+  text-transform:uppercase;
+  letter-spacing:1px;
+}
+
+input{
+  width:100%;
+  padding:14px 16px;
+  border-radius:6px;
+  background:#000;
+  border:1px solid rgba(255,255,255,0.08);
+  color:#fff;
+  font-size:15px;
+  transition:all 0.2s;
+  font-weight:300;
+}
+
+input:focus{
+  outline:none;
+  border-color:rgba(147,51,234,0.4);
+  background:#050505;
+}
+
+input::placeholder{
+  color:#444;
+}
+
+/* Professional Button */
+.btn{
+  width:100%;
+  padding:16px;
+  border-radius:6px;
+  background:#fff;
+  color:#000;
+  border:none;
+  font-size:14px;
+  font-weight:500;
+  cursor:pointer;
+  transition:all 0.2s;
+  text-transform:uppercase;
+  letter-spacing:1px;
+}
+
+.btn:hover:not(:disabled){
+  transform:translateY(-1px);
+  box-shadow:0 4px 12px rgba(255,255,255,0.1);
+}
+
+.btn:disabled{
+  opacity:0.3;
+  cursor:not-allowed;
+}
+
+.btn-secondary{
+  background:transparent;
+  color:#666;
+  border:1px solid rgba(255,255,255,0.08);
+  margin-top:12px;
+  text-transform:none;
+  letter-spacing:0;
+  font-size:13px;
+}
+
+.btn-secondary:hover{
+  color:#fff;
+  border-color:rgba(255,255,255,0.15);
+}
+
+/* Trust Indicators */
+.trust-section{
+  margin-top:32px;
+  padding-top:32px;
+  border-top:1px solid rgba(255,255,255,0.06);
+  text-align:center;
+}
+
+.trust-items{
+  display:flex;
+  justify-content:center;
+  gap:32px;
+  margin-bottom:16px;
+}
+
+.trust-item{
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:0.5px;
+  color:#666;
+}
+
+.legal-text{
+  font-size:11px;
+  color:#444;
+  line-height:1.6;
+  max-width:400px;
+  margin:0 auto;
+}
+
+/* Footer Links */
+.footer-links{
+  text-align:center;
+  margin-top:24px;
+  padding-top:24px;
+  border-top:1px solid rgba(255,255,255,0.06);
+}
+
+.footer-links a{
+  color:#666;
+  text-decoration:none;
+  font-size:13px;
+  transition:color 0.2s;
+}
+
+.footer-links a:hover{
+  color:#fff;
+}
+
+/* Error Messages */
+.error{
+  background:rgba(255,0,0,0.05);
+  border:1px solid rgba(255,0,0,0.1);
+  color:#ff6b6b;
+  padding:12px;
+  border-radius:6px;
+  font-size:13px;
+  margin-top:12px;
+  text-align:center;
+}
+
+.loading{
+  display:inline-block;
+  width:14px;
+  height:14px;
+  border:2px solid #000;
+  border-radius:50%;
+  border-top-color:transparent;
+  animation:spin 0.8s linear infinite;
+  margin-right:8px;
+}
+
+@keyframes spin{
+  to{transform:rotate(360deg)}
+}
+
+/* Success Modal */
+.success-modal{
+  display:none;
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  background:rgba(0,0,0,0.95);
+  z-index:1000;
+  padding:20px;
+  align-items:center;
+  justify-content:center;
+}
+
+.success-modal.active{
+  display:flex;
+}
+
+.success-content{
+  background:#0a0a0a;
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:12px;
+  padding:48px;
+  max-width:500px;
+  width:100%;
+  text-align:center;
+}
+
+.success-icon{
+  width:64px;
+  height:64px;
+  background:rgba(76,175,80,0.1);
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0 auto 24px;
+  font-size:32px;
+}
+
+.success-title{
+  font-size:24px;
+  font-weight:300;
+  margin-bottom:16px;
+}
+
+.success-message{
+  color:#999;
+  font-size:15px;
+  line-height:1.6;
+  margin-bottom:32px;
+}
+
+/* Professional Footer */
+.professional-footer{
+  background:#000;
+  border-top:1px solid rgba(255,255,255,0.06);
+  padding:48px 20px 32px;
+  margin-top:auto;
+  position:relative;
+  z-index:2;
+}
+
+.footer-content{
+  max-width:1200px;
+  margin:0 auto;
+  text-align:center;
+}
+
+.footer-logo{
+  height:40px;
+  margin-bottom:20px;
+  opacity:0.4;
+  filter:brightness(0) invert(1);
+}
+
+.footer-company{
+  font-size:13px;
+  color:#666;
+  margin-bottom:8px;
+  letter-spacing:1px;
+}
+
+.footer-copyright{
+  font-size:11px;
+  color:#444;
+  margin-bottom:20px;
+}
+
+.footer-links-row{
+  display:flex;
+  justify-content:center;
+  gap:24px;
+  font-size:11px;
+}
+
+.footer-links-row a{
+  color:#666;
+  text-decoration:none;
+  transition:color 0.2s;
+}
+
+.footer-links-row a:hover{
+  color:#fff;
+}
+
+@media (max-width:480px){
+  .container{
+    max-width:100%;
+  }
+  .main-card{
+    padding:24px;
+  }
+  h1{
+    font-size:28px;
+  }
+  .trust-items{
+    flex-direction:column;
+    gap:12px;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="main-wrapper">
+  <div class="container">
+    <!-- Professional Header -->
+    <div class="header">
+      <div class="logo-wrapper">
+        <img src="sf-logo.png" alt="Sound Factory" class="logo" />
+      </div>
+      <div class="brand-text">Sound Factory NYC</div>
+      <h1>Team Partnership</h1>
+      <p class="subtitle">Exclusive program for professional event team members</p>
+    </div>
+
+    <!-- Main Card -->
+    <div class="main-card">
+      <!-- Important Context Message -->
+      <div style="background:linear-gradient(135deg, rgba(147,51,234,0.08), rgba(147,51,234,0.04));border:1px solid rgba(147,51,234,0.2);border-radius:8px;padding:20px;margin-bottom:28px;">
+        <h3 style="font-size:16px;font-weight:500;margin-bottom:12px;color:#fff;">Why We're Launching This Program</h3>
+        <p style="font-size:14px;line-height:1.6;color:#bbb;margin-bottom:16px;">
+          The nightlife landscape has evolved significantly post-2020. We recognize that building strong partnerships with professional team members is essential for creating memorable events and supporting our community.
+        </p>
+        <div style="display:flex;align-items:flex-start;gap:12px;padding:16px;background:rgba(0,0,0,0.3);border-radius:6px;margin-bottom:16px;">
+          <div style="color:#4CAF50;font-size:20px;margin-top:2px;">✓</div>
+          <div style="flex:1;">
+            <div style="font-size:14px;color:#fff;margin-bottom:4px;font-weight:500;">Simple 3-Step Setup Process</div>
+            <div style="font-size:13px;color:#999;line-height:1.5;">
+              <strong>Step 1:</strong> Enter your information below<br>
+              <strong>Step 2:</strong> Quick Stripe setup (2-3 minutes if you have an account, 5 minutes if new)<br>
+              <strong>Step 3:</strong> Access your dashboard immediately and start earning
+            </div>
+          </div>
+        </div>
+        <p style="font-size:13px;color:#888;font-style:italic;">
+          <strong>Already have Stripe?</strong> The setup takes just 2 clicks to connect your existing account. Your banking information stays secure with Stripe - we never see or store your financial details.
+        </p>
+      </div>
+      
+      <!-- Commission Structure -->
+      <div class="commission-structure">
+        <div class="commission-header">Guaranteed Commission Structure</div>
+        <div class="commission-grid">
+          <div class="commission-item">
+            <div class="commission-amount">$10</div>
+            <div class="commission-label">Per Ticket</div>
+          </div>
+          <div class="commission-item">
+            <div class="commission-amount">20%</div>
+            <div class="commission-label">Table Sales</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Professional Benefits -->
+      <div class="benefits-section">
+        <div class="benefit-item">
+          <div class="benefit-bullet"></div>
+          <div class="benefit-text">
+            <strong>Instant payment processing</strong> through Stripe Connect with daily transfers
+          </div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-bullet"></div>
+          <div class="benefit-text">
+            <strong>Professional dashboard</strong> with real-time sales tracking and analytics
+          </div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-bullet"></div>
+          <div class="benefit-text">
+            <strong>Complimentary admission</strong> for team member plus guest list management privileges
+          </div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-bullet"></div>
+          <div class="benefit-text">
+            <strong>Marketing materials</strong> including customizable flyers and social media assets
+          </div>
+        </div>
+        <div class="benefit-item">
+          <div class="benefit-bullet"></div>
+          <div class="benefit-text">
+            <strong>Direct support line</strong> to venue management and VIP host team
+          </div>
+        </div>
+      </div>
+
+      <!-- Form -->
+      <div class="form-section">
+        <div style="background:rgba(76,175,80,0.05);border:1px solid rgba(76,175,80,0.15);border-radius:6px;padding:16px;margin-bottom:20px;">
+          <h4 style="font-size:13px;color:#4CAF50;margin-bottom:8px;font-weight:500;">What Happens After You Submit:</h4>
+          <ol style="font-size:12px;color:#999;line-height:1.8;margin:0;padding-left:20px;">
+            <li>You'll receive an instant confirmation email with your unique promo code</li>
+            <li>We'll redirect you to Stripe's secure portal (takes 2-5 minutes)</li>
+            <li>Once complete, you'll have immediate access to your dashboard</li>
+            <li>Start promoting and earning commissions right away</li>
+          </ol>
+        </div>
+        
+        <form id="signupForm">
+          <div class="form-group">
+            <label for="name">Full Name</label>
+            <input type="text" id="name" name="name" placeholder="Enter your full name" required />
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" placeholder="your@email.com" required />
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Mobile Number</label>
+            <input type="tel" id="phone" name="phone" placeholder="(555) 123-4567" required />
+          </div>
+
+          <button type="submit" class="btn" id="submitBtn">
+            Begin Application
+          </button>
+          
+          <button type="button" class="btn btn-secondary" onclick="showInfo()">
+            Learn more about the program
+          </button>
+        </form>
+      </div>
+
+      <!-- Trust Section -->
+      <div class="trust-section">
+        <div class="trust-items">
+          <div class="trust-item">Secure Payments</div>
+          <div class="trust-item">•</div>
+          <div class="trust-item">Verified Accounts</div>
+          <div class="trust-item">•</div>
+          <div class="trust-item">SSL Protected</div>
+        </div>
+        <div class="legal-text">
+          All team member agreements are subject to approval. Commission payments require valid Stripe account and adherence to venue policies.
+        </div>
+      </div>
+
+      <!-- Footer Links -->
+      <div class="footer-links">
+        <a href="promoter-login.html">Existing team member? Sign in</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Professional Footer -->
+<footer class="professional-footer">
+  <div class="footer-content">
+    <img src="sf-logo.png" alt="Sound Factory" class="footer-logo" />
+    <div class="footer-company">JONATHAN PETERS PRODUCTIONS</div>
+    <div class="footer-copyright">© 2025 Sound Factory NYC. All rights reserved.</div>
+    <div class="footer-links-row">
+      <a href="#" onclick="showTerms(); return false;">Terms & Conditions</a>
+      <a href="#" onclick="showPrivacy(); return false;">Privacy Policy</a>
+      <a href="#" onclick="showCompliance(); return false;">Compliance</a>
+      <a href="mailto:team@soundfactorynyc.com">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<!-- Success Modal -->
+<div class="success-modal" id="successModal">
+  <div class="success-content">
+    <div class="success-icon">✓</div>
+    <h2 class="success-title">Perfect! Account Created</h2>
+    
+    <div style="background:rgba(76,175,80,0.1);border:1px solid rgba(76,175,80,0.2);border-radius:8px;padding:16px;margin-bottom:24px;">
+      <div style="font-size:13px;color:#888;margin-bottom:4px;">Your Promo Code:</div>
+      <div id="modalPromoCode" style="font-size:20px;font-weight:600;color:#4CAF50;font-family:monospace;">Loading...</div>
+    </div>
+    
+    <p class="success-message">
+      <strong style="color:#fff;">Next Step: Quick Payment Setup</strong><br>
+      We're about to redirect you to Stripe to set up instant commission payments.
+    </p>
+    
+    <div style="text-align:left;background:rgba(0,0,0,0.5);border-radius:6px;padding:16px;margin-bottom:24px;">
+      <div style="font-size:12px;color:#999;margin-bottom:12px;">
+        <strong style="color:#fff;">If you HAVE a Stripe account:</strong><br>
+        → Just click "Connect" and you're done (30 seconds)
+      </div>
+      <div style="font-size:12px;color:#999;">
+        <strong style="color:#fff;">If you DON'T have Stripe:</strong><br>
+        → Create one in 3-5 minutes (they'll ask for basic info + bank details for payouts)
+      </div>
+    </div>
+    
+    <p style="font-size:13px;color:#666;margin-bottom:20px;">
+      <strong>Note:</strong> Stripe handles billions in payments. Your financial information is secure and we never see your banking details.
+    </p>
+    
+    <button class="btn" id="continueBtn">
+      Continue to Stripe Setup →
+    </button>
+    
+    <p style="font-size:11px;color:#555;margin-top:16px;">
+      Redirecting automatically in <span id="countdown">5</span> seconds...
+    </p>
+  </div>
+</div>
+
+<script>
+let stripeRedirectUrl = '';
+
+// Show info
+function showInfo() {
+  alert('The Sound Factory Team Program is an exclusive partnership opportunity for professional event team members. Partners receive guaranteed commissions, comprehensive marketing support, and VIP privileges at all events. For more information, contact team@soundfactorynyc.com');
+}
+
+function showTerms() {
+  alert('Terms & Conditions: Team member agreement subject to venue approval. Commission rates and benefits subject to terms of partnership agreement. Must maintain professional standards and comply with all venue policies.');
+}
+
+function showPrivacy() {
+  alert('Privacy Policy: Your information is protected with enterprise-grade encryption. We do not share personal data with third parties except as required for payment processing through Stripe.');
+}
+
+function showCompliance() {
+  alert('Compliance: All team members must be 21+ and comply with NYC nightlife regulations. Background verification required. Must maintain appropriate licenses for promotional activities.');
+}
+
+// Form submission
+document.getElementById('signupForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const submitBtn = document.getElementById('submitBtn');
+  const originalText = submitBtn.innerHTML;
+  
+  // Get form data
+  const formData = {
+    name: document.getElementById('name').value.trim(),
+    email: document.getElementById('email').value.trim(),
+    phone: document.getElementById('phone').value.trim()
+  };
+  
+  // Validation
+  if (!formData.name || !formData.email || !formData.phone) {
+    showError('All fields are required');
+    return;
+  }
+  
+  // Phone validation
+  const phoneRegex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/;
+  if (!phoneRegex.test(formData.phone.replace(/\s/g, ''))) {
+    showError('Please enter a valid phone number');
+    return;
+  }
+  
+  // Show loading
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = '<span class="loading"></span>Processing...';
+  
+  try {
+    // Simulate API call - in production this calls your create-promoter function
+    setTimeout(() => {
+      const promoCode = 'SF' + Math.random().toString(36).substr(2, 6).toUpperCase();
+      
+      // Store data
+      localStorage.setItem('team_temp', JSON.stringify({
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        promo_code: promoCode
+      }));
+      
+      // Show success modal
+      document.getElementById('modalPromoCode').textContent = promoCode;
+      document.getElementById('successModal').classList.add('active');
+      
+      // Set redirect URL (in production, this comes from API)
+      stripeRedirectUrl = 'https://connect.stripe.com/setup/s/acct_1234/example';
+      
+      // Countdown timer
+      let countdown = 5;
+      const countdownEl = document.getElementById('countdown');
+      const countdownInterval = setInterval(() => {
+        countdown--;
+        countdownEl.textContent = countdown;
+        if (countdown <= 0) {
+          clearInterval(countdownInterval);
+          if (stripeRedirectUrl) {
+            window.location.href = 'success-improved.html';
+          }
+        }
+      }, 1000);
+    }, 2000);
+    
+  } catch (error) {
+    console.error('Signup error:', error);
+    showError('An error occurred. Please try again.');
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = originalText;
+  }
+});
+
+// Continue button
+document.getElementById('continueBtn').addEventListener('click', () => {
+  window.location.href = 'success-improved.html';
+});
+
+function showError(message) {
+  const existing = document.querySelector('.error');
+  if (existing) existing.remove();
+  
+  const error = document.createElement('div');
+  error.className = 'error';
+  error.textContent = message;
+  document.querySelector('.form-section').appendChild(error);
+  
+  setTimeout(() => error.remove(), 5000);
+}
+
+// Format phone
+document.getElementById('phone').addEventListener('input', (e) => {
+  let value = e.target.value.replace(/\D/g, '');
+  if (value.length > 0) {
+    if (value.length <= 3) {
+      value = `(${value}`;
+    } else if (value.length <= 6) {
+      value = `(${value.slice(0, 3)}) ${value.slice(3)}`;
+    } else if (value.length <= 10) {
+      value = `(${value.slice(0, 3)}) ${value.slice(3, 6)}-${value.slice(6)}`;
+    }
+  }
+  e.target.value = value;
+});
+</script>
+
+</body>
+</html>

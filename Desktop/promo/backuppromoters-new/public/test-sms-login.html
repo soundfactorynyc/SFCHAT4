@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Test SMS Login - Promoter System</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #000;
+      color: #fff;
+      padding: 40px 20px;
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      background: #0a0a0a;
+      border: 1px solid #222;
+      border-radius: 12px;
+      padding: 40px;
+    }
+    h1 {
+      font-size: 28px;
+      margin-bottom: 8px;
+      text-align: center;
+      color: #ba55d3;
+    }
+    .subtitle {
+      text-align: center;
+      color: #999;
+      margin-bottom: 32px;
+      font-size: 14px;
+    }
+    .step {
+      background: #111;
+      border: 1px solid #222;
+      border-radius: 8px;
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+    .step.hidden {
+      display: none;
+    }
+    .step h2 {
+      font-size: 18px;
+      margin-bottom: 16px;
+      color: #fff;
+    }
+    input {
+      width: 100%;
+      padding: 14px;
+      background: #000;
+      border: 1px solid #333;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 16px;
+      margin-bottom: 16px;
+    }
+    input:focus {
+      outline: none;
+      border-color: #ba55d3;
+    }
+    button {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #ba55d3, #8a2be2);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(138, 43, 226, 0.4);
+    }
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .message {
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      font-size: 14px;
+    }
+    .success {
+      background: rgba(0, 255, 136, 0.1);
+      border: 1px solid rgba(0, 255, 136, 0.3);
+      color: #00ff88;
+    }
+    .error {
+      background: rgba(255, 0, 102, 0.1);
+      border: 1px solid rgba(255, 0, 102, 0.3);
+      color: #ff0066;
+    }
+    .dashboard {
+      text-align: center;
+    }
+    .stat {
+      background: #111;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 20px;
+      margin-bottom: 12px;
+    }
+    .stat-label {
+      color: #999;
+      font-size: 13px;
+      margin-bottom: 4px;
+    }
+    .stat-value {
+      color: #ba55d3;
+      font-size: 24px;
+      font-weight: 700;
+    }
+    .promo-link {
+      background: #000;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 12px;
+      word-break: break-all;
+      font-size: 12px;
+      color: #00ff88;
+      margin-top: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔐 SMS Login Test</h1>
+    <p class="subtitle">Promoter System Testing</p>
+
+    <!-- Step 1: Enter Phone -->
+    <div id="step1" class="step">
+      <h2>Step 1: Enter Your Phone</h2>
+      <div id="message1"></div>
+      <input 
+        type="tel" 
+        id="phone" 
+        placeholder="+19293629534" 
+        value="+19293629534"
+      />
+      <button onclick="sendCode()">Send Verification Code</button>
+    </div>
+
+    <!-- Step 2: Enter Code -->
+    <div id="step2" class="step hidden">
+      <h2>Step 2: Enter Verification Code</h2>
+      <div id="message2"></div>
+      <p style="color:#999;font-size:14px;margin-bottom:16px;">
+        Check your phone for a 6-digit code
+      </p>
+      <input 
+        type="text" 
+        id="code" 
+        placeholder="123456" 
+        maxlength="6"
+      />
+      <button onclick="verifyCode()">Verify Code</button>
+      <button onclick="backToPhone()" style="margin-top:12px;background:#333;">
+        ← Back
+      </button>
+    </div>
+
+    <!-- Step 3: Dashboard -->
+    <div id="step3" class="step hidden">
+      <h2>✅ Logged In Successfully!</h2>
+      <div class="dashboard">
+        <div class="stat">
+          <div class="stat-label">Your Promo Code</div>
+          <div class="stat-value" id="promoCode">-</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Tickets Sold</div>
+          <div class="stat-value" id="ticketsSold">0</div>
+        </div>
+        <div class="stat">
+          <div class="stat-label">Commission Earned</div>
+          <div class="stat-value" id="commission">$0.00</div>
+        </div>
+        <div class="promo-link">
+          <strong>Your Referral Link:</strong><br>
+          <span id="promoLink">-</span>
+        </div>
+        <button onclick="logout()" style="margin-top:20px;background:#333;">
+          Logout
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let currentPhone = '';
+
+    async function sendCode() {
+      const phone = document.getElementById('phone').value.trim();
+      const msg = document.getElementById('message1');
+      const btn = event.target;
+      
+      msg.innerHTML = '';
+      btn.disabled = true;
+      btn.textContent = 'Sending...';
+
+      try {
+        const response = await fetch('/.netlify/functions/send-sms-code', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          msg.innerHTML = `<div class="message success">✅ ${data.message || 'Code sent! Check your phone.'}</div>`;
+          currentPhone = phone;
+          setTimeout(() => {
+            document.getElementById('step1').classList.add('hidden');
+            document.getElementById('step2').classList.remove('hidden');
+            document.getElementById('code').focus();
+          }, 1000);
+        } else {
+          msg.innerHTML = `<div class="message error">❌ ${data.error || 'Failed to send code'}</div>`;
+          btn.disabled = false;
+          btn.textContent = 'Send Verification Code';
+        }
+      } catch (error) {
+        msg.innerHTML = `<div class="message error">❌ Connection error: ${error.message}</div>`;
+        btn.disabled = false;
+        btn.textContent = 'Send Verification Code';
+      }
+    }
+
+    async function verifyCode() {
+      const code = document.getElementById('code').value.trim();
+      const msg = document.getElementById('message2');
+      const btn = event.target;
+
+      if (code.length !== 6) {
+        msg.innerHTML = `<div class="message error">❌ Please enter a 6-digit code</div>`;
+        return;
+      }
+
+      msg.innerHTML = '';
+      btn.disabled = true;
+      btn.textContent = 'Verifying...';
+
+      try {
+        const response = await fetch('/.netlify/functions/verify-sms-code', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone: currentPhone, code })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          // Save session
+          localStorage.setItem('promoterToken', data.token);
+          localStorage.setItem('promoterData', JSON.stringify(data.promoter));
+          
+          // Show dashboard
+          showDashboard(data.promoter);
+        } else {
+          msg.innerHTML = `<div class="message error">❌ ${data.error || 'Invalid code'}</div>`;
+          btn.disabled = false;
+          btn.textContent = 'Verify Code';
+        }
+      } catch (error) {
+        msg.innerHTML = `<div class="message error">❌ Connection error: ${error.message}</div>`;
+        btn.disabled = false;
+        btn.textContent = 'Verify Code';
+      }
+    }
+
+    function showDashboard(promoter) {
+      document.getElementById('step2').classList.add('hidden');
+      document.getElementById('step3').classList.remove('hidden');
+      
+      document.getElementById('promoCode').textContent = promoter.promo_code;
+      document.getElementById('ticketsSold').textContent = promoter.tickets_sold || 0;
+      document.getElementById('commission').textContent = '$' + ((promoter.commission_earned || 0) / 100).toFixed(2);
+      
+      // Use TicketSpice link with promo code
+      const promoLink = `https://soundfactory.ticketspice.com/soundfactory-sance?promo=${promoter.promo_code}`;
+      document.getElementById('promoLink').textContent = promoLink;
+    }
+
+    function backToPhone() {
+      document.getElementById('step2').classList.add('hidden');
+      document.getElementById('step1').classList.remove('hidden');
+      document.getElementById('message1').innerHTML = '';
+      document.querySelector('#step1 button').disabled = false;
+      document.querySelector('#step1 button').textContent = 'Send Verification Code';
+    }
+
+    function logout() {
+      localStorage.removeItem('promoterToken');
+      localStorage.removeItem('promoterData');
+      document.getElementById('step3').classList.add('hidden');
+      document.getElementById('step1').classList.remove('hidden');
+      document.getElementById('code').value = '';
+      document.getElementById('message1').innerHTML = '';
+      document.getElementById('message2').innerHTML = '';
+    }
+
+    // Check if already logged in
+    window.addEventListener('load', () => {
+      const token = localStorage.getItem('promoterToken');
+      const promoterData = localStorage.getItem('promoterData');
+      
+      if (token && promoterData) {
+        try {
+          const promoter = JSON.parse(promoterData);
+          document.getElementById('step1').classList.add('hidden');
+          showDashboard(promoter);
+        } catch (e) {
+          localStorage.clear();
+        }
+      }
+    });
+  </script>
+</body>
+</html>

@@ -20,8 +20,21 @@ function generateSessionToken() {
 }
 
 exports.handler = async (event) => {
+  // CORS headers
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Content-Type': 'application/json'
+  };
+
+  // Handle preflight
+  if (event.httpMethod === 'OPTIONS') {
+    return { statusCode: 200, headers, body: '' };
+  }
+
   if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: 'Method Not Allowed' };
+    return { statusCode: 405, headers, body: 'Method Not Allowed' };
   }
 
   try {
@@ -30,6 +43,7 @@ exports.handler = async (event) => {
     if (!phone || !code) {
       return {
         statusCode: 400,
+        headers,
         body: JSON.stringify({ error: 'Phone number and code required' })
       };
     }
@@ -46,6 +60,7 @@ exports.handler = async (event) => {
     if (verificationCheck.status !== 'approved') {
       return {
         statusCode: 400,
+        headers,
         body: JSON.stringify({ error: 'Invalid verification code' })
       };
     }
@@ -61,6 +76,7 @@ exports.handler = async (event) => {
     if (dbError || !promoter) {
       return {
         statusCode: 404,
+        headers,
         body: JSON.stringify({ error: 'Account not found or not approved' })
       };
     }
@@ -93,7 +109,7 @@ exports.handler = async (event) => {
 
     return {
       statusCode: 200,
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       body: JSON.stringify({
         success: true,
         sessionToken: sessionToken,
@@ -115,6 +131,7 @@ exports.handler = async (event) => {
     console.error('Verification error:', error);
     return {
       statusCode: 500,
+      headers,
       body: JSON.stringify({ 
         error: error.message || 'Verification failed' 
       })

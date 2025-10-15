@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Flyer Customization - Sound Factory Séance</title>
+  <style>
+    :root{--bg:#000;--ink:#fff;--muted:#999;--edge:#222}
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: #000;
+      color: #fff;
+      min-height: 100vh;
+      padding: 20px;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .logo-wrapper {
+      margin: 0 auto 32px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .logo {
+      width: 100px;
+      height: 100px;
+      object-fit: contain;
+      animation: pulse 3s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.85; transform: scale(1.02); }
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .header h1 {
+      font-size: 32px;
+      margin-bottom: 8px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      color: #fff;
+    }
+
+    .header p {
+      font-size: 16px;
+      color: #999;
+    }
+
+    .content {
+      padding: 48px 40px;
+    }
+
+    .flyer-preview {
+      max-width: 500px;
+      margin: 0 auto 40px;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3);
+      border: 3px solid #e9ecef;
+    }
+
+    .flyer-preview img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .ai-interface {
+      background: #f8f9fa;
+      border-radius: 16px;
+      padding: 32px;
+      margin-bottom: 32px;
+    }
+
+    .ai-interface h2 {
+      color: #2d3748;
+      font-size: 24px;
+      margin-bottom: 12px;
+      text-align: center;
+      font-weight: 700;
+    }
+
+    .ai-interface .description {
+      color: #718096;
+      font-size: 15px;
+      margin-bottom: 24px;
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    .example-prompts {
+      background: white;
+      border: 2px solid #e9ecef;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 24px;
+    }
+
+    .example-prompts h3 {
+      color: #667eea;
+      font-size: 16px;
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+
+    .example-prompts ul {
+      list-style: none;
+      color: #4a5568;
+      font-size: 14px;
+    }
+
+    .example-prompts li {
+      padding: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border-radius: 8px;
+      margin-bottom: 6px;
+    }
+
+    .example-prompts li:hover {
+      background: #f0f4ff;
+      color: #667eea;
+      transform: translateX(4px);
+    }
+
+    .example-prompts li:before {
+      content: "💡 ";
+      margin-right: 8px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 140px;
+      padding: 16px;
+      background: white;
+      border: 2px solid #e9ecef;
+      border-radius: 12px;
+      color: #2d3748;
+      font-size: 15px;
+      font-family: inherit;
+      resize: vertical;
+      margin-bottom: 20px;
+      transition: border-color 0.3s;
+    }
+
+    textarea:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    textarea::placeholder {
+      color: #a0aec0;
+    }
+
+    .button-group {
+      display: flex;
+      gap: 12px;
+    }
+
+    button {
+      flex: 1;
+      padding: 18px;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-family: inherit;
+    }
+
+    .customize-btn {
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: white;
+    }
+
+    .customize-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(102, 126, 234, 0.4);
+    }
+
+    .customize-btn:active {
+      transform: translateY(0);
+    }
+
+    .back-btn {
+      background: white;
+      color: #667eea;
+      border: 2px solid #667eea;
+    }
+
+    .back-btn:hover {
+      background: #f0f4ff;
+    }
+
+    .features {
+      margin-top: 32px;
+      padding-top: 32px;
+      border-top: 2px solid #e9ecef;
+    }
+
+    .features h3 {
+      text-align: center;
+      color: #2d3748;
+      font-size: 20px;
+      margin-bottom: 24px;
+      font-weight: 700;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .feature {
+      text-align: center;
+      padding: 24px;
+      background: #f8f9fa;
+      border-radius: 12px;
+      border: 2px solid #e9ecef;
+    }
+
+    .feature-icon {
+      font-size: 36px;
+      margin-bottom: 12px;
+    }
+
+    .feature h4 {
+      color: #667eea;
+      font-size: 16px;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .feature p {
+      color: #718096;
+      font-size: 13px;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 20px;
+      background: #f0f4ff;
+      border-radius: 12px;
+      margin-top: 16px;
+    }
+
+    .loading.active {
+      display: block;
+    }
+
+    .loading-spinner {
+      font-size: 32px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    .loading p {
+      color: #667eea;
+      font-weight: 600;
+      margin-top: 12px;
+    }
+
+    @media (max-width: 768px) {
+      .header {
+        padding: 32px 24px;
+      }
+
+      .header h1 {
+        font-size: 28px;
+      }
+
+      .content {
+        padding: 32px 24px;
+      }
+
+      .ai-interface {
+        padding: 24px;
+      }
+
+      .button-group {
+        flex-direction: column;
+      }
+
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="customization-card">
+      <div class="header">
+        <h1>🎨 AI Flyer Customization</h1>
+        <p>Customize your Halloween flyer with AI - no design skills required!</p>
+      </div>
+
+      <div class="content">
+        <div class="flyer-preview">
+          <img src="sf-flyer-optimized.png" alt="Sound Factory Séance Halloween 2025">
+        </div>
+
+        <div class="ai-interface">
+          <h2>🤖 Tell AI What You Want</h2>
+          <p class="description">
+            Our AI will intelligently blend your changes with the existing design, 
+            ensuring your custom flyer looks professional and visually stunning.
+          </p>
+
+          <div class="example-prompts">
+            <h3>💡 Example Prompts (click to use):</h3>
+            <ul>
+              <li onclick="fillPrompt(this)">Add my DJ name 'DJ MIKE' at the top and my Instagram @djmike</li>
+              <li onclick="fillPrompt(this)">Make the background more purple and add floating ghost effects</li>
+              <li onclick="fillPrompt(this)">Change the date to November 1st and add 'Early Bird Special: $15'</li>
+              <li onclick="fillPrompt(this)">Add 'VIP Tables Available' and my phone number 555-0123</li>
+              <li onclick="fillPrompt(this)">Include my promoter code 'MIKE10' for 10% off tickets</li>
+            </ul>
+          </div>
+
+          <textarea 
+            id="flyerCustomization" 
+            placeholder="Describe your customization... (e.g., 'Add my DJ name at the top, change colors to neon green, include my social media handles @djmike')"
+          ></textarea>
+
+          <div class="button-group">
+            <button class="customize-btn" onclick="customizeFlyerWithAI()">
+              ✨ Customize with AI
+            </button>
+            <button class="back-btn" onclick="goBack()">
+              ← Back to Signup
+            </button>
+          </div>
+
+          <div class="loading" id="loading">
+            <div class="loading-spinner">⚙️</div>
+            <p>AI is working its magic...</p>
+          </div>
+        </div>
+
+        <div class="features">
+          <h3>Why Use AI Customization?</h3>
+          <div class="features-grid">
+            <div class="feature">
+              <div class="feature-icon">🎯</div>
+              <h4>Smart Design</h4>
+              <p>AI maintains visual harmony and professional quality</p>
+            </div>
+            <div class="feature">
+              <div class="feature-icon">⚡</div>
+              <h4>Instant Results</h4>
+              <p>See your changes in seconds, no waiting</p>
+            </div>
+            <div class="feature">
+              <div class="feature-icon">🎨</div>
+              <h4>Print Ready</h4>
+              <p>High-resolution output perfect for social media or printing</p>
+            </div>
+            <div class="feature">
+              <div class="feature-icon">💯</div>
+              <h4>No Experience Needed</h4>
+              <p>Just describe what you want in plain English</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Fill textarea with example prompt
+    function fillPrompt(element) {
+      document.getElementById('flyerCustomization').value = element.textContent;
+    }
+
+    // AI Customization function
+    async function customizeFlyerWithAI() {
+      const prompt = document.getElementById('flyerCustomization').value.trim();
+      
+      if (!prompt) {
+        alert('Please describe what you want to customize!');
+        return;
+      }
+
+      const loading = document.getElementById('loading');
+      loading.classList.add('active');
+
+      try {
+        // Call the AI flyer chat API
+        const response = await fetch('/api/ai-flyer-chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            message: prompt,
+            originalFlyer: 'sf-flyer-optimized.png'
+          })
+        });
+
+        const data = await response.json();
+        
+        loading.classList.remove('active');
+        
+        if (data.success) {
+          alert(`✅ AI Customization Complete!\n\n${data.response}\n\nYour customized flyer will be available for download shortly. Check your email for the download link!`);
+        } else {
+          alert('⚠️ Error: ' + (data.error || 'Something went wrong. Please try again.'));
+        }
+      } catch (error) {
+        loading.classList.remove('active');
+        console.error('Error:', error);
+        alert('⚠️ Connection error. Please check your internet and try again.');
+      }
+    }
+
+    // Go back to signup page
+    function goBack() {
+      window.location.href = 'promoter-signup.html';
+    }
+
+    // Handle Enter key in textarea (Shift+Enter for new line, Enter to submit)
+    document.getElementById('flyerCustomization').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        customizeFlyerWithAI();
+      }
+    });
+  </script>
+</body>
+</html>

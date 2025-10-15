@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Flyer Customization - Sound Factory</title>
+  <style>
+    :root{--bg:#000;--ink:#fff;--muted:#999;--edge:#222}
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{margin:0;padding:0}
+    body{
+      background:#000;
+      color:#fff;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      padding:20px;
+      line-height:1.6;
+    }
+    .container{
+      width:100%;
+      max-width:800px;
+      margin:0 auto;
+    }
+    .logo-wrapper{
+      margin:0 auto 32px;
+      display:flex;
+      justify-content:center;
+    }
+    .logo{
+      width:100px;
+      height:100px;
+      object-fit:contain;
+      animation:pulse 3s ease-in-out infinite;
+    }
+    @keyframes pulse{
+      0%,100%{opacity:1;transform:scale(1)}
+      50%{opacity:0.85;transform:scale(1.02)}
+    }
+    h1{
+      font-size:32px;
+      font-weight:700;
+      margin-bottom:8px;
+      letter-spacing:-0.5px;
+      text-align:center;
+    }
+    .subtitle{
+      color:#999;
+      font-size:16px;
+      margin-bottom:40px;
+      text-align:center;
+    }
+    .main-section{
+      background:#0a0a0a;
+      border:1px solid #222;
+      border-radius:12px;
+      padding:32px;
+      margin-bottom:24px;
+    }
+    .main-section h2{
+      font-size:22px;
+      margin-bottom:20px;
+      color:#fff;
+      text-align:center;
+    }
+    .flyer-preview{
+      text-align:center;
+      margin-bottom:32px;
+    }
+    .flyer-preview img{
+      max-width:100%;
+      height:auto;
+      border-radius:12px;
+      border:1px solid #222;
+      box-shadow:0 4px 12px rgba(0,0,0,0.5);
+    }
+    .examples-section{
+      background:#111;
+      border:1px solid #222;
+      border-radius:12px;
+      padding:24px;
+      margin-bottom:24px;
+    }
+    .examples-section h3{
+      font-size:16px;
+      color:#ba55d3;
+      margin-bottom:16px;
+      font-weight:600;
+    }
+    .examples-grid{
+      display:grid;
+      gap:12px;
+      grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+    }
+    .example-prompt{
+      background:rgba(138,43,226,0.1);
+      border:1px solid rgba(138,43,226,0.3);
+      border-radius:8px;
+      padding:12px 16px;
+      color:#ccc;
+      font-size:14px;
+      cursor:pointer;
+      transition:all 0.2s;
+      text-align:center;
+    }
+    .example-prompt:hover{
+      background:rgba(138,43,226,0.2);
+      border-color:#ba55d3;
+      transform:translateY(-2px);
+      color:#fff;
+    }
+    .form-group{
+      margin-bottom:24px;
+    }
+    .form-group label{
+      display:block;
+      font-size:14px;
+      font-weight:600;
+      margin-bottom:8px;
+      color:#fff;
+    }
+    .form-group textarea{
+      width:100%;
+      padding:16px;
+      background:#111;
+      border:1px solid #222;
+      border-radius:8px;
+      color:#fff;
+      font-size:15px;
+      font-family:inherit;
+      resize:vertical;
+      min-height:120px;
+      transition:all 0.2s;
+    }
+    .form-group textarea:focus{
+      outline:none;
+      border-color:#ba55d3;
+      box-shadow:0 0 0 3px rgba(138,43,226,0.1);
+    }
+    .form-group textarea::placeholder{
+      color:#666;
+    }
+    .button-group{
+      display:grid;
+      gap:12px;
+      grid-template-columns:1fr 1fr;
+    }
+    .btn{
+      padding:14px 24px;
+      border-radius:8px;
+      border:1px solid #222;
+      font-size:15px;
+      font-weight:600;
+      cursor:pointer;
+      transition:all 0.2s;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
+      font-family:inherit;
+    }
+    .btn-primary{
+      background:linear-gradient(135deg,#ba55d3,#8a2be2);
+      color:#fff;
+      border-color:rgba(138,43,226,0.5);
+    }
+    .btn-primary:hover{
+      transform:translateY(-2px);
+      box-shadow:0 4px 12px rgba(138,43,226,0.4);
+    }
+    .btn-primary:disabled{
+      opacity:0.5;
+      cursor:not-allowed;
+      transform:none;
+    }
+    .btn-secondary{
+      background:transparent;
+      color:#999;
+      border-color:#333;
+    }
+    .btn-secondary:hover{
+      color:#fff;
+      border-color:#666;
+      background:#111;
+    }
+    .loading{
+      display:none;
+      text-align:center;
+      padding:20px;
+      color:#ba55d3;
+      font-size:14px;
+    }
+    .loading.active{
+      display:block;
+    }
+    .loading-spinner{
+      display:inline-block;
+      width:20px;
+      height:20px;
+      border:3px solid rgba(138,43,226,0.3);
+      border-top-color:#ba55d3;
+      border-radius:50%;
+      animation:spin 1s linear infinite;
+      margin-right:8px;
+      vertical-align:middle;
+    }
+    @keyframes spin{
+      to{transform:rotate(360deg)}
+    }
+    .info-box{
+      background:rgba(138,43,226,0.05);
+      border:1px solid rgba(138,43,226,0.2);
+      border-radius:8px;
+      padding:16px;
+      margin-top:24px;
+      color:#ccc;
+      font-size:14px;
+      line-height:1.6;
+    }
+    .info-box strong{
+      color:#ba55d3;
+    }
+    @media(max-width:640px){
+      .button-group{
+        grid-template-columns:1fr;
+      }
+      .examples-grid{
+        grid-template-columns:1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo-wrapper">
+      <img class="logo" src="sf-logo.png" alt="Sound Factory" />
+    </div>
+    
+    <h1>AI Flyer Customization</h1>
+    <p class="subtitle">Personalize your promotional page in seconds with AI</p>
+    
+    <div class="main-section">
+      <h2>🎨 Your Promotional Page</h2>
+      
+      <div class="flyer-preview">
+        <iframe 
+          id="previewFrame" 
+          src="team-tickets-tables.html" 
+          style="width:100%;height:600px;border:1px solid #222;border-radius:12px;background:#000;"
+        ></iframe>
+      </div>
+      
+      <div class="examples-section">
+        <h3>💡 Quick Examples - Click to Use</h3>
+        <div class="examples-grid">
+          <div class="example-prompt" onclick="fillPrompt('Add my name at the top in large purple glowing text that matches the design')">
+            🎧 Add my name at top
+          </div>
+          <div class="example-prompt" onclick="fillPrompt('Overlay my Instagram handle in the corner in matching purple')">
+            📱 Add Instagram overlay
+          </div>
+          <div class="example-prompt" onclick="fillPrompt('Add my contact info at the bottom in a subtle style')">
+            ✨ Add contact details
+          </div>
+          <div class="example-prompt" onclick="fillPrompt('Overlay my DJ photo in the corner with purple border')">
+            🌟 Add profile photo overlay
+          </div>
+          <div class="example-prompt" onclick="fillPrompt('Add my tagline in elegant text that complements the design')">
+            💫 Add personal tagline
+          </div>
+          <div class="example-prompt" onclick="fillPrompt('Overlay my logo in the top right maintaining the purple theme')">
+            🎨 Add logo overlay
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="customization">✨ Or describe your overlay customization:</label>
+        <textarea 
+          id="customization" 
+          placeholder="Overlay my name and Instagram on the page in a style that matches the purple theme"
+        ></textarea>
+      </div>
+      
+      <div class="info-box" style="background:rgba(255,100,0,0.08);border-color:rgba(255,100,0,0.3);">
+        <strong style="color:#ff6600;">⚠️ Customization Rules:</strong><br>
+        ✅ You CAN add overlays: your name, Instagram, photos, logos, contact info<br>
+        ✅ All additions must match the existing purple/dark design theme<br>
+        ❌ You CANNOT change prices, remove content, or alter the core design<br>
+        <span style="color:#999;font-size:13px;margin-top:8px;display:block;">AI will ensure all customizations complement the original design.</span>
+      </div>
+      
+      <div id="loading" class="loading">
+        <div class="loading-spinner"></div>
+        AI is creating your custom flyer...
+      </div>
+      
+      <div class="button-group">
+        <button class="btn btn-secondary" onclick="goBack()">
+          ← Back to Signup
+        </button>
+        <button class="btn btn-primary" onclick="customizeFlyerWithAI()" id="generateBtn">
+          Generate Custom Flyer ✨
+        </button>
+      </div>
+      
+      <div class="info-box">
+        <strong>🎯 How it works:</strong> Our AI will overlay your personal branding onto the promotional page while preserving all original content, pricing, and design. Add your name, Instagram, photos, or logos - the AI ensures everything matches the purple Halloween theme perfectly!
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const textarea = document.getElementById('customization');
+    const generateBtn = document.getElementById('generateBtn');
+    const loading = document.getElementById('loading');
+
+    function fillPrompt(text) {
+      textarea.value = text;
+      textarea.focus();
+    }
+
+    async function customizeFlyerWithAI() {
+      const prompt = textarea.value.trim();
+      
+      if (!prompt) {
+        alert('⚠️ Please describe what you want to customize on your flyer!');
+        return;
+      }
+
+      generateBtn.disabled = true;
+      loading.classList.add('active');
+
+      try {
+        const response = await fetch('/api/ai-flyer-chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            message: prompt,
+            originalPage: 'team-tickets-tables.html',
+            customizationType: 'promotional-page'
+          })
+        });
+
+        const data = await response.json();
+        
+        loading.classList.remove('active');
+        generateBtn.disabled = false;
+        
+        if (data.success) {
+          alert(`✅ AI Customization Complete!\n\n${data.response}\n\nYour customized flyer will be available for download shortly. Check your email for the download link!`);
+        } else {
+          alert('⚠️ Error: ' + (data.error || 'Something went wrong. Please try again.'));
+        }
+      } catch (error) {
+        loading.classList.remove('active');
+        generateBtn.disabled = false;
+        console.error('Error:', error);
+        alert('⚠️ Connection error. Please check your internet and try again.');
+      }
+    }
+
+    function goBack() {
+      window.location.href = 'promoter-signup.html';
+    }
+
+    // Handle Enter key in textarea (Shift+Enter for new line, Enter to submit)
+    textarea.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        customizeFlyerWithAI();
+      }
+    });
+  </script>
+</body>
+</html>

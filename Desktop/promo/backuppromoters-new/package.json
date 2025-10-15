@@ -1,0 +1,14 @@
+{
+  "name": "sf-promoters-stripe",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "netlify dev",
+    "build": "echo 'No build step'"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.75.0",
+    "stripe": "^14.25.0",
+    "twilio": "^5.10.2"
+  }
+}

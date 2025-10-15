@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Team Member Login - Sound Factory</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #000;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .login-container {
+      width: 100%;
+      max-width: 420px;
+      background: #0a0a0a;
+      border: 1px solid #222;
+      border-radius: 16px;
+      padding: 40px;
+    }
+    
+    .logo-wrapper {
+      text-align: center;
+      margin-bottom: 32px;
+    }
+    
+    .logo {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 16px;
+      filter: drop-shadow(0 0 20px rgba(255, 100, 0, 0.6));
+      animation: pulse 3s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.85; transform: scale(1.05); }
+    }
+    
+    h1 {
+      font-size: 28px;
+      margin-bottom: 8px;
+      text-align: center;
+      background: linear-gradient(135deg, #ff6600 0%, #ff9933 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .subtitle {
+      text-align: center;
+      color: #999;
+      font-size: 14px;
+      margin-bottom: 32px;
+    }
+    
+    .form-group {
+      margin-bottom: 24px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #ccc;
+    }
+    
+    input {
+      width: 100%;
+      padding: 14px 16px;
+      background: #111;
+      border: 1px solid #333;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 16px;
+      transition: all 0.2s;
+    }
+    
+    input:focus {
+      outline: none;
+      border-color: #ff6600;
+      box-shadow: 0 0 0 3px rgba(255, 100, 0, 0.1);
+    }
+    
+    .btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #ff6600 0%, #ff9933 100%);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .btn:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(255, 100, 0, 0.3);
+    }
+    
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .message {
+      margin-bottom: 20px;
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      text-align: center;
+    }
+    
+    .message.error {
+      background: rgba(255, 0, 0, 0.1);
+      border: 1px solid rgba(255, 0, 0, 0.3);
+      color: #ff6666;
+    }
+    
+    .message.success {
+      background: rgba(0, 255, 0, 0.1);
+      border: 1px solid rgba(0, 255, 0, 0.3);
+      color: #66ff66;
+    }
+    
+    .message.info {
+      background: rgba(255, 165, 0, 0.1);
+      border: 1px solid rgba(255, 165, 0, 0.3);
+      color: #ffaa66;
+    }
+    
+    .step {
+      display: none;
+    }
+    
+    .step.active {
+      display: block;
+    }
+    
+    .help-text {
+      font-size: 12px;
+      color: #666;
+      margin-top: 8px;
+    }
+    
+    .back-link {
+      text-align: center;
+      margin-top: 24px;
+    }
+    
+    .back-link a {
+      color: #ff6600;
+      text-decoration: none;
+      font-size: 14px;
+    }
+    
+    .back-link a:hover {
+      text-decoration: underline;
+    }
+    
+    .loader {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-left: 8px;
+      vertical-align: middle;
+    }
+    
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="logo-wrapper">
+      <img src="/sf-logo.png" alt="Sound Factory" class="logo">
+    </div>
+    
+    <h1>Team Member Login</h1>
+    <p class="subtitle">Access your promoter dashboard</p>
+    
+    <div id="messageArea"></div>
+    
+    <!-- Step 1: Enter Phone Number -->
+    <div id="step1" class="step active">
+      <form id="phoneForm">
+        <div class="form-group">
+          <label for="phone">Phone Number</label>
+          <input 
+            type="tel" 
+            id="phone" 
+            name="phone" 
+            placeholder="+1 (555) 123-4567"
+            required
+            autocomplete="tel"
+          >
+          <p class="help-text">Enter the phone number you registered with</p>
+        </div>
+        
+        <button type="submit" class="btn" id="sendCodeBtn">
+          Send Verification Code
+        </button>
+      </form>
+    </div>
+    
+    <!-- Step 2: Enter Verification Code -->
+    <div id="step2" class="step">
+      <form id="verifyForm">
+        <div class="form-group">
+          <label for="code">Verification Code</label>
+          <input 
+            type="text" 
+            id="code" 
+            name="code" 
+            placeholder="123456"
+            maxlength="6"
+            pattern="[0-9]{6}"
+            required
+            autocomplete="one-time-code"
+          >
+          <p class="help-text">Enter the 6-digit code sent to your phone</p>
+        </div>
+        
+        <button type="submit" class="btn" id="verifyBtn">
+          Verify & Login
+        </button>
+        
+        <div class="back-link">
+          <a href="#" id="backToPhone">← Change phone number</a>
+        </div>
+      </form>
+    </div>
+    
+    <div class="back-link">
+      <a href="promoter-signup.html">Don't have an account? Sign up</a>
+    </div>
+  </div>
+
+  <script>
+    const step1 = document.getElementById('step1');
+    const step2 = document.getElementById('step2');
+    const phoneForm = document.getElementById('phoneForm');
+    const verifyForm = document.getElementById('verifyForm');
+    const phoneInput = document.getElementById('phone');
+    const codeInput = document.getElementById('code');
+    const sendCodeBtn = document.getElementById('sendCodeBtn');
+    const verifyBtn = document.getElementById('verifyBtn');
+    const backToPhoneBtn = document.getElementById('backToPhone');
+    const messageArea = document.getElementById('messageArea');
+    
+    let currentPhone = '';
+    
+    // Show message
+    function showMessage(text, type = 'info') {
+      messageArea.innerHTML = `<div class="message ${type}">${text}</div>`;
+      setTimeout(() => {
+        if (type !== 'error') {
+          messageArea.innerHTML = '';
+        }
+      }, 5000);
+    }
+    
+    // Format phone number
+    function formatPhone(phone) {
+      const cleaned = phone.replace(/\D/g, '');
+      if (cleaned.length === 10) {
+        return '+1' + cleaned;
+      }
+      if (cleaned.length === 11 && cleaned[0] === '1') {
+        return '+' + cleaned;
+      }
+      if (phone.startsWith('+')) {
+        return phone;
+      }
+      return '+1' + cleaned;
+    }
+    
+    // Step 1: Send SMS Code
+    phoneForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      currentPhone = formatPhone(phoneInput.value);
+      sendCodeBtn.disabled = true;
+      sendCodeBtn.innerHTML = 'Sending... <span class="loader"></span>';
+      
+      try {
+        const response = await fetch('/.netlify/functions/send-sms-code', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone: currentPhone })
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(data.error || 'Failed to send code');
+        }
+        
+        // Success - move to step 2
+        showMessage('Verification code sent! Check your phone.', 'success');
+        step1.classList.remove('active');
+        step2.classList.add('active');
+        
+        // Auto-focus code input
+        setTimeout(() => codeInput.focus(), 100);
+        
+      } catch (error) {
+        showMessage(error.message, 'error');
+        sendCodeBtn.disabled = false;
+        sendCodeBtn.textContent = 'Send Verification Code';
+      }
+    });
+    
+    // Step 2: Verify Code
+    verifyForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const code = codeInput.value;
+      verifyBtn.disabled = true;
+      verifyBtn.innerHTML = 'Verifying... <span class="loader"></span>';
+      
+      try {
+        const response = await fetch('/.netlify/functions/verify-sms-code', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            phone: currentPhone,
+            code: code 
+          })
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+          throw new Error(data.error || 'Invalid verification code');
+        }
+        
+        // Save session
+        localStorage.setItem('sf_session_token', data.sessionToken);
+        localStorage.setItem('sf_promo_code', data.promoCode);
+        
+        showMessage('Login successful! Redirecting...', 'success');
+        
+        // Redirect to dashboard
+        setTimeout(() => {
+          window.location.href = `promoter-dashboard.html?code=${data.promoCode}`;
+        }, 1000);
+        
+      } catch (error) {
+        showMessage(error.message, 'error');
+        verifyBtn.disabled = false;
+        verifyBtn.textContent = 'Verify & Login';
+        codeInput.value = '';
+        codeInput.focus();
+      }
+    });
+    
+    // Back to phone number
+    backToPhoneBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      step2.classList.remove('active');
+      step1.classList.add('active');
+      codeInput.value = '';
+      sendCodeBtn.disabled = false;
+      sendCodeBtn.textContent = 'Send Verification Code';
+      messageArea.innerHTML = '';
+    });
+    
+    // Auto-submit when 6 digits entered
+    codeInput.addEventListener('input', (e) => {
+      if (e.target.value.length === 6) {
+        verifyForm.dispatchEvent(new Event('submit'));
+      }
+    });
+  </script>
+</body>
+</html>

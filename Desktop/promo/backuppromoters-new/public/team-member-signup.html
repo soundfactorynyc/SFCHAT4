@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join Sound Factory Team | Official Application</title>
+    <meta name="description" content="Join the Sound Factory team and earn 20% commission on tickets and tables. Secure, automated payments through Stripe.">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎵</text></svg>">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .official-header {
+            background: white;
+            border-radius: 16px 16px 0 0;
+            padding: 40px;
+            text-align: center;
+            border-bottom: 3px solid #f0f0f0;
+        }
+
+        .logo-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .logo-box {
+            background: #f8f9fa;
+            padding: 15px 30px;
+            border-radius: 12px;
+            border: 2px solid #e9ecef;
+        }
+
+        .sf-logo {
+            font-size: 32px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
+        }
+
+        .powered-by {
+            font-size: 11px;
+            color: #6c757d;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 0 15px;
+        }
+
+        .stripe-logo {
+            font-size: 28px;
+            font-weight: 700;
+            color: #635bff;
+        }
+
+        .official-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #d4edda;
+            color: #155724;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 15px;
+        }
+
+        .checkmark {
+            background: #28a745;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .page-title {
+            font-size: 36px;
+            font-weight: 800;
+            color: #2d3748;
+            margin-bottom: 12px;
+            line-height: 1.2;
+        }
+
+        .page-subtitle {
+            font-size: 18px;
+            color: #718096;
+            font-weight: 500;
+        }
+
+        .main-card {
+            background: white;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            border-radius: 0 0 16px 16px;
+        }
+
+        .trust-bar {
+            background: #f8f9fa;
+            padding: 25px 40px;
+            display: flex;
+            justify-content: space-around;
+            gap: 30px;
+            border-bottom: 1px solid #e9ecef;
+            flex-wrap: wrap;
+        }
+
+        .trust-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .trust-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+        }
+
+        .trust-text {
+            text-align: left;
+        }
+
+        .trust-label {
+            font-size: 12px;
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        .trust-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: #2d3748;
+        }
+
+        .content-section {
+            padding: 50px 40px;
+        }
+
+        .signup-options {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+            margin-bottom: 50px;
+        }
+
+        .signup-option {
+            background: white;
+            border: 3px solid #e9ecef;
+            border-radius: 16px;
+            padding: 35px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .signup-option:hover {
+            border-color: #667eea;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+            transform: translateY(-3px);
+        }
+
+        .recommended-badge {
+            position: absolute;
+            top: -12px;
+            right: 20px;
+            background: #28a745;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 50px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .option-icon {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 35px;
+        }
+
+        .option-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 12px;
+        }
+
+        .option-desc {
+            font-size: 14px;
+            color: #718096;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .option-benefits {
+            text-align: left;
+            margin-bottom: 25px;
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            font-size: 13px;
+            color: #4a5568;
+        }
+
+        .benefit-check {
+            color: #28a745;
+            font-weight: 700;
+            font-size: 16px;
+        }
+
+        .cta-button {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .benefits-section {
+            background: #f8f9fa;
+            padding: 40px;
+            border-radius: 16px;
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: #2d3748;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+        }
+
+        .benefit-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            border: 2px solid #e9ecef;
+        }
+
+        .benefit-icon {
+            font-size: 32px;
+            margin-bottom: 15px;
+        }
+
+        .benefit-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+
+        .benefit-text {
+            font-size: 14px;
+            color: #718096;
+            line-height: 1.6;
+        }
+
+        .commission-section {
+            margin-bottom: 40px;
+        }
+
+        .commission-table {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .table-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            font-size: 20px;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .table-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            padding: 18px 25px;
+            border-bottom: 1px solid #e9ecef;
+            align-items: center;
+        }
+
+        .table-row:last-child {
+            border-bottom: none;
+        }
+
+        .table-row:nth-child(even) {
+            background: #f8f9fa;
+        }
+
+        .row-label {
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .row-amount {
+            color: #718096;
+            text-align: center;
+        }
+
+        .row-commission {
+            color: #28a745;
+            font-weight: 700;
+            font-size: 18px;
+            text-align: right;
+        }
+
+        .security-footer {
+            background: #f8f9fa;
+            padding: 30px 40px;
+            border-top: 2px solid #e9ecef;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+
+        .security-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .security-icon {
+            color: #28a745;
+            font-size: 24px;
+        }
+
+        .security-text {
+            font-size: 13px;
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .content-section {
+                padding: 30px 20px;
+            }
+
+            .official-header {
+                padding: 30px 20px;
+            }
+
+            .page-title {
+                font-size: 28px;
+            }
+
+            .trust-bar {
+                padding: 20px;
+            }
+
+            .table-row {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .row-amount, .row-commission {
+                text-align: left !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="official-header">
+            <div class="logo-section">
+                <div class="logo-box">
+                    <div class="sf-logo">SOUND FACTORY</div>
+                </div>
+                
+                <span class="powered-by">Powered by</span>
+                
+                <div class="logo-box">
+                    <div class="stripe-logo">stripe</div>
+                </div>
+            </div>
+
+            <div class="official-badge">
+                <span class="checkmark">✓</span>
+                Official Team Member Application
+            </div>
+
+            <h1 class="page-title">Join the Sound Factory Team</h1>
+            <p class="page-subtitle">Earn 20% commission on every ticket and table you sell</p>
+        </div>
+
+        <div class="main-card">
+            <div class="trust-bar">
+                <div class="trust-item">
+                    <div class="trust-icon">🔒</div>
+                    <div class="trust-text">
+                        <div class="trust-label">Secure</div>
+                        <div class="trust-value">Bank-Level Encryption</div>
+                    </div>
+                </div>
+
+                <div class="trust-item">
+                    <div class="trust-icon">⚡</div>
+                    <div class="trust-text">
+                        <div class="trust-label">Fast Setup</div>
+                        <div class="trust-value">Under 2 Minutes</div>
+                    </div>
+                </div>
+
+                <div class="trust-item">
+                    <div class="trust-icon">💰</div>
+                    <div class="trust-text">
+                        <div class="trust-label">Automatic</div>
+                        <div class="trust-value">Instant Payments</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-section">
+                <div class="signup-options">
+                    <div class="signup-option" onclick="startSignup()">
+                        <div class="recommended-badge">SIMPLE & FAST</div>
+                        <div class="option-icon">🚀</div>
+                        <h3 class="option-title">Join the Team</h3>
+                        <p class="option-desc">Sign up now and start earning 20% commission on every sale. Simple SMS login, instant tracking, automated payments.</p>
+                        
+                        <div class="option-benefits">
+                            <div class="benefit-item">
+                                <span class="benefit-check">✓</span>
+                                <span>SMS login - no passwords!</span>
+                            </div>
+                            <div class="benefit-item">
+                                <span class="benefit-check">✓</span>
+                                <span>Instant commission tracking</span>
+                            </div>
+                            <div class="benefit-item">
+                                <span class="benefit-check">✓</span>
+                                <span>Custom referral links</span>
+                            </div>
+                            <div class="benefit-item">
+                                <span class="benefit-check">✓</span>
+                                <span>Real-time dashboard</span>
+                            </div>
+                        </div>
+
+                        <button class="cta-button">
+                            🚀 Start Application
+                        </button>
+                    </div>
+                </div>
+
+                <div class="benefits-section">
+                    <h2 class="section-title">Why Join Our Team?</h2>
+                    <div class="benefits-grid">
+                        <div class="benefit-card">
+                            <div class="benefit-icon">💵</div>
+                            <div class="benefit-title">Real Money</div>
+                            <div class="benefit-text">Earn 20% commission on everything customers pay. Sell a $2,400 table, earn $480.</div>
+                        </div>
+
+                        <div class="benefit-card">
+                            <div class="benefit-icon">📊</div>
+                            <div class="benefit-title">100% Transparent</div>
+                            <div class="benefit-text">Track every sale in real-time. See exactly what you've earned, always.</div>
+                        </div>
+
+                        <div class="benefit-card">
+                            <div class="benefit-icon">🎨</div>
+                            <div class="benefit-title">Custom Marketing</div>
+                            <div class="benefit-text">Get professional templates you can personalize with your name and photo.</div>
+                        </div>
+
+                        <div class="benefit-card">
+                            <div class="benefit-icon">🔒</div>
+                            <div class="benefit-title">Payment Guaranteed</div>
+                            <div class="benefit-text">Tracked by Stripe. Your link = your sale. No disputes, ever.</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="commission-section">
+                    <h2 class="section-title">Your Commission Breakdown</h2>
+                    <div class="commission-table">
+                        <div class="table-header">
+                            You Earn 20% of What Customers Pay
+                        </div>
+
+                        <div class="table-row">
+                            <div class="row-label">🎟️ Ticket</div>
+                            <div class="row-amount">$100</div>
+                            <div class="row-commission">You Earn: $20</div>
+                        </div>
+
+                        <div class="table-row">
+                            <div class="row-label">🍾 Table for 4 (Deposit)</div>
+                            <div class="row-amount">$160</div>
+                            <div class="row-commission">You Earn: $32</div>
+                        </div>
+
+                        <div class="table-row">
+                            <div class="row-label">🍾 Table for 6 (Deposit)</div>
+                            <div class="row-amount">$240</div>
+                            <div class="row-commission">You Earn: $48</div>
+                        </div>
+
+                        <div class="table-row">
+                            <div class="row-label">🍾 Table for 10 (Deposit)</div>
+                            <div class="row-amount">$480</div>
+                            <div class="row-commission">You Earn: $96</div>
+                        </div>
+
+                        <div class="table-row">
+                            <div class="row-label">💎 Table for 6 (Full Payment)</div>
+                            <div class="row-amount">$1,200</div>
+                            <div class="row-commission">You Earn: $240</div>
+                        </div>
+
+                        <div class="table-row">
+                            <div class="row-label">💎 Table for 10 (Full Payment)</div>
+                            <div class="row-amount">$2,400</div>
+                            <div class="row-commission">You Earn: $480</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="security-footer">
+                <div class="security-item">
+                    <div class="security-icon">🔐</div>
+                    <div class="security-text">256-bit SSL Encryption</div>
+                </div>
+
+                <div class="security-item">
+                    <div class="security-icon">✓</div>
+                    <div class="security-text">Stripe Verified Partner</div>
+                </div>
+
+                <div class="security-item">
+                    <div class="security-icon">🛡️</div>
+                    <div class="security-text">PCI Compliant</div>
+                </div>
+
+                <div class="security-item">
+                    <div class="security-icon">⭐</div>
+                    <div class="security-text">Trusted Platform</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function startSignup() {
+            // Redirect to the existing promoter signup flow
+            window.location.href = '/promoter-signup.html';
+        }
+    </script>
+</body>
+</html>

@@ -15,8 +15,21 @@ const twilioClient = twilio(
 );
 
 exports.handler = async (event) => {
+  // CORS headers
+  const headers = {
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Headers': 'Content-Type',
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Content-Type': 'application/json'
+  };
+
+  // Handle preflight
+  if (event.httpMethod === 'OPTIONS') {
+    return { statusCode: 200, headers, body: '' };
+  }
+
   if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: 'Method Not Allowed' };
+    return { statusCode: 405, headers, body: 'Method Not Allowed' };
   }
 
   try {
@@ -25,6 +38,7 @@ exports.handler = async (event) => {
     if (!rawPhone) {
       return {
         statusCode: 400,
+        headers,
         body: JSON.stringify({ error: 'Phone number required' })
       };
     }
@@ -37,6 +51,7 @@ exports.handler = async (event) => {
       console.error('Phone normalization error:', err.message);
       return {
         statusCode: 400,
+        headers,
         body: JSON.stringify({ error: err.message })
       };
     }
@@ -66,6 +81,7 @@ exports.handler = async (event) => {
       console.error('LOOKUP FAILED - Phone not found:', phone);
       return {
         statusCode: 404,
+        headers,
         body: JSON.stringify({ 
           error: `No account found. Debug: Searched for "${phone}"` 
         })
@@ -76,6 +92,7 @@ exports.handler = async (event) => {
     if (promoter.status === 'pending') {
       return {
         statusCode: 403,
+        headers,
         body: JSON.stringify({ 
           error: 'Your account is pending approval. Please wait for admin confirmation.' 
         })
@@ -85,6 +102,7 @@ exports.handler = async (event) => {
     if (promoter.status === 'rejected') {
       return {
         statusCode: 403,
+        headers,
         body: JSON.stringify({ 
           error: 'Your account application was not approved.' 
         })
@@ -94,6 +112,7 @@ exports.handler = async (event) => {
     if (promoter.status === 'suspended') {
       return {
         statusCode: 403,
+        headers,
         body: JSON.stringify({ 
           error: 'Your account has been suspended. Please contact support.' 
         })
@@ -104,6 +123,7 @@ exports.handler = async (event) => {
     if (promoter.status !== 'approved') {
       return {
         statusCode: 403,
+        headers,
         body: JSON.stringify({ error: 'Account not authorized for login' })
       };
     }
@@ -121,7 +141,7 @@ exports.handler = async (event) => {
 
     return {
       statusCode: 200,
-      headers: { 'Content-Type': 'application/json' },
+      headers,
       body: JSON.stringify({ 
         success: true,
         message: 'Verification code sent',
@@ -133,6 +153,7 @@ exports.handler = async (event) => {
     console.error('SMS send error:', error);
     return {
       statusCode: 500,
+      headers,
       body: JSON.stringify({ 
         error: error.message || 'Failed to send verification code' 
       })
