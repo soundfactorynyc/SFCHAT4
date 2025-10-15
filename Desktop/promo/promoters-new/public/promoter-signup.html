@@ -963,11 +963,17 @@ document.getElementById('signupForm').addEventListener('submit', async (e) => {
     }
     
     console.log('✅ Signup successful. Redirecting to Stripe Express onboarding...');
-    console.log('📧 Email will be pre-filled:', email);
+    console.log('📧 Your email:', email, 'will be pre-filled in Stripe');
     console.log('🔗 Stripe URL:', stripeUrl.substring(0, 50) + '...');
     
-    // Redirect immediately to fresh Stripe onboarding link
-    window.location.href = stripeUrl;
+    // Show brief confirmation before redirect
+    submitBtn.innerHTML = '✅ ACCOUNT CREATED! Redirecting to Stripe setup...';
+    submitBtn.style.background = '#10b981';
+    
+    // Brief delay so user sees confirmation, then redirect
+    setTimeout(() => {
+      window.location.href = stripeUrl;
+    }, 1500);
     
   } catch (error) {
     console.error('Signup error:', error);
