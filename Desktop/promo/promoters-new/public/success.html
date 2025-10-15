@@ -249,11 +249,15 @@ let stripeUrl = '';
 let countdownTimer;
 let secondsLeft = 10;
 
-// Load promo code and Stripe URL from temp storage
-const tempData = JSON.parse(localStorage.getItem('team_temp') || '{}');
+// Load promo code and Stripe URL from signup data
+const signupData = JSON.parse(localStorage.getItem('signup_data') || '{}');
+const urlParams = new URLSearchParams(window.location.search);
+const promoFromUrl = urlParams.get('code');
 
-if (tempData.promo_code) {
-  document.getElementById('promoCode').textContent = tempData.promo_code;
+const promoCode = promoFromUrl || signupData.promo_code;
+
+if (promoCode) {
+  document.getElementById('promoCode').textContent = promoCode;
 } else {
   document.getElementById('promoCode').textContent = 'N/A';
 }

@@ -947,32 +947,27 @@ document.getElementById('signupForm').addEventListener('submit', async (e) => {
     const encodedEmail = encodeURIComponent(formData.email);
     const returnUrl = encodeURIComponent(`${window.location.origin}/promoter-dashboard.html`);
     
-    // Store signup data
+    // Store signup data including Stripe URL for later
     localStorage.setItem('signup_data', JSON.stringify({
       promo_code: data.promo_code || data.promoCode,
       name: name,
       email: email,
+      stripe_url: data.stripe_url,
+      stripe_account_id: data.account_id,
       timestamp: Date.now()
     }));
     
-    // Redirect to Stripe onboarding - user should go straight to setup, NOT login
-    const stripeUrl = data.stripe_url;
+    console.log('✅ Signup successful!');
+    console.log('📧 Email registered:', email);
+    console.log('🎟️ Promo code:', data.promo_code || data.promoCode);
     
-    if (!stripeUrl) {
-      throw new Error('Stripe onboarding URL not received from server');
-    }
-    
-    console.log('✅ Signup successful. Redirecting to Stripe Express onboarding...');
-    console.log('📧 Your email:', email, 'will be pre-filled in Stripe');
-    console.log('🔗 Stripe URL:', stripeUrl.substring(0, 50) + '...');
-    
-    // Show brief confirmation before redirect
-    submitBtn.innerHTML = '✅ ACCOUNT CREATED! Redirecting to Stripe setup...';
+    // Show success message
+    submitBtn.innerHTML = '✅ ACCOUNT CREATED! Redirecting...';
     submitBtn.style.background = '#10b981';
     
-    // Brief delay so user sees confirmation, then redirect
+    // Redirect to success page which will guide them to Stripe setup
     setTimeout(() => {
-      window.location.href = stripeUrl;
+      window.location.href = 'success.html?new=true&code=' + (data.promo_code || data.promoCode);
     }, 1500);
     
   } catch (error) {
