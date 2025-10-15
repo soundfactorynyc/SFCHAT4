@@ -448,7 +448,9 @@ document.getElementById('verifyForm').addEventListener('submit', async (e) => {
     sessionStorage.removeItem('login_phone');
     
     // Redirect to dashboard
-    window.location.href = 'promoter-dashboard.html';
+    // Redirect to dashboard with promo code
+    const promoCode = data.promoter && data.promoter.promo_code ? data.promoter.promo_code : '';
+    window.location.href = 'promoter-dashboard.html?code=' + promoCode;
     
   } catch (error) {
     showError(error.message);

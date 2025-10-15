@@ -548,7 +548,7 @@ input[type="text"]:focus{
       </div>
       <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px;">
         <label for="aiBaseUrl" style="font-size:11px;font-weight:600;color:#cfcfcf;text-transform:uppercase;letter-spacing:0.5px;">Base Link</label>
-        <input id="aiBaseUrl" type="text" value="https://soundfactorynyc.com/halloween" readonly style="background:rgba(255,255,255,0.02);border:0.5px solid rgba(255,255,255,0.1);border-radius:2px;color:#999;font-size:12px;padding:10px 12px;font-family:inherit;cursor:not-allowed;">
+        <input id="aiBaseUrl" type="text" value="https://seance.soundfactorynyc.com/halloween" readonly style="background:rgba(255,255,255,0.02);border:0.5px solid rgba(255,255,255,0.1);border-radius:2px;color:#999;font-size:12px;padding:10px 12px;font-family:inherit;cursor:not-allowed;">
       </div>
       <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px;">
         <label style="font-size:11px;font-weight:600;color:#cfcfcf;text-transform:uppercase;letter-spacing:0.5px;">Platforms</label>
@@ -815,7 +815,7 @@ const promoCode = urlParams.get('code') || urlParams.get('promo') || 'JP2025';
   function buildPromoLink(){
     const p = promo() || promoCode;
     if(!p){ alert("Enter your promo code"); return; }
-    const url = `${base() || 'https://soundfactorynyc.com/halloween'}?promo=${encodeURIComponent(p)}`;
+    const url = `${base() || 'https://seance.soundfactorynyc.com/halloween'}?promo=${encodeURIComponent(p)}`;
     $("#outPromo").textContent = url;
     const utm = `${url}&utm_source=${encodeURIComponent(p)}&utm_medium=partner&utm_campaign=${encodeURIComponent(eventName().toLowerCase().replace(/\s+/g,'-'))}`;
     $("#outUtm").textContent = utm;
@@ -835,7 +835,7 @@ const promoCode = urlParams.get('code') || urlParams.get('promo') || 'JP2025';
     const vibe = tone();
     const list = [];
 
-    const baseLink = $("#outUtm").textContent || $("#outPromo").textContent || `${base() || 'https://soundfactorynyc.com/halloween'}?promo=${encodeURIComponent(p)}`;
+    const baseLink = $("#outUtm").textContent || $("#outPromo").textContent || `${base() || 'https://seance.soundfactorynyc.com/halloween'}?promo=${encodeURIComponent(p)}`;
 
     const templates = [
       ({en,ed,cta,link}) => `🖤 ${en}\n${ed}\n${cta}\n${link}`,
@@ -913,7 +913,7 @@ function generateWildText() {
   const eventName = document.getElementById('aiEventName').value || 'Sound Factory Séance — Halloween';
   const eventDate = document.getElementById('aiEventDate').value || 'Nov 1, New York City';
   const promoCode = document.getElementById('aiPromo').value || 'YOURCODE';
-  const baseUrl = document.getElementById('aiBaseUrl').value || 'https://soundfactorynyc.com/halloween';
+  const baseUrl = document.getElementById('aiBaseUrl').value || 'https://seance.soundfactorynyc.com/halloween';
   const customInstructions = document.getElementById('wildCustom').value || '';
   
   const link = `${baseUrl}?promo=${promoCode}`;

@@ -168,7 +168,9 @@
 
         // Redirect to dashboard after short delay
         setTimeout(() => {
-          window.location.href = 'promoter-dashboard.html';
+          // Redirect to dashboard with promo code
+          const promoCode = verifyData.promoter && verifyData.promoter.promo_code ? verifyData.promoter.promo_code : '';
+          window.location.href = 'promoter-dashboard.html?code=' + promoCode;
         }, 1500);
 
       } catch (error) {
