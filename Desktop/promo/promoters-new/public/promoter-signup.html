@@ -947,10 +947,26 @@ document.getElementById('signupForm').addEventListener('submit', async (e) => {
     const encodedEmail = encodeURIComponent(formData.email);
     const returnUrl = encodeURIComponent(`${window.location.origin}/promoter-dashboard.html`);
     
-    // In production, use the actual Stripe Connect URL from your API response
-    const stripeUrl = data.stripe_url || `https://connect.stripe.com/setup/s/${data.account_id}?email=${encodedEmail}&return_url=${returnUrl}`;
+    // Store signup data
+    localStorage.setItem('signup_data', JSON.stringify({
+      promo_code: data.promo_code || data.promoCode,
+      name: name,
+      email: email,
+      timestamp: Date.now()
+    }));
     
-    // Go directly to Stripe (no success page)
+    // Redirect to Stripe onboarding - user should go straight to setup, NOT login
+    const stripeUrl = data.stripe_url;
+    
+    if (!stripeUrl) {
+      throw new Error('Stripe onboarding URL not received from server');
+    }
+    
+    console.log('✅ Signup successful. Redirecting to Stripe Express onboarding...');
+    console.log('📧 Email will be pre-filled:', email);
+    console.log('🔗 Stripe URL:', stripeUrl.substring(0, 50) + '...');
+    
+    // Redirect immediately to fresh Stripe onboarding link
     window.location.href = stripeUrl;
     
   } catch (error) {

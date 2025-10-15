@@ -85,7 +85,7 @@ exports.handler = async (event) => {
     }
 
     const base = process.env.PUBLIC_BASE_URL || getBaseUrl(event);
-    const returnUrl = `${base}/promoter-dashboard.html?promo=${promoCode}&registered=true`;
+    const returnUrl = `${base}/promoter-dashboard.html?code=${promoCode}&registered=true`;
     const refreshUrl = `${base}/index.html`;
 
     const accountLink = await stripe.accountLinks.create({
