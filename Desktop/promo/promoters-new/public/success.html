@@ -264,7 +264,7 @@ if (promoCode) {
 
 // Get Stripe URL from URL parameters (if redirected from backend)
 const urlParams = new URLSearchParams(window.location.search);
-stripeUrl = urlParams.get('stripe_url') || tempData.stripe_url || '';
+stripeUrl = urlParams.get('stripe_url') || signupData.stripe_url || '';
 
 // Countdown timer
 if (stripeUrl) {
