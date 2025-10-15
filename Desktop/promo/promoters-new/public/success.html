@@ -210,7 +210,9 @@ h1{
     <!-- Next Steps -->
     <div class="info-box">
       <strong>Next Step: Complete Stripe Setup</strong>
-      We're redirecting you to Stripe to set up instant commission payments. This takes 2-5 minutes.
+      Click the button below to set up instant commission payments with Stripe. 
+      <br><br>
+      <strong style="color:#2563eb;">📧 You'll be asked to verify your email first</strong> - this is normal for new Stripe accounts. Just enter the email you used to sign up, and Stripe will send you a verification link.
     </div>
 
     <div class="info-box">
@@ -230,17 +232,14 @@ h1{
 
     <!-- Action Button -->
     <button class="btn btn-primary" id="continueBtn">
-      CONTINUE TO STRIPE SETUP →
+      VERIFY EMAIL & SET UP STRIPE →
     </button>
 
     <a href="promoter-login.html" class="btn">
       SKIP FOR NOW - GO TO LOGIN
     </a>
 
-    <!-- Countdown -->
-    <div class="countdown">
-      Redirecting automatically in <span id="countdown">10</span> seconds...
-    </div>
+    <!-- No auto-redirect - user must click button -->
   </div>
 </div>
 
@@ -265,18 +264,8 @@ if (promoCode) {
 // Get Stripe URL from URL parameters (if redirected from backend)
 stripeUrl = urlParams.get('stripe_url') || signupData.stripe_url || '';
 
-// Countdown timer
-if (stripeUrl) {
-  countdownTimer = setInterval(() => {
-    secondsLeft--;
-    document.getElementById('countdown').textContent = secondsLeft;
-    
-    if (secondsLeft <= 0) {
-      clearInterval(countdownTimer);
-      window.location.href = stripeUrl;
-    }
-  }, 1000);
-}
+// No auto-redirect - let user click button when ready
+// This gives them time to read the instructions about email verification
 
 // Continue button
 document.getElementById('continueBtn').addEventListener('click', () => {
