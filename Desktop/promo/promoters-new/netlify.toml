@@ -1,0 +1,32 @@
+[build]
+  publish = "public"
+  command = ""
+
+[functions]
+  node_bundler = "esbuild"
+  external_node_modules = ["stripe"]
+
+[[redirects]]
+  from = "/api/create-promoter"
+  to = "/.netlify/functions/create-promoter"
+  status = 200
+
+[[redirects]]
+  from = "/api/purchase-ticket"
+  to = "/.netlify/functions/purchase-ticket"
+  status = 200
+
+[[redirects]]
+  from = "/api/ai-flyer-chat"
+  to = "/.netlify/functions/ai-flyer-chat"
+  status = 200
+
+[[redirects]]
+  from = "/api/promoter/*"
+  to = "/.netlify/functions/get-promoter/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/api/stripe-webhook"
+  to = "/.netlify/functions/stripe-webhook"
+  status = 200

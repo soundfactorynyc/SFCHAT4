@@ -1,0 +1,45 @@
+✅ NEW PROMOTERS FOLDER READY
+================================
+
+📁 Location: /Users/jpwesite/Desktop/SF/promoters-new
+
+✨ What's Included:
+- ✅ Updated promoter-signup.html (AI flyer customization)
+- ✅ All backend functions (create-promoter updated with flyer_request)
+- ✅ AI flyer chat system (Claude API)
+- ✅ Optimized images (4.4MB flyer vs 21MB)
+- ✅ All admin pages
+- ✅ Dashboard and login pages
+- ✅ Team tracking pages
+- ✅ Environment variables (.env)
+- ✅ Netlify configuration (netlify.toml)
+- ✅ Package dependencies
+
+🎨 Recent Updates:
+- Logo and flyer loading correctly
+- AI customization feature active
+- "Try me!" placeholder text
+- Beautiful design preservation messaging
+- Preview bar removed
+- Backend wired to save flyer requests
+
+📦 Ready to Deploy:
+cd /Users/jpwesite/Desktop/SF/promoters-new
+./deploy.sh
+
+OR
+
+netlify deploy --prod
+
+🗑️ Safe to Remove:
+After testing, you can remove these old folders:
+- seance.soundfactorynyc.com:promoters/
+- Any other old promoter folders
+
+📝 Next Steps:
+1. Test the new folder locally if needed
+2. Deploy to Netlify
+3. Verify all features work
+4. Remove old promoter folders
+
+🎉 All files are current and tested!

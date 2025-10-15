@@ -1,0 +1,3 @@
+/api/promoter/:code /.netlify/functions/get-promoter 200
+/api/ai-flyer-chat /.netlify/functions/ai-flyer-chat 200
+/api/* /.netlify/functions/:splat 200

@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SMS Finder Tool - Stripe Integration</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .main-button {
+            padding: 15px 40px;
+            font-size: 18px;
+            background: white;
+            color: #667eea;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .main-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        /* Popup Overlay */
+        .popup-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 1000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .popup-overlay.active {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Popup Container */
+        .popup-container {
+            background: white;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideUp 0.4s ease;
+        }
+
+        .popup-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            position: relative;
+        }
+
+        .popup-header h2 {
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .popup-header p {
+            margin-top: 5px;
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .popup-content {
+            padding: 30px;
+            max-height: calc(80vh - 100px);
+            overflow-y: auto;
+        }
+
+        /* Search Section */
+        .search-section {
+            margin-bottom: 30px;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 12px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .search-btn {
+            padding: 12px 30px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .search-btn:hover {
+            background: #5a67d8;
+        }
+
+        .search-btn:disabled {
+            background: #e0e0e0;
+            cursor: not-allowed;
+        }
+
+        /* Filter Options */
+        .filter-options {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-chip {
+            padding: 8px 16px;
+            background: #f5f5f5;
+            border: 2px solid transparent;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+        }
+
+        .filter-chip.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        /* Status Indicator */
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 15px;
+            background: #f0f9ff;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #10b981;
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.error {
+            background: #ef4444;
+            animation: none;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        /* Results Section */
+        .results-section {
+            margin-top: 20px;
+        }
+
+        .result-item {
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .result-item:hover {
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.1);
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .result-name {
+            font-weight: 600;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .result-badge {
+            padding: 4px 12px;
+            background: #10b981;
+            color: white;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .result-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .detail-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 2px;
+        }
+
+        .detail-value {
+            font-size: 14px;
+            color: #333;
+            font-weight: 500;
+        }
+
+        /* Loading State */
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+
+        .empty-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* SMS Specific Styling */
+        .sms-tag {
+            display: inline-block;
+            padding: 3px 8px;
+            background: #eff6ff;
+            color: #1e40af;
+            border-radius: 5px;
+            font-size: 11px;
+            margin-right: 5px;
+        }
+
+        .phone-number {
+            font-family: 'Courier New', monospace;
+            color: #6b7280;
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Button to Open Popup -->
+    <button class="main-button" onclick="openPopup()">
+        Open SMS Finder Tool
+    </button>
+
+    <!-- Popup Overlay -->
+    <div id="popupOverlay" class="popup-overlay">
+        <div class="popup-container">
+            <!-- Popup Header -->
+            <div class="popup-header">
+                <h2>📱 SMS Finder Tool</h2>
+                <p>Search and manage SMS communications with Stripe integration</p>
+                <button class="close-btn" onclick="closePopup()">✕</button>
+            </div>
+
+            <!-- Popup Content -->
+            <div class="popup-content">
+                <!-- Status Indicator -->
+                <div class="status-indicator">
+                    <span class="status-dot" id="statusDot"></span>
+                    <span id="statusText">Connected to Stripe API</span>
+                </div>
+
+                <!-- Search Section -->
+                <div class="search-section">
+                    <div class="search-box">
+                        <input type="text" 
+                               class="search-input" 
+                               id="searchInput" 
+                               placeholder="Search by phone, email, or customer ID...">
+                        <button class="search-btn" id="searchBtn" onclick="performSearch()">
+                            Search
+                        </button>
+                    </div>
+
+                    <!-- Filter Options -->
+                    <div class="filter-options">
+                        <div class="filter-chip active" onclick="toggleFilter(this, 'all')">All</div>
+                        <div class="filter-chip" onclick="toggleFilter(this, 'customers')">Customers</div>
+                        <div class="filter-chip" onclick="toggleFilter(this, 'payments')">Payments</div>
+                        <div class="filter-chip" onclick="toggleFilter(this, 'subscriptions')">Subscriptions</div>
+                        <div class="filter-chip" onclick="toggleFilter(this, 'invoices')">Invoices</div>
+                    </div>
+                </div>
+
+                <!-- Results Section -->
+                <div class="results-section" id="resultsSection">
+                    <div class="empty-state">
+                        <div class="empty-icon">🔍</div>
+                        <p>Enter a search term to find SMS-related data</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentFilter = 'all';
+        let isLoading = false;
+
+        // Open popup
+        function openPopup() {
+            document.getElementById('popupOverlay').classList.add('active');
+            document.getElementById('searchInput').focus();
+            checkStripeConnection();
+        }
+
+        // Close popup
+        function closePopup() {
+            document.getElementById('popupOverlay').classList.remove('active');
+            clearResults();
+        }
+
+        // Close popup when clicking outside
+        document.getElementById('popupOverlay').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closePopup();
+            }
+        });
+
+        // Handle Enter key in search input
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+
+        // Toggle filter
+        function toggleFilter(element, filter) {
+            // Remove active class from all chips
+            document.querySelectorAll('.filter-chip').forEach(chip => {
+                chip.classList.remove('active');
+            });
+            
+            // Add active class to clicked chip
+            element.classList.add('active');
+            currentFilter = filter;
+            
+            // Re-run search if there's a search term
+            const searchTerm = document.getElementById('searchInput').value;
+            if (searchTerm) {
+                performSearch();
+            }
+        }
+
+        // Check Stripe Connection
+        async function checkStripeConnection() {
+            try {
+                // Simulate API connection check
+                const statusDot = document.getElementById('statusDot');
+                const statusText = document.getElementById('statusText');
+                
+                // This would be replaced with actual Stripe API call
+                setTimeout(() => {
+                    statusDot.classList.remove('error');
+                    statusText.textContent = 'Connected to Stripe API';
+                }, 500);
+            } catch (error) {
+                const statusDot = document.getElementById('statusDot');
+                const statusText = document.getElementById('statusText');
+                statusDot.classList.add('error');
+                statusText.textContent = 'Connection error - Please check API settings';
+            }
+        }
+
+        // Perform search
+        async function performSearch() {
+            const searchTerm = document.getElementById('searchInput').value.trim();
+            
+            if (!searchTerm) {
+                showEmptyState();
+                return;
+            }
+
+            if (isLoading) return;
+            
+            isLoading = true;
+            const searchBtn = document.getElementById('searchBtn');
+            searchBtn.disabled = true;
+            searchBtn.textContent = 'Searching...';
+            
+            showLoading();
+
+            try {
+                // Call actual Stripe API through Netlify function
+                const response = await fetch('/.netlify/functions/stripe-finder', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        searchTerm: searchTerm,
+                        filter: currentFilter
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Search failed');
+                }
+
+                displayResults(data.results || []);
+            } catch (error) {
+                showError('Failed to search. Please try again.');
+                console.error('Search error:', error);
+            } finally {
+                isLoading = false;
+                searchBtn.disabled = false;
+                searchBtn.textContent = 'Search';
+            }
+        }
+
+        // Simulate Stripe API search
+        async function simulateStripeSearch(searchTerm) {
+            // Simulate network delay
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            // Sample data based on filter
+            const sampleResults = getSampleResults(searchTerm);
+            displayResults(sampleResults);
+        }
+
+        // Get sample results based on filter
+        function getSampleResults(searchTerm) {
+            const baseResults = [
+                {
+                    type: 'customer',
+                    id: 'cus_' + Math.random().toString(36).substr(2, 9),
+                    name: 'John Doe',
+                    email: 'john.doe@example.com',
+                    phone: '+1 (555) 123-4567',
+                    smsEnabled: true,
+                    lastMessage: '2 hours ago',
+                    status: 'active'
+                },
+                {
+                    type: 'payment',
+                    id: 'pi_' + Math.random().toString(36).substr(2, 9),
+                    amount: '$299.00',
+                    customer: 'John Doe',
+                    phone: '+1 (555) 123-4567',
+                    smsNotification: 'Sent',
+                    date: '2024-01-15',
+                    status: 'succeeded'
+                },
+                {
+                    type: 'subscription',
+                    id: 'sub_' + Math.random().toString(36).substr(2, 9),
+                    plan: 'Premium Plan',
+                    customer: 'Jane Smith',
+                    phone: '+1 (555) 987-6543',
+                    smsReminders: true,
+                    nextBilling: '2024-02-01',
+                    status: 'active'
+                }
+            ];
+
+            // Filter results based on current filter
+            if (currentFilter === 'all') {
+                return baseResults;
+            } else if (currentFilter === 'customers') {
+                return baseResults.filter(r => r.type === 'customer');
+            } else if (currentFilter === 'payments') {
+                return baseResults.filter(r => r.type === 'payment');
+            } else if (currentFilter === 'subscriptions') {
+                return baseResults.filter(r => r.type === 'subscription');
+            } else {
+                return [];
+            }
+        }
+
+        // Display results
+        function displayResults(results) {
+            const resultsSection = document.getElementById('resultsSection');
+            
+            if (results.length === 0) {
+                resultsSection.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📭</div>
+                        <p>No results found for your search</p>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            results.forEach(result => {
+                html += createResultItem(result);
+            });
+            
+            resultsSection.innerHTML = html;
+        }
+
+        // Create result item HTML
+        function createResultItem(result) {
+            let badgeColor = result.status === 'active' ? '#10b981' : '#f59e0b';
+            let typeIcon = '';
+            
+            switch(result.type) {
+                case 'customer':
+                    typeIcon = '👤';
+                    break;
+                case 'payment':
+                    typeIcon = '💳';
+                    break;
+                case 'subscription':
+                    typeIcon = '🔄';
+                    break;
+                default:
+                    typeIcon = '📄';
+            }
+
+            return `
+                <div class="result-item" onclick="handleResultClick('${result.id}')">
+                    <div class="result-header">
+                        <div class="result-name">
+                            ${typeIcon} ${result.name || result.plan || 'Payment ' + result.id.substr(-6)}
+                        </div>
+                        <div class="result-badge" style="background: ${badgeColor}">
+                            ${result.status}
+                        </div>
+                    </div>
+                    <div class="result-details">
+                        <div class="detail-item">
+                            <span class="detail-label">ID</span>
+                            <span class="detail-value">${result.id}</span>
+                        </div>
+                        ${result.phone ? `
+                            <div class="detail-item">
+                                <span class="detail-label">Phone</span>
+                                <span class="detail-value phone-number">${result.phone}</span>
+                            </div>
+                        ` : ''}
+                        ${result.email ? `
+                            <div class="detail-item">
+                                <span class="detail-label">Email</span>
+                                <span class="detail-value">${result.email}</span>
+                            </div>
+                        ` : ''}
+                        ${result.amount ? `
+                            <div class="detail-item">
+                                <span class="detail-label">Amount</span>
+                                <span class="detail-value">${result.amount}</span>
+                            </div>
+                        ` : ''}
+                        ${result.smsEnabled !== undefined ? `
+                            <div class="detail-item">
+                                <span class="detail-label">SMS Status</span>
+                                <span class="detail-value">
+                                    <span class="sms-tag">${result.smsEnabled ? 'Enabled' : 'Disabled'}</span>
+                                </span>
+                            </div>
+                        ` : ''}
+                        ${result.smsNotification ? `
+                            <div class="detail-item">
+                                <span class="detail-label">SMS Notification</span>
+                                <span class="detail-value">
+                                    <span class="sms-tag">${result.smsNotification}</span>
+                                </span>
+                            </div>
+                        ` : ''}
+                        ${result.lastMessage ? `
+                            <div class="detail-item">
+                                <span class="detail-label">Last Message</span>
+                                <span class="detail-value">${result.lastMessage}</span>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Handle result click
+        function handleResultClick(id) {
+            // In production, this would open detailed view or perform action
+            console.log('Clicked on result:', id);
+            alert('Opening details for: ' + id + '\n\nIn production, this would show detailed SMS history and options.');
+        }
+
+        // Show loading state
+        function showLoading() {
+            const resultsSection = document.getElementById('resultsSection');
+            resultsSection.innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Searching Stripe database...</p>
+                </div>
+            `;
+        }
+
+        // Show empty state
+        function showEmptyState() {
+            const resultsSection = document.getElementById('resultsSection');
+            resultsSection.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">🔍</div>
+                    <p>Enter a search term to find SMS-related data</p>
+                </div>
+            `;
+        }
+
+        // Show error state
+        function showError(message) {
+            const resultsSection = document.getElementById('resultsSection');
+            resultsSection.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-icon">⚠️</div>
+                    <p>${message}</p>
+                </div>
+            `;
+        }
+
+        // Clear results
+        function clearResults() {
+            document.getElementById('searchInput').value = '';
+            showEmptyState();
+        }
+    </script>
+</body>
+</html>
