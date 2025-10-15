@@ -1,25 +1,9 @@
 // netlify/functions/ai-flyer-chat.js
 // AI Flyer Assistant using Claude API
 
-const headers = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'Content-Type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Content-Type': 'application/json'
-};
-
 exports.handler = async (event) => {
-  // Handle OPTIONS request for CORS
-  if (event.httpMethod === 'OPTIONS') {
-    return { statusCode: 200, headers, body: '' };
-  }
-  
   if (event.httpMethod !== 'POST') {
-    return { 
-      statusCode: 405, 
-      headers,
-      body: JSON.stringify({ error: 'Method Not Allowed' })
-    };
+    return { statusCode: 405, body: 'Method Not Allowed' };
   }
 
   try {
@@ -28,7 +12,6 @@ exports.handler = async (event) => {
     if (!message) {
       return {
         statusCode: 400,
-        headers,
         body: JSON.stringify({ error: 'Message required' })
       };
     }
@@ -39,9 +22,8 @@ exports.handler = async (event) => {
       // Fallback to simple responses if no API key
       return {
         statusCode: 200,
-        headers,
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          success: true,
           response: generateFallbackResponse(message, context)
         })
       };
@@ -57,21 +39,15 @@ exports.handler = async (event) => {
       },
       body: JSON.stringify({
         model: 'claude-3-5-sonnet-20241022',
-        max_tokens: 300,
-        system: `You are a flyer customization assistant for Sound Factory Halloween event. When a promoter tells you what they want to add to their flyer, you CONFIRM the customization and describe exactly what will be added.
+        max_tokens: 500,
+        system: `You are a helpful AI assistant for Sound Factory Halloween event. Your job is to help promoters customize their event flyers by collecting their name, Instagram handle, and style preferences. Be friendly, concise, and use emojis. Keep responses under 100 words.
 
-IMPORTANT: 
-- Be direct and actionable
-- Always confirm you're making the customization
-- Describe exactly where/how it will appear on the flyer
-- Match the purple/dark Halloween theme
-- Keep responses under 75 words
-- Use emojis sparingly
+Current context:
+- User name: ${context?.userName || 'not provided'}
+- Instagram: ${context?.instagram || 'not provided'}
+- Style: ${context?.style || 'default'}
 
-Example responses:
-"Perfect! I'll add 'JONATHAN PETERS' in bold purple text at the top of the flyer with a glowing effect. ✨"
-"Got it! Adding your Instagram @jonathanpeters in elegant script at the bottom corner. 🎃"
-"Awesome! I'll overlay your tagline in a Halloween-style font that complements the design. 👻"`,
+When you have their name, offer to add Instagram or generate the flyer. Be encouraging and supportive!`,
         messages: [
           {
             role: 'user',
@@ -90,9 +66,8 @@ Example responses:
 
     return {
       statusCode: 200,
-      headers,
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        success: true,
         response: aiResponse,
         usage: data.usage
       })
@@ -100,31 +75,14 @@ Example responses:
 
   } catch (error) {
     console.error('AI Chat error:', error);
-    console.error('Error details:', {
-      message: error.message,
-      stack: error.stack,
-      hasApiKey: !!process.env.ANTHROPIC_API_KEY
-    });
-    
-    // Try to parse the body for fallback
-    let fallbackMessage = '';
-    let fallbackContext = {};
-    
-    try {
-      const parsed = JSON.parse(event.body || '{}');
-      fallbackMessage = parsed.message;
-      fallbackContext = parsed.context;
-    } catch (e) {
-      console.error('Could not parse body for fallback:', e);
-    }
-    
     return {
       statusCode: 500,
-      headers,
       body: JSON.stringify({ 
-        error: 'Something went wrong. Please try again.',
-        details: error.message,
-        fallback: generateFallbackResponse(fallbackMessage, fallbackContext)
+        error: 'AI service temporarily unavailable',
+        fallback: generateFallbackResponse(
+          JSON.parse(event.body || '{}').message,
+          JSON.parse(event.body || '{}').context
+        )
       })
     };
   }

@@ -1,0 +1,74 @@
+# ✅ DEPLOYMENT CHECKLIST
+
+Use this checklist when deploying in a new chat.
+
+---
+
+## 📋 PRE-DEPLOYMENT
+
+- [ ] All files exist in project directory
+- [ ] Environment variables in .env file
+- [ ] Git repository initialized
+- [ ] Netlify account connected
+
+---
+
+## 🚀 DEPLOYMENT
+
+- [ ] Git commit all changes
+- [ ] Git push to main branch
+- [ ] Netlify build starts automatically
+- [ ] Build completes successfully
+- [ ] Check deployment URL is live
+
+---
+
+## 🧪 TESTING - SIGNUP
+
+- [ ] Visit: `{your-url}/index-stripe-oauth.html`
+- [ ] Fill form: First, Last, Email, Phone
+- [ ] Click "Connect with Stripe"
+- [ ] Complete Stripe onboarding
+- [ ] Enter SMS verification code
+- [ ] Redirected to dashboard
+- [ ] Session in localStorage
+- [ ] Record in database
+
+---
+
+## 🧪 TESTING - LOGIN
+
+- [ ] Visit: `{your-url}/promoter-login-stripe-v2.html`
+- [ ] Enter your email
+- [ ] Click "Continue with Stripe"
+- [ ] Enter SMS verification code
+- [ ] Redirected to dashboard
+- [ ] Session updated in localStorage
+- [ ] Database session_token updated
+
+---
+
+## ✅ VERIFICATION
+
+- [ ] Check Netlify function logs
+- [ ] Check Stripe dashboard
+- [ ] Check Supabase database
+- [ ] Test on mobile device
+- [ ] Verify session expires after 24h
+
+---
+
+## 🎉 SUCCESS CRITERIA
+
+✅ Signup flow works end-to-end
+✅ Login flow works end-to-end
+✅ SMS verification via Stripe works
+✅ Sessions persist correctly
+✅ Dashboard loads with session
+✅ Database updates correctly
+✅ No console errors
+✅ Mobile-friendly
+
+---
+
+**When all boxes checked → System is LIVE! 🚀**

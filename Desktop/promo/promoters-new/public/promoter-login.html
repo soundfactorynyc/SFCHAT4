@@ -3,23 +3,23 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Team Login - Sound Factory</title>
+<title>Team Member Login - Sound Factory NYC</title>
 <meta name="color-scheme" content="dark" />
 <style>
 :root{
-  --bg:#000;
+  --bg:#000000;
   --surface:#0a0a0a;
-  --border:rgba(255,255,255,0.08);
-  --text:#fff;
-  --muted:#999;
-  --accent:#fff;
+  --border:#333333;
+  --text:#ffffff;
+  --muted:#999999;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;margin:0;padding:0}
 body{
-  background:#000;
-  color:#fff;
-  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  background:#000000;
+  color:#ffffff;
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -29,8 +29,8 @@ body{
 
 .container{
   width:100%;
-  max-width:400px;
-  animation:fadeIn 0.4s ease;
+  max-width:480px;
+  animation:fadeIn 0.6s ease;
 }
 
 @keyframes fadeIn{
@@ -38,182 +38,157 @@ body{
   to{opacity:1;transform:translateY(0)}
 }
 
-/* Header */
 .header{
   text-align:center;
-  margin-bottom:32px;
+  margin-bottom:40px;
 }
 
 .logo-wrapper{
-  margin:0 auto 24px;
+  margin:0 auto 20px;
+  height:100px;
   display:flex;
   justify-content:center;
+  align-items:center;
 }
 
 .logo{
-  width:72px;
-  height:72px;
-  object-fit:contain;
+  height:80px;
+  width:auto;
+}
+
+.brand-text{
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:2.5px;
+  color:#999999;
+  margin-bottom:8px;
+  font-weight:700;
 }
 
 h1{
-  font-size:28px;
+  font-size:18px;
   font-weight:700;
   margin-bottom:8px;
-  letter-spacing:-0.5px;
+  letter-spacing:0.3px;
+  color:#F0F0F0;
+  text-transform:uppercase;
 }
 
 .subtitle{
-  color:#999;
-  font-size:15px;
+  color:#999999;
+  font-size:12px;
+  font-weight:400;
+  letter-spacing:0.2px;
 }
 
-/* Main Card */
 .main-card{
   background:#0a0a0a;
-  border:1px solid var(--border);
-  border-radius:16px;
-  padding:32px;
-  backdrop-filter:blur(20px);
+  border:0.5px solid rgba(255,255,255,0.15);
+  border-radius:2px;
+  padding:32px 24px;
 }
 
-/* Status Messages */
-.status-message{
-  background:rgba(76,175,80,0.1);
-  border:1px solid rgba(76,175,80,0.2);
-  color:#4CAF50;
-  padding:12px;
-  border-radius:8px;
-  font-size:13px;
-  margin-bottom:20px;
-  text-align:center;
-  line-height:1.5;
-}
-
-.status-message.warning{
-  background:rgba(255,193,7,0.1);
-  border:1px solid rgba(255,193,7,0.2);
-  color:#FFC107;
-}
-
-/* Form */
 .form-group{
   margin-bottom:20px;
 }
 
 label{
   display:block;
-  font-size:12px;
-  font-weight:600;
-  margin-bottom:8px;
-  color:#aaa;
+  font-size:11px;
+  font-weight:700;
+  margin-bottom:6px;
+  color:#cccccc;
   text-transform:uppercase;
-  letter-spacing:0.5px;
+  letter-spacing:2px;
 }
 
 input{
   width:100%;
-  padding:12px 14px;
-  border-radius:8px;
-  background:#000;
-  border:1px solid var(--border);
-  color:#fff;
-  font-size:15px;
+  padding:8px 12px;
+  border-radius:2px;
+  background:rgba(255,255,255,0.05);
+  border:0.5px solid rgba(255,255,255,0.15);
+  color:#F0F0F0;
+  font-size:12px;
+  height:28px;
   transition:all 0.2s;
 }
 
 input:focus{
   outline:none;
-  border-color:rgba(255,255,255,0.3);
-  background:#050505;
+  border-color:rgba(255,255,255,0.4);
+  background:rgba(255,255,255,0.08);
 }
 
-input::placeholder{
-  color:#555;
-}
-
-/* Verification Code Input */
-.code-input-group{
-  display:flex;
-  gap:8px;
-  justify-content:center;
-  margin:24px 0;
-}
-
-.code-input{
-  width:48px;
-  height:56px;
-  text-align:center;
-  font-size:24px;
-  font-weight:600;
-  border-radius:8px;
-  background:#000;
-  border:1px solid var(--border);
-  color:#fff;
-  transition:all 0.2s;
-}
-
-.code-input:focus{
-  border-color:rgba(255,255,255,0.5);
-  background:#050505;
-}
-
-/* Buttons */
 .btn{
   width:100%;
-  padding:14px;
-  border-radius:8px;
-  background:#fff;
-  color:#000;
-  border:none;
-  font-size:15px;
-  font-weight:600;
+  height:32px;
+  border-radius:2px;
+  background:#111111;
+  color:#ffffff;
+  border:1px solid #222222;
+  font-size:11px;
+  font-weight:700;
   cursor:pointer;
   transition:all 0.2s;
-  margin-bottom:12px;
+  text-transform:uppercase;
+  letter-spacing:1.5px;
 }
 
 .btn:hover:not(:disabled){
-  background:#f0f0f0;
-  transform:translateY(-1px);
+  background:#1a1a1a;
+  border-color:#333333;
 }
 
 .btn:disabled{
-  opacity:0.5;
+  opacity:0.3;
   cursor:not-allowed;
 }
 
 .btn-secondary{
   background:transparent;
-  color:#fff;
-  border:1px solid var(--border);
+  color:#F0F0F0;
+  border:1px solid rgba(255,255,255,0.15);
+  margin-top:8px;
+  height:28px;
 }
 
 .btn-secondary:hover{
   background:rgba(255,255,255,0.05);
+  border-color:rgba(255,255,255,0.3);
 }
 
-.btn-text{
-  background:transparent;
-  border:none;
-  color:#666;
-  font-size:13px;
-  padding:8px;
-  text-decoration:none;
-  display:inline-block;
-  transition:color 0.2s;
+.error{
+  background:rgba(255,0,0,0.05);
+  border:1px solid rgba(255,0,0,0.1);
+  color:#ff6b6b;
+  padding:12px;
+  border-radius:2px;
+  font-size:11px;
+  margin-top:12px;
+  text-align:center;
+  text-transform:uppercase;
+  letter-spacing:1px;
 }
 
-.btn-text:hover{
-  color:#fff;
+.success{
+  background:rgba(76,175,80,0.05);
+  border:1px solid rgba(76,175,80,0.1);
+  color:#4caf50;
+  padding:12px;
+  border-radius:2px;
+  font-size:11px;
+  margin-bottom:16px;
+  text-align:center;
+  text-transform:uppercase;
+  letter-spacing:1px;
 }
 
-/* Loading */
 .loading{
   display:inline-block;
   width:14px;
   height:14px;
-  border:2px solid #000;
+  border:2px solid #fff;
   border-radius:50%;
   border-top-color:transparent;
   animation:spin 0.8s linear infinite;
@@ -224,83 +199,67 @@ input::placeholder{
   to{transform:rotate(360deg)}
 }
 
-/* Messages */
-.error{
-  background:rgba(255,0,0,0.1);
-  border:1px solid rgba(255,0,0,0.2);
-  color:#ff6b6b;
-  padding:10px;
-  border-radius:6px;
-  font-size:13px;
-  margin-top:12px;
+.divider{
   text-align:center;
+  margin:24px 0;
+  position:relative;
 }
 
-.info-text{
+.divider:before{
+  content:'';
+  position:absolute;
+  top:50%;
+  left:0;
+  right:0;
+  height:1px;
+  background:rgba(255,255,255,0.1);
+}
+
+.divider span{
+  background:#0a0a0a;
+  padding:0 12px;
+  position:relative;
+  font-size:11px;
   color:#666;
-  font-size:13px;
-  text-align:center;
-  margin:16px 0;
+  text-transform:uppercase;
+  letter-spacing:1px;
 }
 
-/* Footer */
+.info-box{
+  background:rgba(255,255,255,0.02);
+  border:0.5px solid rgba(255,255,255,0.15);
+  border-radius:2px;
+  padding:16px;
+  margin-bottom:16px;
+  font-size:12px;
+  color:#F0F0F0;
+  line-height:1.5;
+  letter-spacing:0.2px;
+}
+
 .footer-links{
   text-align:center;
   margin-top:24px;
   padding-top:24px;
-  border-top:1px solid var(--border);
+  border-top:1px solid #333333;
 }
 
 .footer-links a{
-  color:#666;
+  color:#ffffff;
   text-decoration:none;
-  font-size:13px;
+  font-size:11px;
+  font-weight:600;
   transition:color 0.2s;
-  display:block;
-  margin-bottom:8px;
+  text-transform:uppercase;
+  letter-spacing:1px;
 }
 
 .footer-links a:hover{
-  color:#fff;
+  color:#cccccc;
 }
 
-/* Steps */
-.step{
+#verifySection{
   display:none;
-}
-
-.step.active{
-  display:block;
-  animation:slideIn 0.3s ease;
-}
-
-@keyframes slideIn{
-  from{opacity:0;transform:translateX(10px)}
-  to{opacity:1;transform:translateX(0)}
-}
-
-/* Timer */
-.timer{
-  color:#666;
-  font-size:12px;
-  text-align:center;
-  margin-top:12px;
-}
-
-.timer.warning{
-  color:#FFC107;
-}
-
-@media (max-width:480px){
-  .container{
-    max-width:100%;
-  }
-  .main-card{
-    padding:24px;
-  }
-  h1{
-    font-size:24px;
-  }
 }
 </style>
 </head>
@@ -312,88 +271,216 @@ input::placeholder{
     <div class="logo-wrapper">
       <img src="sf-logo.png" alt="Sound Factory" class="logo" />
     </div>
-    <h1>Team Login</h1>
-    <p class="subtitle">Access your promoter dashboard</p>
+    <div class="brand-text">SOUND FACTORY NYC</div>
+    <h1>TEAM MEMBER LOGIN</h1>
+    <p class="subtitle">Enter your phone number</p>
   </div>
 
   <!-- Main Card -->
   <div class="main-card">
-    <!-- Status Message (if coming from signup) -->
-    <div id="statusMessage" class="status-message" style="display:none;"></div>
+    <!-- Success Message (if registered) -->
+    <div id="registeredMessage" class="success" style="display:none;">
+      ✓ REGISTRATION COMPLETE - LOGIN TO ACCESS YOUR DASHBOARD
+    </div>
 
-    <!-- Step 1: Phone Number -->
-    <div id="step1" class="step active">
+    <!-- Info Box -->
+    <div class="info-box">
+      Secure SMS verification. Your phone number must be registered in our system.
+    </div>
+
+    <!-- Phone Input Section -->
+    <div id="phoneSection">
       <form id="phoneForm">
         <div class="form-group">
-          <label for="phone">Phone Number</label>
+          <label for="phone">MOBILE NUMBER</label>
           <input 
             type="tel" 
             id="phone" 
             name="phone" 
-            placeholder="(929) 362-9534" 
+            placeholder="+1 (555) 123-4567" 
             required 
-            autocomplete="tel"
           />
         </div>
-        
+
         <button type="submit" class="btn" id="sendCodeBtn">
-          Send Verification Code
+          SEND VERIFICATION CODE
         </button>
       </form>
-      
-      <div class="footer-links">
-        <a href="index.html">Don't have an account? Sign up</a>
-      </div>
     </div>
 
-    <!-- Step 2: Verification Code -->
-    <div id="step2" class="step">
-      <div class="info-text">
-        We sent a 6-digit code to <span id="phoneDisplay"></span>
+    <!-- Code Verification Section -->
+    <div id="verifySection">
+      <div class="info-box" style="background:rgba(76,175,80,0.05);border-color:rgba(76,175,80,0.2);">
+        Code sent! Check your phone for a 6-digit verification code.
       </div>
-      
-      <div class="code-input-group">
-        <input type="text" class="code-input" maxlength="1" pattern="[0-9]" />
-        <input type="text" class="code-input" maxlength="1" pattern="[0-9]" />
-        <input type="text" class="code-input" maxlength="1" pattern="[0-9]" />
-        <input type="text" class="code-input" maxlength="1" pattern="[0-9]" />
-        <input type="text" class="code-input" maxlength="1" pattern="[0-9]" />
-        <input type="text" class="code-input" maxlength="1" pattern="[0-9]" />
-      </div>
-      
-      <button class="btn" id="verifyBtn" onclick="verifyCode()">
-        Verify Code
-      </button>
-      
-      <button class="btn btn-secondary" onclick="backToPhone()">
-        Use Different Number
-      </button>
-      
-      <div class="timer" id="timer"></div>
-      <button class="btn-text" id="resendBtn" style="display:none;" onclick="resendCode()">
-        Resend Code
-      </button>
+
+      <form id="verifyForm">
+        <div class="form-group">
+          <label for="code">VERIFICATION CODE</label>
+          <input 
+            type="text" 
+            id="code" 
+            name="code" 
+            placeholder="123456" 
+            maxlength="6" 
+            required 
+            autocomplete="one-time-code"
+          />
+        </div>
+
+        <button type="submit" class="btn" id="verifyBtn">
+          VERIFY & LOGIN
+        </button>
+
+        <button type="button" class="btn btn-secondary" onclick="backToPhone()">
+          USE DIFFERENT NUMBER
+        </button>
+      </form>
+    </div>
+
+    <!-- Error Display -->
+    <div id="errorDisplay"></div>
+
+    <!-- Divider -->
+    <div class="divider">
+      <span>OR</span>
+    </div>
+
+    <!-- Footer Links -->
+    <div class="footer-links">
+      <a href="index.html">← NEW TO THE PROGRAM? SIGN UP</a>
     </div>
   </div>
 </div>
 
 <script>
-// Check for URL parameters
-const params = new URLSearchParams(window.location.search);
-if (params.get('registered') === 'true') {
-  const message = document.getElementById('statusMessage');
-  message.textContent = 'Account created! Complete Stripe setup, then you can log in.';
-  message.style.display = 'block';
+// Check for registered parameter
+const urlParams = new URLSearchParams(window.location.search);
+if (urlParams.get('registered') === 'true') {
+  document.getElementById('registeredMessage').style.display = 'block';
 }
-if (params.get('approved') === 'true') {
-  const message = document.getElementById('statusMessage');
-  message.textContent = 'Your account has been approved! You can now log in.';
-  message.style.display = 'block';
+
+// Phone form submission
+document.getElementById('phoneForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const sendBtn = document.getElementById('sendCodeBtn');
+  const phone = document.getElementById('phone').value.trim();
+  
+  // Format phone to E.164
+  let formattedPhone = phone.replace(/\D/g, '');
+  if (!formattedPhone.startsWith('1') && formattedPhone.length === 10) {
+    formattedPhone = '1' + formattedPhone;
+  }
+  formattedPhone = '+' + formattedPhone;
+  
+  sendBtn.disabled = true;
+  sendBtn.innerHTML = '<span class="loading"></span>SENDING...';
+  clearError();
+  
+  try {
+    const response = await fetch('/.netlify/functions/send-sms-code', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone: formattedPhone })
+    });
+    
+    const data = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(data.error || 'Failed to send code');
+    }
+    
+    // Store phone for verification
+    sessionStorage.setItem('login_phone', formattedPhone);
+    
+    // Show verification section
+    document.getElementById('phoneSection').style.display = 'none';
+    document.getElementById('verifySection').style.display = 'block';
+    document.getElementById('code').focus();
+    
+  } catch (error) {
+    showError(error.message);
+    sendBtn.disabled = false;
+    sendBtn.innerHTML = 'SEND VERIFICATION CODE';
+  }
+});
+
+// Verify form submission
+document.getElementById('verifyForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const verifyBtn = document.getElementById('verifyBtn');
+  const code = document.getElementById('code').value.trim();
+  const phone = sessionStorage.getItem('login_phone');
+  
+  if (!phone) {
+    showError('Session expired. Please start over.');
+    backToPhone();
+    return;
+  }
+  
+  verifyBtn.disabled = true;
+  verifyBtn.innerHTML = '<span class="loading"></span>VERIFYING...';
+  clearError();
+  
+  try {
+    const response = await fetch('/.netlify/functions/verify-sms-code', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ phone, code })
+    });
+    
+    const data = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(data.error || 'Verification failed');
+    }
+    
+    // Store session
+    localStorage.setItem('promoter_session', JSON.stringify({
+      token: data.sessionToken || data.token,
+      promoter: data.promoter,
+      expiresAt: data.expiresAt
+    }));
+    
+    // Clear temp storage
+    sessionStorage.removeItem('login_phone');
+    
+    // Redirect to dashboard
+    window.location.href = 'promoter-dashboard.html';
+    
+  } catch (error) {
+    showError(error.message);
+    verifyBtn.disabled = false;
+    verifyBtn.innerHTML = 'VERIFY & LOGIN';
+  }
+});
+
+function backToPhone() {
+  document.getElementById('phoneSection').style.display = 'block';
+  document.getElementById('verifySection').style.display = 'none';
+  document.getElementById('code').value = '';
+  sessionStorage.removeItem('login_phone');
+  clearError();
+}
+
+function showError(message) {
+  const errorDiv = document.getElementById('errorDisplay');
+  errorDiv.className = 'error';
+  errorDiv.textContent = message;
+}
+
+function clearError() {
+  document.getElementById('errorDisplay').textContent = '';
+  document.getElementById('errorDisplay').className = '';
 }
 
 // Phone formatting
 document.getElementById('phone').addEventListener('input', (e) => {
   let value = e.target.value.replace(/\D/g, '');
+  if (value.startsWith('1')) value = value.substring(1);
+  
   if (value.length > 0) {
     if (value.length <= 3) {
       value = `(${value}`;
@@ -406,182 +493,10 @@ document.getElementById('phone').addEventListener('input', (e) => {
   e.target.value = value;
 });
 
-// Code input handling
-const codeInputs = document.querySelectorAll('.code-input');
-codeInputs.forEach((input, index) => {
-  input.addEventListener('input', (e) => {
-    if (e.target.value && index < codeInputs.length - 1) {
-      codeInputs[index + 1].focus();
-    }
-    checkCodeComplete();
-  });
-  
-  input.addEventListener('keydown', (e) => {
-    if (e.key === 'Backspace' && !e.target.value && index > 0) {
-      codeInputs[index - 1].focus();
-    }
-  });
-  
-  input.addEventListener('paste', (e) => {
-    e.preventDefault();
-    const pastedData = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
-    for (let i = 0; i < pastedData.length; i++) {
-      if (codeInputs[i]) {
-        codeInputs[i].value = pastedData[i];
-      }
-    }
-    checkCodeComplete();
-  });
+// Code input - auto-uppercase and numbers only
+document.getElementById('code').addEventListener('input', (e) => {
+  e.target.value = e.target.value.replace(/[^0-9]/g, '').slice(0, 6);
 });
-
-function checkCodeComplete() {
-  const code = Array.from(codeInputs).map(i => i.value).join('');
-  if (code.length === 6) {
-    verifyCode();
-  }
-}
-
-// Timer
-let timerInterval;
-let resendTimer = 60;
-
-function startTimer() {
-  resendTimer = 60;
-  const timerEl = document.getElementById('timer');
-  const resendBtn = document.getElementById('resendBtn');
-  
-  resendBtn.style.display = 'none';
-  timerEl.style.display = 'block';
-  
-  timerInterval = setInterval(() => {
-    resendTimer--;
-    if (resendTimer <= 0) {
-      clearInterval(timerInterval);
-      timerEl.style.display = 'none';
-      resendBtn.style.display = 'block';
-    } else {
-      timerEl.textContent = `Resend code in ${resendTimer}s`;
-      if (resendTimer <= 10) {
-        timerEl.classList.add('warning');
-      }
-    }
-  }, 1000);
-}
-
-// Form submission
-document.getElementById('phoneForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  await sendCode();
-});
-
-async function sendCode() {
-  const phone = document.getElementById('phone').value;
-  const btn = document.getElementById('sendCodeBtn');
-  
-  btn.disabled = true;
-  btn.innerHTML = '<span class="loading"></span>Sending...';
-  
-  try {
-    const response = await fetch('/.netlify/functions/send-sms-code', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ phone })
-    });
-    
-    const data = await response.json();
-    
-    if (response.ok && data.success) {
-      // Show verification step
-      document.getElementById('step1').classList.remove('active');
-      document.getElementById('step2').classList.add('active');
-      document.getElementById('phoneDisplay').textContent = phone;
-      
-      // Store phone for verification
-      sessionStorage.setItem('login_phone', phone);
-      
-      // Start timer
-      startTimer();
-      
-      // Focus first code input
-      codeInputs[0].focus();
-    } else {
-      throw new Error(data.error || 'Failed to send code');
-    }
-  } catch (error) {
-    showError(error.message);
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = 'Send Verification Code';
-  }
-}
-
-async function verifyCode() {
-  const code = Array.from(codeInputs).map(i => i.value).join('');
-  if (code.length !== 6) return;
-  
-  const btn = document.getElementById('verifyBtn');
-  const phone = sessionStorage.getItem('login_phone');
-  
-  btn.disabled = true;
-  btn.innerHTML = '<span class="loading"></span>Verifying...';
-  
-  try {
-    const response = await fetch('/.netlify/functions/verify-sms-code', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ phone, code })
-    });
-    
-    const data = await response.json();
-    
-    if (response.ok && data.success) {
-      // Store session
-      localStorage.setItem('promoter_session', data.sessionToken);
-      localStorage.setItem('promoter_data', JSON.stringify({
-        name: data.name,
-        email: data.email,
-        promo_code: data.promoCode,
-        promoter_id: data.promoterId
-      }));
-      
-      // Redirect to dashboard
-      window.location.href = 'promoter-dashboard.html';
-    } else {
-      throw new Error(data.error || 'Invalid code');
-    }
-  } catch (error) {
-    showError(error.message);
-    // Clear code inputs
-    codeInputs.forEach(input => input.value = '');
-    codeInputs[0].focus();
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = 'Verify Code';
-  }
-}
-
-async function resendCode() {
-  await sendCode();
-}
-
-function backToPhone() {
-  document.getElementById('step2').classList.remove('active');
-  document.getElementById('step1').classList.add('active');
-  clearInterval(timerInterval);
-  codeInputs.forEach(input => input.value = '');
-}
-
-function showError(message) {
-  const existing = document.querySelector('.error');
-  if (existing) existing.remove();
-  
-  const error = document.createElement('div');
-  error.className = 'error';
-  error.textContent = message;
-  document.querySelector('.step.active').appendChild(error);
-  
-  setTimeout(() => error.remove(), 5000);
-}
 </script>
 
 </body>

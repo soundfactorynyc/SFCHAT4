@@ -1,0 +1,26 @@
+[build]
+  publish = "public"
+  functions = "netlify/functions"
+  node_version = "20"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+[[redirects]]
+  from = "/api/captions"
+  to = "/.netlify/functions/captions"
+  status = 200
+
+[[redirects]]
+  from = "/api/qr"
+  to = "/.netlify/functions/qr"
+  status = 200
+
+[[redirects]]
+  from = "/api/kit"
+  to = "/.netlify/functions/kit"
+  status = 200

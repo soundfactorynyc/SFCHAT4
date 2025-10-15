@@ -1,44 +1,78 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Dashboard - Sound Factory Promoter System</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Admin Dashboard - Sound Factory</title>
+<meta name="color-scheme" content="dark" />
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#000000;
+  --surface:#0a0a0a;
+  --border:#333333;
+  --text:#ffffff;
+  --muted:#999999;
+  --accent:#ffffff;
+  --gray-light:#cccccc;
+  --gray-medium:#666666;
+  --gray-dark:#1a1a1a;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;margin:0;padding:0}
 body{
-  background:#000;
-  color:#fff;
-  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display",sans-serif;
+  background:#000000;
+  color:#ffffff;
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  font-feature-settings:"kern" 1;
+  text-rendering:optimizeLegibility;
   padding:20px;
-  line-height:1.6;
+  min-height:100vh;
 }
 
 .header{
-  background:linear-gradient(135deg,#0a0a0a,#1a1a1a);
-  border:1px solid rgba(255,255,255,0.1);
-  border-radius:12px;
+  background:#0a0a0a;
+  border:0.5px solid rgba(255,255,255,0.15);
+  border-radius:2px;
   padding:24px;
   margin-bottom:24px;
+}
+
+.header-top{
   display:flex;
   justify-content:space-between;
   align-items:center;
 }
 
+.logo-wrapper{
+  display:flex;
+  align-items:center;
+  gap:16px;
+}
+
+.logo{
+  height:60px;
+  width:auto;
+}
+
 .header h1{
-  font-size:24px;
-  font-weight:600;
+  font-size:18px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:0.3px;
 }
 
 .header .admin-badge{
-  background:rgba(76,175,80,0.1);
-  border:1px solid rgba(76,175,80,0.2);
-  color:#4CAF50;
-  padding:6px 16px;
-  border-radius:20px;
-  font-size:12px;
-  font-weight:600;
+  background:rgba(255,255,255,0.05);
+  border:0.5px solid rgba(255,255,255,0.15);
+  color:#cccccc;
+  padding:6px 12px;
+  border-radius:2px;
+  font-size:11px;
+  font-weight:700;
   text-transform:uppercase;
+  letter-spacing:1.5px;
 }
 
 .stats-grid{
@@ -50,32 +84,31 @@ body{
 
 .stat-card{
   background:#0a0a0a;
-  border:1px solid rgba(255,255,255,0.1);
-  border-radius:12px;
+  border:0.5px solid rgba(255,255,255,0.15);
+  border-radius:2px;
   padding:20px;
 }
 
 .stat-label{
-  color:#666;
-  font-size:12px;
+  color:#999999;
+  font-size:11px;
   text-transform:uppercase;
-  letter-spacing:0.5px;
+  letter-spacing:2px;
   margin-bottom:8px;
+  font-weight:700;
 }
 
 .stat-value{
   font-size:32px;
-  font-weight:600;
+  font-weight:300;
   margin-bottom:4px;
+  color:#ffffff;
 }
 
 .stat-change{
-  font-size:13px;
-  color:#4CAF50;
-}
-
-.stat-change.negative{
-  color:#ff4444;
+  font-size:11px;
+  color:#666666;
+  letter-spacing:0.2px;
 }
 
 .main-content{
@@ -86,23 +119,25 @@ body{
 
 .data-table{
   background:#0a0a0a;
-  border:1px solid rgba(255,255,255,0.1);
-  border-radius:12px;
+  border:0.5px solid rgba(255,255,255,0.15);
+  border-radius:2px;
   overflow:hidden;
 }
 
 .table-header{
-  background:#111;
+  background:rgba(255,255,255,0.02);
   padding:16px 20px;
-  border-bottom:1px solid rgba(255,255,255,0.1);
+  border-bottom:0.5px solid rgba(255,255,255,0.15);
   display:flex;
   justify-content:space-between;
   align-items:center;
 }
 
 .table-title{
-  font-size:16px;
-  font-weight:600;
+  font-size:13px;
+  font-weight:700;
+  text-transform:uppercase;
+  letter-spacing:1.5px;
 }
 
 .table-actions{
@@ -111,28 +146,35 @@ body{
 }
 
 .btn{
-  background:#1a1a1a;
-  border:1px solid rgba(255,255,255,0.1);
-  color:#fff;
-  padding:6px 12px;
-  border-radius:6px;
-  font-size:12px;
+  background:#111111;
+  border:0.5px solid rgba(255,255,255,0.15);
+  color:#ffffff;
+  padding:0;
+  height:28px;
+  padding:0 12px;
+  border-radius:2px;
+  font-size:11px;
+  font-weight:700;
   cursor:pointer;
   transition:all 0.2s;
+  text-transform:uppercase;
+  letter-spacing:1.5px;
 }
 
 .btn:hover{
-  background:#222;
-  border-color:rgba(255,255,255,0.2);
+  background:#1a1a1a;
+  border-color:rgba(255,255,255,0.4);
 }
 
 .btn-primary{
-  background:#fff;
-  color:#000;
+  background:#111111;
+  color:#ffffff;
+  border:1px solid #222222;
 }
 
 .btn-primary:hover{
-  background:#eee;
+  background:#1a1a1a;
+  border-color:#333333;
 }
 
 table{
@@ -141,24 +183,26 @@ table{
 }
 
 thead{
-  background:#050505;
+  background:rgba(0,0,0,0.3);
 }
 
 th{
   text-align:left;
-  padding:12px 16px;
+  padding:8px 12px;
   font-size:11px;
-  font-weight:600;
+  font-weight:700;
   text-transform:uppercase;
-  letter-spacing:0.5px;
-  color:#666;
-  border-bottom:1px solid rgba(255,255,255,0.05);
+  letter-spacing:1px;
+  color:#999999;
+  border-bottom:0.5px solid rgba(255,255,255,0.1);
 }
 
 td{
-  padding:12px 16px;
-  font-size:13px;
-  border-bottom:1px solid rgba(255,255,255,0.05);
+  padding:12px;
+  font-size:12px;
+  border-bottom:0.5px solid rgba(255,255,255,0.05);
+  color:#F0F0F0;
+  letter-spacing:0.2px;
 }
 
 tbody tr:hover{
@@ -205,8 +249,8 @@ tbody tr:hover{
 
 .activity-feed{
   background:#0a0a0a;
-  border:1px solid rgba(255,255,255,0.1);
-  border-radius:12px;
+  border:0.5px solid rgba(255,255,255,0.15);
+  border-radius:2px;
   padding:20px;
   max-height:400px;
   overflow-y:auto;
@@ -217,7 +261,7 @@ tbody tr:hover{
   gap:12px;
   margin-bottom:16px;
   padding-bottom:16px;
-  border-bottom:1px solid rgba(255,255,255,0.05);
+  border-bottom:0.5px solid rgba(255,255,255,0.05);
 }
 
 .activity-item:last-child{
@@ -229,12 +273,13 @@ tbody tr:hover{
 .activity-icon{
   width:32px;
   height:32px;
-  background:#1a1a1a;
-  border-radius:50%;
+  background:rgba(255,255,255,0.05);
+  border-radius:2px;
   display:flex;
   align-items:center;
   justify-content:center;
   flex-shrink:0;
+  font-size:14px;
 }
 
 .activity-content{
@@ -242,28 +287,39 @@ tbody tr:hover{
 }
 
 .activity-title{
-  font-size:13px;
+  font-size:12px;
   margin-bottom:2px;
+  color:#F0F0F0;
+  letter-spacing:0.2px;
 }
 
 .activity-time{
   font-size:11px;
-  color:#666;
+  color:#999999;
 }
 
 .search-box{
   width:100%;
-  padding:10px 16px;
-  background:#000;
-  border:1px solid rgba(255,255,255,0.1);
-  border-radius:8px;
-  color:#fff;
-  font-size:14px;
+  padding:8px 12px;
+  background:rgba(255,255,255,0.05);
+  border:0.5px solid rgba(255,255,255,0.15);
+  border-radius:2px;
+  color:#F0F0F0;
+  font-size:12px;
+  height:28px;
   margin-bottom:16px;
+  font-weight:400;
+  letter-spacing:0.2px;
 }
 
 .search-box::placeholder{
-  color:#555;
+  color:#666666;
+}
+
+.search-box:focus{
+  outline:none;
+  border-color:rgba(255,255,255,0.4);
+  background:rgba(255,255,255,0.08);
 }
 
 .tabs{
@@ -326,11 +382,16 @@ tbody tr:hover{
 
 <!-- Header -->
 <div class="header">
-  <div>
-    <h1>Promoter Admin Dashboard</h1>
-    <p style="color:#666;font-size:13px;margin-top:4px;">Sound Factory NYC - Jonathan Peters Productions</p>
+  <div class="header-top">
+    <div class="logo-wrapper">
+      <img src="sf-logo.png" alt="Sound Factory" class="logo" />
+      <div>
+        <h1>Promoter Admin Dashboard</h1>
+        <p style="color:#666;font-size:13px;margin-top:4px;">Sound Factory NYC</p>
+      </div>
+    </div>
+    <button class="btn" onclick="logout()">Logout</button>
   </div>
-  <div class="admin-badge">Admin Access</div>
 </div>
 
 <!-- Stats Grid -->
@@ -362,6 +423,54 @@ tbody tr:hover{
 
 <!-- Main Content -->
 <div class="main-content">
+  <!-- Master Promoters List -->
+  <div class="data-table" style="grid-column:1/-1;margin-bottom:24px;">
+    <div class="table-header">
+      <div class="table-title">📋 Master Promoters Directory</div>
+      <div class="table-actions">
+        <button class="btn" onclick="exportAllPromoters()">Export All CSV</button>
+        <button class="btn btn-primary" onclick="addNewPromoter()">+ Add Promoter</button>
+      </div>
+    </div>
+    
+    <div style="padding:16px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px;">
+        <input type="text" class="search-box" placeholder="Search name..." id="searchName" onkeyup="searchMasterPromoters()" />
+        <input type="text" class="search-box" placeholder="Search promo code..." id="searchPromo" onkeyup="searchMasterPromoters()" />
+        <select class="search-box" id="statusFilter" onchange="searchMasterPromoters()" style="cursor:pointer;">
+          <option value="all">All Status</option>
+          <option value="approved">Approved</option>
+          <option value="pending">Pending</option>
+          <option value="suspended">Suspended</option>
+        </select>
+      </div>
+    </div>
+    
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Phone</th>
+            <th>Promo Code</th>
+            <th>Status</th>
+            <th>Commission</th>
+            <th>Tickets</th>
+            <th>Tables</th>
+            <th>Total Sales</th>
+            <th>Joined</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="masterPromotersTable">
+          <!-- Data will be loaded here -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
   <!-- Promoters Table -->
   <div class="data-table">
     <div class="table-header">
@@ -644,6 +753,191 @@ function exportData() {
   window.URL.revokeObjectURL(url);
 }
 
+// Master Promoters List Functions
+function loadMasterPromoters() {
+  const tbody = document.getElementById('masterPromotersTable');
+  
+  if (allPromoters.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="12" style="text-align:center;padding:40px;color:#666;">
+          No promoters in the system
+        </td>
+      </tr>
+    `;
+    return;
+  }
+  
+  tbody.innerHTML = allPromoters.map((p, index) => {
+    const totalSales = ((p.tickets_sold || 0) * 50) + ((p.tables_sold || 0) * 800);
+    return `
+    <tr>
+      <td style="font-family:monospace;font-size:11px;color:#666;">#${String(index + 1).padStart(3, '0')}</td>
+      <td>
+        <div style="font-weight:600;">${p.name}</div>
+      </td>
+      <td style="font-size:11px;color:#999;">${p.email}</td>
+      <td style="font-size:11px;color:#999;">${p.phone}</td>
+      <td>
+        <span class="promo-code">${p.promo_code}</span>
+      </td>
+      <td>
+        <span class="status-badge status-${p.status}">${p.status}</span>
+      </td>
+      <td style="font-weight:600;color:#4caf50;">$${p.commission_earned || 0}</td>
+      <td>${p.tickets_sold || 0}</td>
+      <td>${p.tables_sold || 0}</td>
+      <td style="font-weight:600;">$${totalSales.toLocaleString()}</td>
+      <td style="font-size:11px;color:#666;">${new Date(p.created_at).toLocaleDateString()}</td>
+      <td>
+        <div style="display:flex;gap:4px;">
+          <button class="btn" onclick="editPromoter('${p.id}')" style="padding:4px 8px;font-size:10px;">Edit</button>
+          <button class="btn" onclick="viewPromoterDetails('${p.id}')" style="padding:4px 8px;font-size:10px;">View</button>
+        </div>
+      </td>
+    </tr>
+  `}).join('');
+}
+
+function searchMasterPromoters() {
+  const nameSearch = document.getElementById('searchName').value.toLowerCase();
+  const promoSearch = document.getElementById('searchPromo').value.toLowerCase();
+  const statusFilter = document.getElementById('statusFilter').value;
+  
+  let filtered = allPromoters;
+  
+  if (nameSearch) {
+    filtered = filtered.filter(p => 
+      p.name.toLowerCase().includes(nameSearch) ||
+      p.email.toLowerCase().includes(nameSearch)
+    );
+  }
+  
+  if (promoSearch) {
+    filtered = filtered.filter(p => 
+      p.promo_code.toLowerCase().includes(promoSearch)
+    );
+  }
+  
+  if (statusFilter !== 'all') {
+    filtered = filtered.filter(p => p.status === statusFilter);
+  }
+  
+  const tbody = document.getElementById('masterPromotersTable');
+  if (filtered.length === 0) {
+    tbody.innerHTML = `
+      <tr>
+        <td colspan="12" style="text-align:center;padding:40px;color:#666;">
+          No promoters match your search criteria
+        </td>
+      </tr>
+    `;
+    return;
+  }
+  
+  tbody.innerHTML = filtered.map((p, index) => {
+    const totalSales = ((p.tickets_sold || 0) * 50) + ((p.tables_sold || 0) * 800);
+    return `
+    <tr>
+      <td style="font-family:monospace;font-size:11px;color:#666;">#${String(index + 1).padStart(3, '0')}</td>
+      <td>
+        <div style="font-weight:600;">${p.name}</div>
+      </td>
+      <td style="font-size:11px;color:#999;">${p.email}</td>
+      <td style="font-size:11px;color:#999;">${p.phone}</td>
+      <td>
+        <span class="promo-code">${p.promo_code}</span>
+      </td>
+      <td>
+        <span class="status-badge status-${p.status}">${p.status}</span>
+      </td>
+      <td style="font-weight:600;color:#4caf50;">$${p.commission_earned || 0}</td>
+      <td>${p.tickets_sold || 0}</td>
+      <td>${p.tables_sold || 0}</td>
+      <td style="font-weight:600;">$${totalSales.toLocaleString()}</td>
+      <td style="font-size:11px;color:#666;">${new Date(p.created_at).toLocaleDateString()}</td>
+      <td>
+        <div style="display:flex;gap:4px;">
+          <button class="btn" onclick="editPromoter('${p.id}')" style="padding:4px 8px;font-size:10px;">Edit</button>
+          <button class="btn" onclick="viewPromoterDetails('${p.id}')" style="padding:4px 8px;font-size:10px;">View</button>
+        </div>
+      </td>
+    </tr>
+  `}).join('');
+}
+
+function exportAllPromoters() {
+  const headers = ['ID', 'Name', 'Email', 'Phone', 'Promo Code', 'Status', 'Commission', 'Tickets Sold', 'Tables Sold', 'Total Sales', 'Joined Date'];
+  const rows = allPromoters.map((p, index) => {
+    const totalSales = ((p.tickets_sold || 0) * 50) + ((p.tables_sold || 0) * 800);
+    return [
+      index + 1,
+      p.name,
+      p.email,
+      p.phone,
+      p.promo_code,
+      p.status,
+      p.commission_earned || 0,
+      p.tickets_sold || 0,
+      p.tables_sold || 0,
+      totalSales,
+      p.created_at
+    ];
+  });
+  
+  let csvContent = headers.join(',') + '\n';
+  rows.forEach(row => {
+    csvContent += row.map(cell => `"${cell}"`).join(',') + '\n';
+  });
+  
+  const blob = new Blob([csvContent], { type: 'text/csv' });
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `master_promoters_${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+  window.URL.revokeObjectURL(url);
+}
+
+function addNewPromoter() {
+  alert('Add New Promoter - Hook this to your promoter creation form/modal');
+}
+
+function editPromoter(id) {
+  const promoter = allPromoters.find(p => p.id === id);
+  if (promoter) {
+    alert(`Edit Promoter: ${promoter.name}\nHook this to your edit form/modal`);
+  }
+}
+
+function viewPromoterDetails(id) {
+  const promoter = allPromoters.find(p => p.id === id);
+  if (promoter) {
+    const totalSales = ((promoter.tickets_sold || 0) * 50) + ((promoter.tables_sold || 0) * 800);
+    alert(`
+PROMOTER DETAILS
+================
+Name: ${promoter.name}
+Email: ${promoter.email}
+Phone: ${promoter.phone}
+Promo Code: ${promoter.promo_code}
+Status: ${promoter.status}
+
+PERFORMANCE
+===========
+Commission Earned: $${promoter.commission_earned || 0}
+Tickets Sold: ${promoter.tickets_sold || 0}
+Tables Sold: ${promoter.tables_sold || 0}
+Total Sales: $${totalSales.toLocaleString()}
+
+ACCOUNT
+=======
+Joined: ${new Date(promoter.created_at).toLocaleDateString()}
+ID: ${promoter.id}
+    `);
+  }
+}
+
 function refreshData() {
   // Show loading state
   const btn = event.target;
@@ -653,6 +947,7 @@ function refreshData() {
   // Simulate refresh
   setTimeout(() => {
     loadPromoters();
+    loadMasterPromoters();
     loadPromoCodes();
     updateStats();
     btn.textContent = 'Refresh';
@@ -660,9 +955,16 @@ function refreshData() {
   }, 1000);
 }
 
+// Initialize dashboard
+loadPromoters();
+loadMasterPromoters();
+updateStats();
+loadPromoCodes();
+
 // Auto-refresh every 30 seconds
 setInterval(() => {
   loadPromoters();
+  loadMasterPromoters();
   updateStats();
 }, 30000);
 </script>

@@ -1,0 +1,22 @@
+# 🎯 COPY THIS PROMPT FOR NEW CHAT
+
+---
+
+## ⚡ SUPER SIMPLE VERSION (Just Copy & Paste This)
+
+```
+Deploy and test my Stripe OAuth auth system at:
+/Users/jpwesite/Desktop/promo/promoters-new/
+
+All code is complete. Just need you to:
+1. Check files are ready
+2. Deploy to Netlify (git push)
+3. Test signup and login flows
+4. Verify everything works
+
+Docs: STRIPE_OAUTH_COMPLETE.md
+```
+
+---
+
+That's it! Copy the text in the box above and paste into a new chat. Claude will handle the rest! 🚀

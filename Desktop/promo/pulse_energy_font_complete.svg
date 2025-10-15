@@ -1,0 +1,458 @@
+<svg viewBox="0 0 1800 1400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>
+      .energy-ring { fill: none; stroke-width: 4; opacity: 0.6; }
+      .core { fill: #000; }
+      .beam { stroke-width: 3; stroke-linecap: round; }
+      .hot-pink { stroke: #FF1493; }
+      .cyan { stroke: #00FFFF; }
+      .gold { stroke: #FFD700; }
+      .orange { stroke: #FF6600; }
+    </style>
+  </defs>
+  
+  <!-- ROW 1: A-F -->
+  <!-- A - Exploding Pyramid -->
+  <g transform="translate(60, 80)">
+    <circle class="energy-ring cyan" cx="50" cy="50" r="55"/>
+    <circle class="energy-ring hot-pink" cx="50" cy="50" r="45"/>
+    <circle class="energy-ring gold" cx="50" cy="50" r="35"/>
+    <polygon class="core" points="50,15 75,75 25,75"/>
+    <line class="beam cyan" x1="50" y1="15" x2="50" y2="-10" stroke="#00FFFF"/>
+    <line class="beam hot-pink" x1="35" y1="40" x2="15" y2="25" stroke="#FF1493"/>
+    <line class="beam hot-pink" x1="65" y1="40" x2="85" y2="25" stroke="#FF1493"/>
+  </g>
+
+  <!-- B - Double Reactor -->
+  <g transform="translate(180, 80)">
+    <circle class="energy-ring gold" cx="50" cy="30" r="25"/>
+    <circle class="energy-ring gold" cx="50" cy="70" r="25"/>
+    <circle class="energy-ring hot-pink" cx="50" cy="50" r="50"/>
+    <circle class="core" cx="50" cy="30" r="15"/>
+    <circle class="core" cx="50" cy="70" r="15"/>
+    <rect class="core" x="30" y="20" width="10" height="60"/>
+  </g>
+
+  <!-- C - Sonic Crescent -->
+  <g transform="translate(300, 80)">
+    <path class="energy-ring cyan" d="M 80,50 A 30,30 0 1,0 80,50" stroke="#00FFFF"/>
+    <path class="energy-ring hot-pink" d="M 75,50 A 25,25 0 1,0 75,50" stroke="#FF1493"/>
+    <path class="energy-ring gold" d="M 70,50 A 20,20 0 1,0 70,50" stroke="#FFD700"/>
+    <path class="core" d="M 60,50 A 15,15 0 1,0 60,50" fill="#000" stroke="none"/>
+    <line class="beam cyan" x1="80" y1="30" x2="95" y2="20"/>
+    <line class="beam cyan" x1="80" y1="70" x2="95" y2="80"/>
+  </g>
+
+  <!-- D - Radiating Dome -->
+  <g transform="translate(420, 80)">
+    <ellipse class="energy-ring hot-pink" cx="50" cy="50" rx="45" ry="50"/>
+    <ellipse class="energy-ring cyan" cx="50" cy="50" rx="35" ry="40"/>
+    <ellipse class="energy-ring gold" cx="50" cy="50" rx="25" ry="30"/>
+    <ellipse class="core" cx="50" cy="50" rx="18" ry="22"/>
+    <rect class="core" x="25" y="30" width="10" height="40"/>
+    <circle class="core" cx="50" cy="50" r="8"/>
+  </g>
+
+  <!-- E - Stacked Energy -->
+  <g transform="translate(540, 80)">
+    <rect class="energy-ring cyan" x="15" y="20" width="60" height="8" rx="4"/>
+    <rect class="energy-ring hot-pink" x="15" y="46" width="60" height="8" rx="4"/>
+    <rect class="energy-ring gold" x="15" y="72" width="60" height="8" rx="4"/>
+    <rect class="core" x="25" y="25" width="10" height="50"/>
+    <rect class="core" x="30" y="28" width="35" height="4"/>
+    <rect class="core" x="30" y="49" width="30" height="4"/>
+    <rect class="core" x="30" y="75" width="35" height="4"/>
+  </g>
+
+  <!-- F - Antenna Burst -->
+  <g transform="translate(660, 80)">
+    <line class="energy-ring cyan" x1="50" y1="10" x2="50" y2="90"/>
+    <circle class="energy-ring hot-pink" cx="50" cy="15" r="18"/>
+    <circle class="energy-ring gold" cx="50" cy="15" r="12"/>
+    <rect class="core" x="42" y="30" width="16" height="55"/>
+    <rect class="core" x="47" y="30" width="30" height="6"/>
+    <rect class="core" x="47" y="50" width="25" height="6"/>
+    <line class="beam cyan" x1="50" y1="10" x2="35" y2="-5"/>
+    <line class="beam cyan" x1="50" y1="10" x2="65" y2="-5"/>
+    <line class="beam hot-pink" x1="50" y1="10" x2="50" y2="-8"/>
+  </g>
+
+  <!-- ROW 2: G-L -->
+  <!-- G - Sonic Swirl -->
+  <g transform="translate(60, 220)">
+    <path class="energy-ring cyan" d="M 80,50 A 30,30 0 1,0 50,80 L 50,50" stroke="#00FFFF"/>
+    <path class="energy-ring hot-pink" d="M 75,50 A 25,25 0 1,0 50,75 L 50,50" stroke="#FF1493"/>
+    <path class="energy-ring gold" d="M 70,50 A 20,20 0 1,0 50,70 L 50,50" stroke="#FFD700"/>
+    <path class="core" d="M 60,50 A 15,15 0 1,0 50,65 L 50,50 Z"/>
+    <rect class="core" x="48" y="50" width="25" height="8"/>
+  </g>
+
+  <!-- H - Parallel Towers -->
+  <g transform="translate(180, 220)">
+    <rect class="energy-ring cyan" x="20" y="15" width="15" height="70" rx="7"/>
+    <rect class="energy-ring hot-pink" x="65" y="15" width="15" height="70" rx="7"/>
+    <line class="energy-ring gold" x1="27" y1="50" x2="73" y2="50" stroke="#FFD700" stroke-width="8"/>
+    <rect class="core" x="30" y="25" width="8" height="50"/>
+    <rect class="core" x="62" y="25" width="8" height="50"/>
+    <rect class="core" x="33" y="47" width="34" height="6"/>
+  </g>
+
+  <!-- I - Pulse Column -->
+  <g transform="translate(300, 220)">
+    <circle class="energy-ring cyan" cx="50" cy="50" r="45"/>
+    <circle class="energy-ring hot-pink" cx="50" cy="50" r="35"/>
+    <circle class="energy-ring gold" cx="50" cy="50" r="25"/>
+    <rect class="core" x="42" y="20" width="16" height="60" rx="8"/>
+    <line class="beam cyan" x1="50" y1="20" x2="50" y2="0"/>
+    <line class="beam hot-pink" x1="50" y1="80" x2="50" y2="100"/>
+  </g>
+
+  <!-- J - Hook Energy -->
+  <g transform="translate(420, 220)">
+    <path class="energy-ring cyan" d="M 60,20 L 60,60 Q 60,85 35,85 Q 20,85 20,70" stroke="#00FFFF"/>
+    <path class="energy-ring hot-pink" d="M 55,25 L 55,60 Q 55,80 35,80 Q 25,80 25,70" stroke="#FF1493"/>
+    <path class="energy-ring gold" d="M 50,30 L 50,58 Q 50,75 35,75 Q 28,75 28,70" stroke="#FFD700"/>
+    <rect class="core" x="45" y="25" width="10" height="40" rx="5"/>
+    <path class="core" d="M 45,62 L 45,68 Q 45,78 35,78 Q 28,78 28,70 L 28,65 Q 28,73 35,73 Q 40,73 40,68 L 40,62 Z"/>
+  </g>
+
+  <!-- K - Lightning Split -->
+  <g transform="translate(540, 220)">
+    <line class="energy-ring cyan" x1="30" y1="50" x2="75" y2="20" stroke="#00FFFF" stroke-width="6"/>
+    <line class="energy-ring hot-pink" x1="30" y1="50" x2="75" y2="80" stroke="#FF1493" stroke-width="6"/>
+    <circle class="energy-ring gold" cx="30" cy="50" r="20"/>
+    <rect class="core" x="25" y="20" width="10" height="60"/>
+    <polygon class="core" points="35,45 60,25 45,50 70,30"/>
+    <polygon class="core" points="35,55 60,75 45,50 70,70"/>
+  </g>
+
+  <!-- L - Grounded Beam -->
+  <g transform="translate(660, 220)">
+    <rect class="energy-ring cyan" x="25" y="15" width="12" height="75" rx="6"/>
+    <rect class="energy-ring hot-pink" x="30" y="80" width="50" height="12" rx="6"/>
+    <circle class="energy-ring gold" cx="35" cy="85" r="18"/>
+    <rect class="core" x="32" y="25" width="8" height="55"/>
+    <rect class="core" x="35" y="82" width="40" height="6"/>
+  </g>
+
+  <!-- ROW 3: M-R -->
+  <!-- M - Mountain Waves -->
+  <g transform="translate(60, 360)">
+    <polyline class="energy-ring cyan" points="15,80 30,20 50,60 70,20 85,80" stroke-linejoin="round"/>
+    <polyline class="energy-ring hot-pink" points="18,75 30,30 50,58 70,30 82,75" stroke-linejoin="round"/>
+    <polyline class="energy-ring gold" points="21,70 30,38 50,56 70,38 79,70" stroke-linejoin="round"/>
+    <polygon class="core" points="25,70 30,30 50,55 70,30 75,70 68,70 70,40 50,62 30,40 32,70"/>
+    <circle class="core" cx="30" cy="25" r="6"/>
+    <circle class="core" cx="70" cy="25" r="6"/>
+  </g>
+
+  <!-- N - Diagonal Energy -->
+  <g transform="translate(180, 360)">
+    <line class="energy-ring cyan" x1="25" y1="25" x2="75" y2="75" stroke-width="18"/>
+    <line class="energy-ring hot-pink" x1="25" y1="25" x2="75" y2="75" stroke-width="12"/>
+    <line class="energy-ring gold" x1="25" y1="25" x2="75" y2="75" stroke-width="6"/>
+    <rect class="core" x="22" y="30" width="8" height="50"/>
+    <rect class="core" x="70" y="20" width="8" height="50"/>
+    <rect class="core" x="30" y="32" width="42" height="8" transform="rotate(45 50 50)"/>
+  </g>
+
+  <!-- O - Orbital Core -->
+  <g transform="translate(300, 360)">
+    <circle class="energy-ring cyan" cx="50" cy="50" r="45"/>
+    <circle class="energy-ring hot-pink" cx="50" cy="50" r="35"/>
+    <circle class="energy-ring gold" cx="50" cy="50" r="25"/>
+    <circle class="core" cx="50" cy="50" r="20"/>
+    <circle cx="50" cy="50" r="13" fill="none" stroke="#FFD700" stroke-width="2"/>
+    <line class="beam cyan" x1="15" y1="50" x2="5" y2="50"/>
+    <line class="beam hot-pink" x1="85" y1="50" x2="95" y2="50"/>
+    <line class="beam gold" x1="50" y1="15" x2="50" y2="5"/>
+    <line class="beam gold" x1="50" y1="85" x2="50" y2="95"/>
+  </g>
+
+  <!-- P - Power Lobe -->
+  <g transform="translate(420, 360)">
+    <circle class="energy-ring cyan" cx="55" cy="35" r="28"/>
+    <circle class="energy-ring hot-pink" cx="55" cy="35" r="20"/>
+    <circle class="energy-ring gold" cx="55" cy="35" r="13"/>
+    <rect class="core" x="30" y="20" width="10" height="60"/>
+    <circle class="core" cx="52" cy="35" r="12"/>
+    <line class="beam cyan" x1="70" y1="25" x2="82" y2="15"/>
+    <line class="beam hot-pink" x1="70" y1="45" x2="82" y2="55"/>
+  </g>
+
+  <!-- Q - Orbital Tail -->
+  <g transform="translate(540, 360)">
+    <circle class="energy-ring cyan" cx="50" cy="45" r="40"/>
+    <circle class="energy-ring hot-pink" cx="50" cy="45" r="30"/>
+    <circle class="energy-ring gold" cx="50" cy="45" r="20"/>
+    <circle class="core" cx="50" cy="45" r="18"/>
+    <line class="energy-ring gold" x1="65" y1="60" x2="80" y2="80" stroke-width="10"/>
+    <line class="core" x1="62" y1="58" x2="75" y2="75" stroke="#000" stroke-width="6"/>
+    <circle class="core" cx="77" cy="77" r="5"/>
+  </g>
+
+  <!-- R - Radar Pulse -->
+  <g transform="translate(660, 360)">
+    <circle class="energy-ring cyan" cx="55" cy="35" r="28"/>
+    <circle class="energy-ring hot-pink" cx="55" cy="35" r="20"/>
+    <rect class="core" x="30" y="20" width="10" height="60"/>
+    <circle class="core" cx="52" cy="35" r="12"/>
+    <line class="energy-ring gold" x1="48" y1="55" x2="75" y2="85" stroke-width="10"/>
+    <line class="core" x1="50" y1="53" x2="72" y2="80" stroke="#000" stroke-width="6"/>
+    <line class="beam cyan" x1="70" y1="25" x2="85" y2="12"/>
+  </g>
+
+  <!-- ROW 4: S-X -->
+  <!-- S - Sine Wave -->
+  <g transform="translate(60, 500)">
+    <path class="energy-ring cyan" d="M 20,30 Q 35,18 50,30 T 80,30 Q 65,42 50,30 T 20,70" stroke="#00FFFF"/>
+    <path class="energy-ring hot-pink" d="M 23,32 Q 35,23 50,32 T 77,32 Q 65,40 50,32 T 23,68" stroke="#FF1493"/>
+    <path class="energy-ring gold" d="M 26,34 Q 35,28 50,34 T 74,34 Q 65,38 50,34 T 26,66" stroke="#FFD700"/>
+    <path class="core" d="M 28,35 Q 38,30 50,35 T 72,35 Q 62,40 50,35 T 28,65 Q 38,70 50,65 T 72,65 Q 68,68 65,68 Q 55,60 50,68 T 35,68 Q 32,68 28,65 Q 38,62 50,62 T 72,62 Q 65,55 50,62 T 28,35 Z"/>
+  </g>
+
+  <!-- T - Transmission Tower -->
+  <g transform="translate(180, 500)">
+    <circle class="energy-ring cyan" cx="50" cy="25" r="22"/>
+    <circle class="energy-ring hot-pink" cx="50" cy="25" r="15"/>
+    <rect class="energy-ring gold" x="20" y="18" width="60" height="10" rx="5"/>
+    <rect class="core" x="45" y="25" width="10" height="55"/>
+    <rect class="core" x="30" y="22" width="40" height="6"/>
+    <line class="beam cyan" x1="50" y1="20" x2="35" y2="5"/>
+    <line class="beam cyan" x1="50" y1="20" x2="65" y2="5"/>
+    <line class="beam hot-pink" x1="50" y1="20" x2="50" y2="5"/>
+  </g>
+
+  <!-- U - Magnetic Basin -->
+  <g transform="translate(300, 500)">
+    <path class="energy-ring cyan" d="M 20,25 L 20,55 Q 20,85 50,85 Q 80,85 80,55 L 80,25" stroke="#00FFFF"/>
+    <path class="energy-ring hot-pink" d="M 25,28 L 25,55 Q 25,80 50,80 Q 75,80 75,55 L 75,28" stroke="#FF1493"/>
+    <path class="energy-ring gold" d="M 30,31 L 30,55 Q 30,75 50,75 Q 70,75 70,55 L 70,31" stroke="#FFD700"/>
+    <path class="core" d="M 32,30 L 32,54 Q 32,72 50,72 Q 68,72 68,54 L 68,30 L 60,30 L 60,54 Q 60,66 50,66 Q 40,66 40,54 L 40,30 Z"/>
+  </g>
+
+  <!-- V - Converging Waves -->
+  <g transform="translate(420, 500)">
+    <polyline class="energy-ring cyan" points="18,20 50,85 82,20" stroke-linejoin="round"/>
+    <polyline class="energy-ring hot-pink" points="22,25 50,80 78,25" stroke-linejoin="round"/>
+    <polyline class="energy-ring gold" points="26,30 50,75 74,30" stroke-linejoin="round"/>
+    <polygon class="core" points="28,32 50,72 72,32 65,32 50,62 35,32"/>
+    <circle class="core" cx="50" cy="75" r="6"/>
+  </g>
+
+  <!-- W - Triple Peak -->
+  <g transform="translate(540, 500)">
+    <polyline class="energy-ring cyan" points="12,80 23,20 37,65 50,20 63,65 77,20 88,80" stroke-linejoin="round"/>
+    <polyline class="energy-ring hot-pink" points="15,75 23,28 37,62 50,28 63,62 77,28 85,75" stroke-linejoin="round"/>
+    <polyline class="energy-ring gold" points="18,70 23,35 37,60 50,35 63,60 77,35 82,70" stroke-linejoin="round"/>
+    <polygon class="core" points="20,68 23,35 37,58 50,35 63,58 77,35 80,68 74,68 77,42 63,65 50,42 37,65 23,42 26,68"/>
+  </g>
+
+  <!-- X - Cross Energy -->
+  <g transform="translate(660, 500)">
+    <line class="energy-ring cyan" x1="20" y1="20" x2="80" y2="80" stroke-width="12"/>
+    <line class="energy-ring cyan" x1="80" y1="20" x2="20" y2="80" stroke-width="12"/>
+    <line class="energy-ring hot-pink" x1="22" y1="22" x2="78" y2="78" stroke-width="8"/>
+    <line class="energy-ring hot-pink" x1="78" y1="22" x2="22" y2="78" stroke-width="8"/>
+    <circle class="energy-ring gold" cx="50" cy="50" r="18"/>
+    <rect class="core" x="28" y="45" width="44" height="10" transform="rotate(45 50 50)"/>
+    <rect class="core" x="28" y="45" width="44" height="10" transform="rotate(-45 50 50)"/>
+    <circle class="core" cx="50" cy="50" r="8"/>
+  </g>
+
+  <!-- ROW 5: Y-Z + NUMBERS -->
+  <!-- Y - Tuning Fork -->
+  <g transform="translate(60, 640)">
+    <line class="energy-ring cyan" x1="25" y1="20" x2="50" y2="50" stroke-width="10"/>
+    <line class="energy-ring cyan" x1="75" y1="20" x2="50" y2="50" stroke-width="10"/>
+    <circle class="energy-ring hot-pink" cx="50" cy="52" r="25"/>
+    <circle class="energy-ring gold" cx="50" cy="52" r="15"/>
+    <line class="core" x1="28" y1="25" x2="48" y2="48" stroke="#000" stroke-width="8"/>
+    <line class="core" x1="72" y1="25" x2="52" y2="48" stroke="#000" stroke-width="8"/>
+    <rect class="core" x="46" y="48" width="8" height="35"/>
+    <line class="beam cyan" x1="25" y1="20" x2="15" y2="5"/>
+    <line class="beam hot-pink" x1="75" y1="20" x2="85" y2="5"/>
+  </g>
+
+  <!-- Z - Zigzag Bolt -->
+  <g transform="translate(180, 640)">
+    <polyline class="energy-ring cyan" points="20,25 75,25 25,75 80,75" stroke-linejoin="miter" stroke-width="12"/>
+    <polyline class="energy-ring hot-pink" points="23,28 72,28 28,72 77,72" stroke-linejoin="miter" stroke-width="8"/>
+    <polyline class="energy-ring gold" points="26,31 69,31 31,69 74,69" stroke-linejoin="miter" stroke-width="4"/>
+    <polygon class="core" points="28,30 70,30 70,36 38,36 68,64 68,70 30,70 30,64 62,64 32,36 28,36"/>
+    <circle class="core" cx="25" cy="28" r="5"/>
+    <circle class="core" cx="75" cy="72" r="5"/>
+  </g>
+
+  <!-- 0 - Zero Point -->
+  <g transform="translate(300, 640)">
+    <ellipse class="energy-ring cyan" cx="50" cy="50" rx="35" ry="45"/>
+    <ellipse class="energy-ring hot-pink" cx="50" cy="50" rx="27" ry="37"/>
+    <ellipse class="energy-ring gold" cx="50" cy="50" rx="19" ry="29"/>
+    <ellipse class="core" cx="50" cy="50" rx="16" ry="24"/>
+    <ellipse cx="50" cy="50" rx="10" ry="16" fill="none" stroke="#FFD700" stroke-width="2"/>
+    <line class="beam cyan" x1="30" y1="30" x2="20" y2="20"/>
+    <line class="beam hot-pink" x1="70" y1="70" x2="80" y2="80"/>
+  </g>
+
+  <!-- 1 - Single Pulse -->
+  <g transform="translate(420, 640)">
+    <circle class="energy-ring cyan" cx="50" cy="50" r="40"/>
+    <circle class="energy-ring hot-pink" cx="50" cy="50" r="30"/>
+    <circle class="energy-ring gold" cx="50" cy="50" r="20"/>
+    <rect class="core" x="42" y="20" width="16" height="60" rx="8"/>
+    <polygon class="core" points="42,28 42,20 35,30"/>
+    <line class="beam cyan" x1="50" y1="20" x2="50" y2="5"/>
+    <line class="beam hot-pink" x1="50" y1="80" x2="50" y2="95"/>
+  </g>
+
+  <!-- 2 - Double Wave -->
+  <g transform="translate(540, 640)">
+    <path class="energy-ring cyan" d="M 20,30 Q 35,18 50,30 Q 65,42 50,55 L 25,80 L 75,80" stroke="#00FFFF"/>
+    <path class="energy-ring hot-pink" d="M 23,32 Q 35,23 50,32 Q 62,40 50,52 L 28,77 L 72,77" stroke="#FF1493"/>
+    <path class="energy-ring gold" d="M 26,34 Q 35,28 50,34 Q 60,38 50,49 L 31,74 L 69,74" stroke="#FFD700"/>
+    <path class="core" d="M 28,35 Q 38,30 50,35 Q 58,40 50,48 L 32,70 L 70,70 L 70,76 L 28,76 L 50,54 Q 56,47 50,42 Q 42,37 32,42 L 28,38 Z"/>
+    <circle class="core" cx="50" cy="30" r="5"/>
+  </g>
+
+  <!-- 3 - Triple Lobe -->
+  <g transform="translate(660, 640)">
+    <circle class="energy-ring cyan" cx="52" cy="32" r="22"/>
+    <circle class="energy-ring hot-pink" cx="52" cy="68" r="22"/>
+    <circle class="energy-ring gold" cx="50" cy="50" r="35"/>
+    <circle class="core" cx="52" cy="32" r="13"/>
+    <circle class="core" cx="52" cy="68" r="13"/>
+    <rect class="core" x="47" y="38" width="10" height="24" rx="5"/>
+    <line class="beam cyan" x1="68" y1="25" x2="80" y2="15"/>
+    <line class="beam hot-pink" x1="68" y1="75" x2="80" y2="85"/>
+  </g>
+
+  <!-- ROW 6: 4-9 -->
+  <!-- 4 - Four Beams -->
+  <g transform="translate(60, 780)">
+    <line class="energy-ring cyan" x1="55" y1="20" x2="55" y2="80" stroke-width="10"/>
+    <line class="energy-ring hot-pink" x1="20" y1="55" x2="80" y2="55" stroke-width="10"/>
+    <circle class="energy-ring gold" cx="55" cy="55" r="25"/>
+    <rect class="core" x="20" y="50" width="40" height="8"/>
+    <rect class="core" x="52" y="20" width="8" height="60"/>
+    <line class="beam cyan" x1="55" y1="20" x2="45" y2="5"/>
+    <line class="beam cyan" x1="55" y1="20" x2="65" y2="5"/>
+    <line class="beam hot-pink" x1="20" y1="55" x2="5" y2="45"/>
+    <line class="beam hot-pink" x1="20" y1="55" x2="5" y2="65"/>
+  </g>
+
+  <!-- 5 - Five Fold -->
+  <g transform="translate(180, 780)">
+    <path class="energy-ring cyan" d="M 65,22 L 30,22 L 28,45 Q 38,38 50,45 Q 70,52 70,68 Q 70,82 50,82 Q 30,82 25,70" stroke="#00FFFF"/>
+    <path class="energy-ring hot-pink" d="M 62,25 L 33,25 L 31,45 Q 40,40 50,45 Q 67,51 67,68 Q 67,79 50,79 Q 33,79 28,70" stroke="#FF1493"/>
+    <circle class="energy-ring gold" cx="50" cy="67" r="18"/>
+    <path class="core" d="M 60,28 L 35,28 L 33,43 Q 42,38 50,43 Q 64,49 64,66 Q 64,76 50,76 Q 36,76 33,68 L 38,66 Q 40,71 50,71 Q 59,71 59,66 Q 59,55 50,50 Q 38,45 32,50 L 35,28 Z"/>
+  </g>
+
+  <!-- 6 - Spiral Core -->
+  <g transform="translate(300, 780)">
+    <path class="energy-ring cyan" d="M 65,28 Q 30,20 25,50 Q 20,85 50,85 Q 75,85 75,60 Q 75,45 60,45 Q 48,45 48,55" stroke="#00FFFF"/>
+    <path class="energy-ring hot-pink" d="M 62,30 Q 33,23 28,50 Q 23,82 50,82 Q 72,82 72,60 Q 72,48 60,48 Q 51,48 51,55" stroke="#FF1493"/>
+    <circle class="energy-ring gold" cx="50" cy="62" r="20"/>
+    <circle class="core" cx="50" cy="62" r="16"/>
+    <circle cx="50" cy="62" r="9" fill="none" stroke="#FFD700" stroke-width="2"/>
+    <path class="core" d="M 60,32 Q 35,26 30,50 Q 26,78 50,78 Q 68,78 68,60 Q 68,51 60,51 Q 54,51 54,56 L 54,60 Q 54,62 56,62 L 60,62 Q 63,62 63,60 Q 63,54 60,54 Q 51,54 51,60 Q 51,69 60,69 L 50,69 Q 35,69 35,52 Q 35,35 50,32 Q 58,30 62,35 Z" fill="#000"/>
+  </g>
+
+  <!-- 7 - Seven Rays -->
+  <g transform="translate(420, 780)">
+    <line class="energy-ring cyan" x1="22" y1="25" x2="75" y2="25" stroke-width="10"/>
+    <line class="energy-ring hot-pink" x1="68" y1="28" x2="32" y2="78" stroke-width="10"/>
+    <circle class="energy-ring gold" cx="68" cy="28" r="18"/>
+    <rect class="core" x="25" y="23" width="48" height="6"/>
+    <rect class="core" x="60" y="28" width="8" height="52" transform="rotate(-20 64 54)"/>
+    <line class="beam cyan" x1="68" y1="25" x2="75" y2="12"/>
+    <line class="beam hot-pink" x1="72" y1="25" x2="82" y2="20"/>
+    <line class="beam gold" x1="68" y1="28" x2="68" y2="15"/>
+  </g>
+
+  <!-- 8 - Infinity Loops -->
+  <g transform="translate(540, 780)">
+    <circle class="energy-ring cyan" cx="50" cy="33" r="25"/>
+    <circle class="energy-ring hot-pink" cx="50" cy="67" r="25"/>
+    <circle class="energy-ring gold" cx="50" cy="33" r="18"/>
+    <circle class="energy-ring gold" cx="50" cy="67" r="18"/>
+    <circle class="core" cx="50" cy="33" r="14"/>
+    <circle class="core" cx="50" cy="67" r="14"/>
+    <ellipse cx="50" cy="50" rx="20" ry="40" fill="none" stroke="#FFD700" stroke-width="2"/>
+  </g>
+
+  <!-- 9 - Reverse Six -->
+  <g transform="translate(660, 780)">
+    <path class="energy-ring cyan" d="M 35,72 Q 70,80 75,50 Q 80,15 50,15 Q 25,15 25,40 Q 25,55 40,55 Q 52,55 52,45" stroke="#00FFFF"/>
+    <path class="energy-ring hot-pink" d="M 38,70 Q 67,77 72,50 Q 77,18 50,18 Q 28,18 28,40 Q 28,52 40,52 Q 49,52 49,45" stroke="#FF1493"/>
+    <circle class="energy-ring gold" cx="50" cy="38" r="20"/>
+    <circle class="core" cx="50" cy="38" r="16"/>
+    <circle cx="50" cy="38" r="9" fill="none" stroke="#FFD700" stroke-width="2"/>
+    <path class="core" d="M 40,68 Q 65,74 70,50 Q 74,21 50,21 Q 32,21 32,40 Q 32,49 40,49 Q 46,49 46,44 L 46,40 Q 46,38 44,38 L 40,38 Q 37,38 37,40 Q 37,46 40,46 Q 49,46 49,40 Q 49,31 40,31 L 50,31 Q 65,31 65,48 Q 65,65 50,68 Q 42,70 38,65 Z" fill="#000"/>
+  </g>
+
+  <!-- TITLE -->
+  <text x="900" y="100" font-family="Arial Black, sans-serif" font-size="48" font-weight="900" fill="#FF1493">
+    PULSE ENERGY
+  </text>
+  <text x="900" y="160" font-family="Arial Black, sans-serif" font-size="48" font-weight="900" fill="#00FFFF">
+    COMPLETE FONT
+  </text>
+  <text x="900" y="220" font-family="Arial, sans-serif" font-size="24" fill="#FFD700">
+    🔥 Every Letter = Energy Source ⚡
+  </text>
+  
+  <text x="900" y="280" font-family="Arial, sans-serif" font-size="16" fill="#666">
+    M = Mountain Waves
+  </text>
+  <text x="900" y="305" font-family="Arial, sans-serif" font-size="16" fill="#666">
+    N = Diagonal Energy Beam
+  </text>
+  <text x="900" y="330" font-family="Arial, sans-serif" font-size="16" fill="#666">
+    O = Orbital Rings Core
+  </text>
+  <text x="900" y="355" font-family="Arial, sans-serif" font-size="16" fill="#666">
+    P = Power Lobe Burst
+  </text>
+  <text x="900" y="380" font-family="Arial, sans-serif" font-size="16" fill="#666">
+    Q = Orbital Tail Sweep
+  </text>
+  <text x="900" y="405" font-family="Arial, sans-serif" font-size="16" fill="#666">
+    R = Radar Pulse Kick
+  </text>
+  <text x="900" y="430" font-family="Arial, sans-serif" font-size="16" fill="#666">
+    S = Sine Wave Flow
+  </text>
+  <text x="900" y="455" font-family="Arial, sans-serif" font-size="16" fill="#666">
+    T = Transmission Tower
+  </text>
+  <text x="900" y="480" font-family="Arial, sans-serif" font-size="16" fill="#666">
+    U = Magnetic Basin
+  </text>
+  <text x="900" y="505" font-family="Arial, sans-serif" font-size="16" fill="#666">
+    V = Converging Waves
+  </text>
+  <text x="900" y="530" font-family="Arial, sans-serif" font-size="16" fill="#666">
+    W = Triple Peak Energy
+  </text>
+  <text x="900" y="555" font-family="Arial, sans-serif" font-size="16" fill="#666">
+    X = Cross Energy Burst
+  </text>
+  <text x="900" y="580" font-family="Arial, sans-serif" font-size="16" fill="#666">
+    Y = Tuning Fork Resonance
+  </text>
+  <text x="900" y="605" font-family="Arial, sans-serif" font-size="16" fill="#666">
+    Z = Zigzag Lightning Bolt
+  </text>
+  
+  <text x="900" y="650" font-family="Arial Black, sans-serif" font-size="20" fill="#FF6600">
+    + NUMBERS 0-9!
+  </text>
+  <text x="900" y="680" font-family="Arial, sans-serif" font-size="14" fill="#999">
+    Each digit = unique energy pattern
+  </text>
+  <text x="900" y="700" font-family="Arial, sans-serif" font-size="14" fill="#999">
+    Pulses • Waves • Orbits • Beams
+  </text>
+</svg>

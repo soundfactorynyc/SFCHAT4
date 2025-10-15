@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Canceled - Sound Factory NYC</title>
+    <meta name="color-scheme" content="dark">
+    <style>
+        :root{--bg:#000000;--surface:#0a0a0a;--border:#333333;--text:#ffffff;--muted:#999999}
+        *{box-sizing:border-box;margin:0;padding:0}
+        html,body{height:100%}
+        body{background:#000000;color:#ffffff;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;display:flex;flex-direction:column;min-height:100vh}
+        .container{width:100%;max-width:480px;margin:0 auto;padding:20px;animation:fadeIn 0.6s ease}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+        .header{text-align:center;margin-bottom:40px}
+        .logo-wrapper{margin:0 auto 20px;display:flex;justify-content:center;align-items:center;height:100px}
+        .logo{height:80px;width:auto;object-fit:contain}
+        .brand-text{font-size:11px;text-transform:uppercase;letter-spacing:2.5px;color:#999999;margin-bottom:8px;font-weight:700}
+        h1{font-size:18px;font-weight:700;margin-bottom:8px;letter-spacing:0.3px;color:#F0F0F0;text-transform:uppercase}
+        .subtitle{color:#999999;font-size:12px;line-height:16px;font-weight:400;letter-spacing:0.2px}
+        .main-card{background:#0a0a0a;border:0.5px solid rgba(255,255,255,0.15);border-radius:2px;padding:32px 24px}
+        .cancel-icon-wrapper{text-align:center;margin-bottom:24px}
+        .cancel-icon{width:64px;height:64px;background:rgba(255,153,0,0.1);border:1px solid rgba(255,153,0,0.2);border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:32px}
+        .cancel-message{background:rgba(255,153,0,0.08);border:0.5px solid rgba(255,153,0,0.25);border-radius:2px;padding:16px;margin-bottom:24px;text-align:center}
+        .cancel-message-text{font-size:12px;line-height:16px;color:#ff9900;letter-spacing:0.2px}
+        .info-box{background:rgba(255,255,255,0.02);border:0.5px solid rgba(255,255,255,0.15);border-radius:2px;padding:20px;margin-bottom:24px}
+        .info-header{font-size:12px;font-weight:700;color:#F0F0F0;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px}
+        .info-list{list-style:none;padding:0;margin:0}
+        .info-list li{font-size:12px;line-height:16px;color:#F0F0F0;margin-bottom:6px;padding-left:16px;position:relative;letter-spacing:0.2px}
+        .info-list li:before{content:"•";position:absolute;left:0;color:#F0F0F0}
+        .reassurance-box{background:rgba(0,0,0,0.3);border:0.5px solid rgba(255,255,255,0.1);border-radius:2px;padding:16px;margin-bottom:24px}
+        .reassurance-text{font-size:12px;line-height:16px;color:#999999;text-align:center;letter-spacing:0.2px}
+        .divider{border-top:1px solid rgba(255,255,255,0.1);padding-top:16px;margin-bottom:16px}
+        .divider-symbol{text-align:center;font-size:16px;color:rgba(255,255,255,0.3);margin-bottom:16px}
+        .btn{width:100%;padding:0;height:32px;border-radius:2px;background:#111111;color:#ffffff;border:1px solid #222222;font-size:11px;font-weight:700;cursor:pointer;transition:all 0.2s;text-transform:uppercase;letter-spacing:1.5px;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;margin-bottom:8px}
+        .btn:hover{background:#1a1a1a;border-color:#333333}
+        .btn-secondary{background:transparent;border:1px solid rgba(255,255,255,0.15)}
+        .btn-secondary:hover{background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.3)}
+        .help-text{text-align:center;margin-top:20px;font-size:11px;color:#666;letter-spacing:0.2px}
+        .help-text a{color:#999;text-decoration:none}
+        .help-text a:hover{color:#ccc}
+        .professional-footer{background:#0a0a0a;border-top:1px solid rgba(255,255,255,0.08);padding:20px 20px 16px;margin-top:auto}
+        .footer-content{max-width:480px;margin:0 auto;text-align:center}
+        .footer-company{font-size:11px;color:#999;margin-bottom:4px;letter-spacing:1.5px;font-weight:700;text-transform:uppercase}
+        .footer-copyright{font-size:10px;color:#666;letter-spacing:0.2px}
+        @media (max-width:480px){.container{padding:16px}.main-card{padding:24px 20px}}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo-wrapper">
+                <img src="sf-logo.png" alt="Sound Factory" class="logo" onerror="this.style.display='none'">
+            </div>
+            <div class="brand-text">SOUND FACTORY NYC</div>
+            <h1>Payment Canceled</h1>
+            <p class="subtitle">No Charges Were Made</p>
+        </div>
+
+        <div class="main-card">
+            <div class="cancel-icon-wrapper">
+                <div class="cancel-icon">⚠</div>
+            </div>
+
+            <div class="cancel-message">
+                <div class="cancel-message-text">
+                    Your payment was not processed. No charges were made to your account.
+                </div>
+            </div>
+
+            <div class="info-box">
+                <div class="info-header">What Happened?</div>
+                <ul class="info-list">
+                    <li>You clicked the back button during checkout</li>
+                    <li>The checkout session expired</li>
+                    <li>You chose to cancel the payment</li>
+                </ul>
+            </div>
+
+            <div class="reassurance-box">
+                <div class="reassurance-text">
+                    🔒 Your payment information is secure and was not saved.<br>
+                    You can try again whenever you're ready.
+                </div>
+            </div>
+
+            <div class="divider">
+                <div class="divider-symbol">⸻</div>
+            </div>
+
+            <a href="/stripe-checkout.html" class="btn">Try Again</a>
+            <a href="/" class="btn btn-secondary">Back to Home</a>
+
+            <div class="help-text">
+                Need help? <a href="mailto:team@soundfactorynyc.com">Contact Support</a>
+            </div>
+        </div>
+    </div>
+
+    <footer class="professional-footer">
+        <div class="footer-content">
+            <div class="footer-company">SOUND FACTORY NYC</div>
+            <div class="footer-copyright">© 2025 Sound Factory NYC. All rights reserved.</div>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,28 @@
+name: Netlify Deploy Preview
+
+on:
+  pull_request:
+    branches: [ "master", "main" ]
+
+jobs:
+  deploy-preview:
+    runs-on: ubuntu-latest
+    if: ${{ secrets.NETLIFY_AUTH_TOKEN && secrets.NETLIFY_SITE_ID }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install Netlify CLI
+        run: npm i -g netlify-cli
+
+      - name: Netlify Deploy Preview
+        env:
+          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+        run: |
+          netlify deploy --dir=public --functions=netlify/functions --message "GitHub PR Preview $GITHUB_HEAD_REF" --json --build --auth "$NETLIFY_AUTH_TOKEN" --site "$NETLIFY_SITE_ID"

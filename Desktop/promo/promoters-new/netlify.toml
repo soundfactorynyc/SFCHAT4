@@ -17,11 +17,6 @@
   status = 200
 
 [[redirects]]
-  from = "/api/ai-flyer-chat"
-  to = "/.netlify/functions/ai-flyer-chat"
-  status = 200
-
-[[redirects]]
   from = "/api/promoter/*"
   to = "/.netlify/functions/get-promoter/:splat"
   status = 200

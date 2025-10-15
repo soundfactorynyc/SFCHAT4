@@ -9,7 +9,7 @@
 - Backend creates:
   - Stripe Connect account
   - Supabase record with `status: 'pending'`
-  - Stores phone number for SMS login
+  - Stores phone number for contact/reference
   - Stores `flyer_request` if provided
 
 ### 2. Stripe Onboarding ✅
@@ -22,14 +22,11 @@
 - Admin changes `status` from 'pending' to 'approved'
 - Only then can promoter log in
 
-### 4. SMS Login (promoter-login.html) ✅
-- User enters phone number
-- SMS code sent via Twilio (send-sms-code.js)
-- User enters 6-digit code
-- Backend verifies code (verify-sms-code.js)
-- ✅ Checks `status = 'approved'` - blocks if not approved
-- Creates 24-hour session token
-- Returns: sessionToken, promoCode, name, email
+### 4. Login via Stripe (promoter-login.html) ✅
+- User clicks “Login with Stripe”
+- Redirected to Stripe Express login (Stripe handles email + SMS verification)
+- After success, returns to site
+- We verify session and route to dashboard
 
 ### 5. Dashboard Access (promoter-dashboard.html) ✅
 - Shows total commission earned
@@ -105,4 +102,4 @@ Promoters table needs:
 - last_login_at (timestamp)
 ```
 
-✅ All fields already in place based on create-promoter.js and verify-sms-code.js
+✅ All fields already in place based on create-promoter.js and Stripe login

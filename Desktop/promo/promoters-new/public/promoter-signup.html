@@ -1,62 +1,1041 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Promoter Signup - Sound Factory</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Sound Factory Official Team Program | Jonathan Peters</title>
+<meta name="description" content="Join the exclusive Sound Factory NYC team program. Professional partnership opportunity with guaranteed commissions and VIP benefits." />
+<meta name="color-scheme" content="dark" />
+<style>
+:root{
+  --bg:#000000;
+  --surface:#0a0a0a;
+  --border:#333333;
+  --text:#ffffff;
+  --muted:#999999;
+  --accent:#ffffff;
+  --gray-light:#cccccc;
+  --gray-medium:#666666;
+  --gray-dark:#1a1a1a;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;margin:0;padding:0}
+body{
+  background:#000000;
+  color:#ffffff;
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Helvetica Neue",Helvetica,Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+  font-feature-settings:"kern" 1;
+  text-rendering:optimizeLegibility;
+  display:flex;
+  flex-direction:column;
+  min-height:100vh;
+  position:relative;
+}
+
+
+
+.main-wrapper{
+  flex:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:40px 20px;
+  position:relative;
+  z-index:2;
+}
+
+.container{
+  width:100%;
+  max-width:480px;
+  animation:fadeIn 0.6s ease;
+}
+
+@keyframes fadeIn{
+  from{opacity:0;transform:translateY(10px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* Professional Header */
+.header{
+  text-align:center;
+  margin-bottom:40px;
+  position:relative;
+  z-index:100;
+}
+
+.logo-wrapper{
+  margin:0 auto 20px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100px;
+  position:relative;
+  z-index:100;
+  background:transparent;
+}
+
+.logo{
+  height:80px;
+  width:auto;
+  object-fit:contain;
+  opacity:1;
+  position:relative;
+  z-index:100;
+  display:block;
+}
+
+/* Fallback if logo doesn't load */
+.logo-wrapper::after{
+  content:"SF";
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%, -50%);
+  color:#ffffff;
+  font-size:24px;
+  font-weight:700;
+  letter-spacing:4px;
+  z-index:101;
+  pointer-events:none;
+}
+
+.brand-text{
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:2.5px;
+  color:#999999;
+  margin-bottom:8px;
+  font-weight:700;
+}
+
+h1{
+  font-size:18px;
+  font-weight:700;
+  margin-bottom:8px;
+  letter-spacing:0.3px;
+  line-height:22px;
+  color:#F0F0F0;
+  text-transform:uppercase;
+}
+
+.subtitle{
+  color:#999999;
+  font-size:12px;
+  line-height:16px;
+  font-weight:400;
+  letter-spacing:0.2px;
+}
+
+/* Professional Card */
+.main-card{
+  background:#0a0a0a;
+  border:0.5px solid rgba(255,255,255,0.15);
+  border-radius:2px;
+  padding:32px 24px;
+  box-shadow:none;
+  max-width:480px;
+  margin:0 auto;
+}
+
+/* Commission Structure - Professional */
+.commission-structure{
+  background:#1a1a1a;
+  border:1px solid #333333;
+  border-radius:4px;
+  padding:32px;
+  margin-bottom:32px;
+}
+
+.commission-header{
+  font-size:13px;
+  text-transform:uppercase;
+  letter-spacing:0.8px;
+  color:#8E8E93;
+  margin-bottom:20px;
+  text-align:center;
+  font-weight:600;
+}
+
+.commission-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:20px;
+}
+
+.commission-item{
+  text-align:center;
+  padding:16px;
+  background:rgba(255,255,255,0.02);
+  border-radius:6px;
+  border:1px solid rgba(255,255,255,0.04);
+}
+
+.commission-amount{
+  font-size:24px;
+  font-weight:300;
+  margin-bottom:4px;
+  color:#fff;
+}
+
+.commission-label{
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:0.5px;
+  color:#666;
+}
+
+/* Program Benefits - Clean List */
+.benefits-section{
+  margin-bottom:32px;
+}
+
+.benefit-item{
+  display:flex;
+  align-items:flex-start;
+  margin-bottom:8px;
+  font-size:12px;
+  color:#F0F0F0;
+  line-height:16px;
+  letter-spacing:0.2px;
+}
+
+.benefit-bullet{
+  width:3px;
+  height:3px;
+  background:#F0F0F0;
+  border-radius:50%;
+  margin-right:10px;
+  margin-top:6px;
+  flex-shrink:0;
+}
+
+.benefit-text{
+  flex:1;
+}
+
+.benefit-text strong{
+  color:#F0F0F0;
+  font-weight:700;
+}
+
+/* Form - Professional */
+.form-section{
+  margin-bottom:24px;
+}
+
+.form-group{
+  margin-bottom:20px;
+}
+
+label{
+  display:block;
+  font-size:11px;
+  font-weight:700;
+  margin-bottom:6px;
+  color:#cccccc;
+  text-transform:uppercase;
+  letter-spacing:2px;
+}
+
+input{
+  width:100%;
+  padding:8px 12px;
+  border-radius:2px;
+  background:rgba(255,255,255,0.05);
+  border:0.5px solid rgba(255,255,255,0.15);
+  color:#F0F0F0;
+  font-size:12px;
+  height:28px;
+  transition:all 0.2s;
+  font-weight:400;
+  letter-spacing:0.2px;
+}
+
+input:focus{
+  outline:none;
+  border-color:rgba(255,255,255,0.4);
+  background:rgba(255,255,255,0.08);
+}
+
+input::placeholder{
+  color:#666666;
+}
+
+/* Professional Button */
+.btn{
+  width:100%;
+  padding:0;
+  height:32px;
+  border-radius:2px;
+  background:#111111;
+  color:#ffffff;
+  border:1px solid #222222;
+  font-size:11px;
+  font-weight:700;
+  cursor:pointer;
+  transition:all 0.2s;
+  text-transform:uppercase;
+  letter-spacing:1.5px;
+}
+
+.btn:hover:not(:disabled){
+  background:#1a1a1a;
+  border-color:#333333;
+}
+
+.btn:disabled{
+  opacity:0.3;
+  cursor:not-allowed;
+}
+
+.btn-secondary{
+  background:transparent;
+  color:#F0F0F0;
+  border:1px solid rgba(255,255,255,0.15);
+  margin-top:8px;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  font-size:11px;
+  height:28px;
+}
+
+.btn-secondary:hover{
+  background:rgba(255,255,255,0.05);
+  border-color:rgba(255,255,255,0.3);
+}
+
+/* Trust Indicators */
+.trust-section{
+  margin-top:32px;
+  padding-top:32px;
+  border-top:2px solid #333333;
+  text-align:center;
+}
+
+.trust-items{
+  display:flex;
+  justify-content:center;
+  gap:32px;
+  margin-bottom:16px;
+}
+
+.trust-item{
+  font-size:11px;
+  text-transform:uppercase;
+  letter-spacing:1px;
+  color:#999999;
+  font-weight:600;
+}
+
+.legal-text{
+  font-size:11px;
+  color:#999999;
+  line-height:1.7;
+  max-width:600px;
+  margin:0 auto;
+}
+
+/* Footer Links */
+.footer-links{
+  text-align:center;
+  margin-top:24px;
+  padding-top:24px;
+  border-top:1px solid #333333;
+}
+
+.footer-links a{
+  color:#ffffff;
+  text-decoration:none;
+  font-size:13px;
+  font-weight:600;
+  transition:color 0.2s;
+}
+
+.footer-links a:hover{
+  color:#cccccc;
+  text-decoration:underline;
+}
+
+/* Error Messages */
+.error{
+  background:rgba(255,0,0,0.05);
+  border:1px solid rgba(255,0,0,0.1);
+  color:#ff6b6b;
+  padding:12px;
+  border-radius:6px;
+  font-size:13px;
+  margin-top:12px;
+  text-align:center;
+}
+
+.loading{
+  display:inline-block;
+  width:14px;
+  height:14px;
+  border:2px solid #000;
+  border-radius:50%;
+  border-top-color:transparent;
+  animation:spin 0.8s linear infinite;
+  margin-right:8px;
+}
+
+@keyframes spin{
+  to{transform:rotate(360deg)}
+}
+
+/* Success Modal */
+.success-modal{
+  display:none;
+  position:fixed;
+  top:0;
+  left:0;
+  right:0;
+  bottom:0;
+  background:rgba(0,0,0,0.95);
+  z-index:1000;
+  padding:20px;
+  align-items:center;
+  justify-content:center;
+}
+
+.success-modal.active{
+  display:flex;
+}
+
+.success-content{
+  background:#0a0a0a;
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:12px;
+  padding:48px;
+  max-width:500px;
+  width:100%;
+  text-align:center;
+}
+
+.success-icon{
+  width:64px;
+  height:64px;
+  background:rgba(76,175,80,0.1);
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin:0 auto 24px;
+  font-size:32px;
+}
+
+.success-title{
+  font-size:24px;
+  font-weight:300;
+  margin-bottom:16px;
+}
+
+.success-message{
+  color:#999;
+  font-size:15px;
+  line-height:1.6;
+  margin-bottom:32px;
+}
+
+/* Professional Footer */
+.professional-footer{
+  background:#0a0a0a;
+  border-top:1px solid rgba(255,255,255,0.08);
+  padding:20px 20px 16px;
+  margin-top:auto;
+  position:relative;
+  z-index:2;
+}
+
+.footer-content{
+  max-width:480px;
+  margin:0 auto;
+  text-align:center;
+}
+
+.footer-logo{
+  height:24px;
+  margin-bottom:12px;
+  opacity:0.4;
+  filter:brightness(0) invert(1);
+}
+
+.footer-company{
+  font-size:11px;
+  color:#999;
+  margin-bottom:4px;
+  letter-spacing:1.5px;
+  font-weight:700;
+  text-transform:uppercase;
+}
+
+.footer-copyright{
+  font-size:10px;
+  color:#666;
+  margin-bottom:12px;
+  letter-spacing:0.2px;
+}
+
+.footer-links-row{
+  display:flex;
+  justify-content:center;
+  gap:16px;
+  font-size:10px;
+  flex-wrap:wrap;
+}
+
+.footer-links-row a{
+  color:#999;
+  text-decoration:none;
+  transition:color 0.2s;
+  font-weight:600;
+  letter-spacing:0.3px;
+}
+
+.footer-links-row a:hover{
+  color:#ccc;
+}
+
+@media (max-width:480px){
+  .container{
+    max-width:100%;
+  }
+  .main-card{
+    padding:24px;
+  }
+  h1{
+    font-size:28px;
+  }
+  .trust-items{
+    flex-direction:column;
+    gap:12px;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="main-wrapper">
+  <div class="container">
+    <!-- Professional Header -->
+    <div class="header">
+      <div class="logo-wrapper">
+        <img src="sf-logo.png" alt="Sound Factory" class="logo" />
+      </div>
+      <div class="brand-text">SOUND FACTORY NYC</div>
+      <h1>PARTNER PROGRAM — OFFICIAL</h1>
+      <p class="subtitle">Join Us</p>
+    </div>
+
+    <!-- Main Card -->
+    <div class="main-card">
+      <!-- WHY WE'RE LAUNCHING THIS PROGRAM -->
+      <div style="border-top:1px solid rgba(255,255,255,0.1);padding-top:16px;margin-bottom:16px;">
+        <div style="text-align:center;font-size:16px;color:rgba(255,255,255,0.3);margin-bottom:16px;">⸻</div>
+      </div>
+      
+      <div style="background:rgba(255,255,255,0.02);border:0.5px solid rgba(255,255,255,0.15);border-radius:2px;padding:16px;margin-bottom:16px;" id="why-program">
+        <h3 style="font-size:14px;font-weight:700;margin-bottom:12px;color:#F0F0F0;text-transform:uppercase;letter-spacing:1.25px;line-height:1.25;">Why We're Launching This Program</h3>
+        <p class="eyebrow" style="font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:#6772e5;margin-bottom:12px;">WE DON'T FOLLOW. WE LEAD.</p>
+        <p style="font-size:12px;line-height:1.5;letter-spacing:0.2px;color:#F0F0F0;margin-bottom:12px;">
+          Sound Factory recognizes that strategies in music and nightlife have evolved.<br>
+          Independent creators, promoters, and online influencers deserve their fair share — and the same level of respect as any professional partner.
+        </p>
+        <p style="font-size:12px;line-height:1.5;letter-spacing:0.2px;color:#F0F0F0;margin-bottom:12px;">
+          There's a real gap: people work hard to build loyal communities, and most never see a proper return.<br>
+          This program changes that — rewarding real influence and real work with real earnings.
+        </p>
+        <ul style="padding-left:0;list-style:none;margin-bottom:12px;">
+          <li style="font-size:12px;line-height:1.5;letter-spacing:0.2px;color:#F0F0F0;margin-bottom:4px;"><strong>Fairness:</strong> Clear commissions, no hidden fees</li>
+          <li style="font-size:12px;line-height:1.5;letter-spacing:0.2px;color:#F0F0F0;margin-bottom:4px;"><strong>Transparency:</strong> Every sale tracked, every payout visible</li>
+          <li style="font-size:12px;line-height:1.5;letter-spacing:0.2px;color:#F0F0F0;"><strong>Leadership:</strong> Setting the standard for how nightlife partners get paid</li>
+        </ul>
+        <p style="font-size:12px;line-height:1.5;letter-spacing:0.2px;color:#F0F0F0;margin-bottom:0;">
+          Sound Factory stands for fairness, transparency, and leadership in a new era of nightlife and entertainment.
+        </p>
+      </div>
+
+      <div style="border-top:1px solid rgba(255,255,255,0.1);padding-top:16px;margin-bottom:16px;">
+        <div style="text-align:center;font-size:16px;color:rgba(255,255,255,0.3);margin-bottom:16px;">⸻</div>
+      </div>
+
+      <!-- ALREADY ON STRIPE -->
+      <div style="background:rgba(255,255,255,0.02);border:0.5px solid rgba(255,255,255,0.15);border-radius:2px;padding:16px;margin-bottom:16px;">
+        <h3 style="font-size:14px;font-weight:700;margin-bottom:12px;color:#F0F0F0;text-transform:uppercase;letter-spacing:1.25px;line-height:1.25;">Already on Stripe?</h3>
+        <p style="font-size:12px;line-height:1.5;letter-spacing:0.2px;color:#F0F0F0;margin-bottom:8px;">
+          If you already have a Stripe account, you're 99% done — just log in below and connect.
+        </p>
+        <p style="font-size:12px;line-height:1.5;letter-spacing:0.2px;color:#F0F0F0;margin-bottom:0;">
+          All payments go directly through Stripe Connect — we never touch a dollar.
+        </p>
+      </div>
+
+      <div style="border-top:1px solid rgba(255,255,255,0.1);padding-top:16px;margin-bottom:16px;">
+        <div style="text-align:center;font-size:16px;color:rgba(255,255,255,0.3);margin-bottom:16px;">⸻</div>
+      </div>
+      
+      <!-- 3-Step Process -->
+      <div style="background:rgba(255,255,255,0.02);border:0.5px solid rgba(255,255,255,0.15);border-radius:2px;padding:16px;margin-bottom:16px;">
+        <h4 style="font-size:14px;font-weight:700;margin-bottom:12px;color:#F0F0F0;text-transform:uppercase;letter-spacing:1.25px;">3-Step Setup Process</h4>
+        <div style="font-size:12px;line-height:1.5;letter-spacing:0.2px;color:#F0F0F0;">
+          <div style="margin-bottom:6px;"><strong>Step 1:</strong> Enter your information below</div>
+          <div style="margin-bottom:6px;"><strong>Step 2:</strong> Complete quick Stripe setup (2–5 minutes)</div>
+          <div><strong>Step 3:</strong> Access your dashboard and start earning</div>
+        </div>
+      </div>
+
+      <div style="border-top:1px solid rgba(255,255,255,0.1);padding-top:16px;margin-bottom:16px;">
+        <div style="text-align:center;font-size:16px;color:rgba(255,255,255,0.3);margin-bottom:16px;">⸻</div>
+      </div>
+      
+      <!-- Payment & Transparency -->
+      <div style="background:rgba(255,255,255,0.02);border:0.5px solid rgba(255,255,255,0.15);border-radius:2px;padding:16px;margin-bottom:16px;">
+        <h4 style="font-size:14px;font-weight:700;margin-bottom:12px;color:#F0F0F0;text-transform:uppercase;letter-spacing:1.25px;">Payment & Transparency</h4>
+        <ul style="margin:0;padding:0;list-style:none;font-size:12px;color:#F0F0F0;line-height:1.5;letter-spacing:0.2px;">
+          <li style="margin-bottom:6px;">• All transactions handled by Stripe — we never process payments directly</li>
+          <li style="margin-bottom:6px;">• Stripe monitors every sale — 100% transparency</li>
+          <li style="margin-bottom:6px;">• Licensed venue sales only — legit event tickets and tables</li>
+          <li style="margin-bottom:6px;">• Your business, your Stripe account — Sound Factory stays out of your money</li>
+          <li>• No hidden fees. No middlemen. No games.</li>
+        </ul>
+      </div>
+
+      <div style="border-top:1px solid rgba(255,255,255,0.1);padding-top:16px;margin-bottom:16px;">
+        <div style="text-align:center;font-size:16px;color:rgba(255,255,255,0.3);margin-bottom:16px;">⸻</div>
+      </div>
+      
+      <!-- Commission Structure -->
+      <div style="background:rgba(255,255,255,0.02);border:0.5px solid rgba(255,255,255,0.15);border-radius:2px;padding:16px;margin-bottom:16px;">
+        <h3 style="font-size:12px;font-weight:700;margin-bottom:12px;color:#F0F0F0;text-transform:uppercase;letter-spacing:1.5px;">Commission Structure (20%)</h3>
+        
+        <!-- Tight Table -->
+        <div style="background:rgba(0,0,0,0.3);border:0.5px solid rgba(255,255,255,0.1);border-radius:2px;overflow:hidden;">
+          <!-- Header -->
+          <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px;padding:8px 12px;background:rgba(255,255,255,0.03);border-bottom:0.5px solid rgba(255,255,255,0.1);">
+            <div style="font-size:11px;font-weight:700;color:#999;text-transform:uppercase;letter-spacing:1px;">Service</div>
+            <div style="font-size:11px;font-weight:700;color:#999;text-align:right;text-transform:uppercase;letter-spacing:1px;">Price</div>
+            <div style="font-size:11px;font-weight:700;color:#999;text-align:right;text-transform:uppercase;letter-spacing:1px;">Your Cut</div>
+          </div>
+          <!-- Rows -->
+          <div style="font-family:Menlo,Monaco,monospace;font-size:11px;color:#F0F0F0;">
+            <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px;padding:8px 12px;border-bottom:0.5px solid rgba(255,255,255,0.05);">
+              <div>General Admission</div>
+              <div style="text-align:right;">$100</div>
+              <div style="text-align:right;font-weight:700;">$20</div>
+            </div>
+            <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px;padding:8px 12px;border-bottom:0.5px solid rgba(255,255,255,0.05);">
+              <div>Table (4 Seats)</div>
+              <div style="text-align:right;">$160</div>
+              <div style="text-align:right;font-weight:700;">$32</div>
+            </div>
+            <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px;padding:8px 12px;border-bottom:0.5px solid rgba(255,255,255,0.05);">
+              <div>Table (6 Seats)</div>
+              <div style="text-align:right;">$240</div>
+              <div style="text-align:right;font-weight:700;">$48</div>
+            </div>
+            <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px;padding:8px 12px;border-bottom:0.5px solid rgba(255,255,255,0.05);">
+              <div>Table (10 Seats)</div>
+              <div style="text-align:right;">$480</div>
+              <div style="text-align:right;font-weight:700;">$96</div>
+            </div>
+            <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px;padding:8px 12px;border-bottom:0.5px solid rgba(255,255,255,0.05);">
+              <div>VIP (6 Seats)</div>
+              <div style="text-align:right;">$1,200</div>
+              <div style="text-align:right;font-weight:700;">$240</div>
+            </div>
+            <div style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px;padding:8px 12px;">
+              <div>VIP (10 Seats)</div>
+              <div style="text-align:right;">$2,400</div>
+              <div style="text-align:right;font-weight:700;">$480</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- How It Works -->
+        <div style="margin-top:16px;padding:12px;background:rgba(0,0,0,0.3);border:0.5px solid rgba(255,255,255,0.1);border-radius:2px;">
+          <div style="font-size:12px;line-height:16px;letter-spacing:0.2px;color:#F0F0F0;margin-bottom:8px;">
+            <strong>1</strong> Customer buys through your link<br>
+            <strong>2</strong> Stripe processes and splits instantly<br>
+            <strong>3</strong> Your 20% transfers to your Stripe account
+          </div>
+          <div style="margin-top:8px;padding-top:8px;border-top:0.5px solid rgba(255,255,255,0.1);font-size:11px;color:#999;">
+            Example: VIP Package $1,200 → $240 to you → straight to your account
+          </div>
+        </div>
+      </div>
+
+      <!-- What You Get -->
+      <div style="background:rgba(255,255,255,0.02);border:0.5px solid rgba(255,255,255,0.15);border-radius:2px;padding:16px;margin-bottom:16px;">
+        <h4 style="font-size:12px;font-weight:700;margin-bottom:12px;color:#F0F0F0;text-transform:uppercase;letter-spacing:1.5px;">What You Get</h4>
+        <div class="benefits-section">
+          <div class="benefit-item">
+            <div class="benefit-bullet"></div>
+            <div class="benefit-text">Daily payouts via Stripe Connect</div>
+          </div>
+          <div class="benefit-item">
+            <div class="benefit-bullet"></div>
+            <div class="benefit-text">Real-time dashboard with analytics</div>
+          </div>
+          <div class="benefit-item">
+            <div class="benefit-bullet"></div>
+            <div class="benefit-text">Complimentary entry + guest list control</div>
+          </div>
+          <div class="benefit-item">
+            <div class="benefit-bullet"></div>
+            <div class="benefit-text">Official marketing assets & promo codes</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form -->
+      <div class="form-section">
+        <div style="background:rgba(255,255,255,0.02);border:0.5px solid rgba(255,255,255,0.15);border-radius:2px;padding:12px;margin-bottom:16px;">
+          <h4 style="font-size:12px;font-weight:700;margin-bottom:8px;color:#F0F0F0;text-transform:uppercase;letter-spacing:1.5px;">After You Apply</h4>
+          <div style="font-size:12px;line-height:16px;letter-spacing:0.2px;color:#F0F0F0;">
+            <div style="margin-bottom:4px;">1. You'll get an instant email with your promo code</div>
+            <div style="margin-bottom:4px;">2. You'll go through Stripe's secure setup portal (2–5 min)</div>
+            <div style="margin-bottom:4px;">3. You'll land in your dashboard</div>
+            <div>4. Start earning immediately</div>
+          </div>
+        </div>
+        
+        <form id="signupForm">
+          <div class="form-group">
+            <label for="name">Full Name</label>
+            <input type="text" id="name" name="name" placeholder="Enter your full name" required />
+          </div>
+
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" placeholder="your@email.com" required />
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Mobile Number</label>
+            <input type="tel" id="phone" name="phone" placeholder="(555) 123-4567" required />
+          </div>
+
+          <button type="submit" class="btn" id="submitBtn">
+            SUBMIT APPLICATION
+          </button>
+          
+          <button type="button" class="btn btn-secondary" onclick="showInfo()">
+            PROGRAM DETAILS
+          </button>
+        </form>
+      </div>
+
+      <!-- Powered By -->
+      <div style="text-align:center;padding:16px 0;margin:16px 0;border-top:0.5px solid rgba(255,255,255,0.1);border-bottom:0.5px solid rgba(255,255,255,0.1);">
+        <div style="font-size:11px;color:#666;text-transform:uppercase;letter-spacing:2px;font-weight:700;">POWERED BY STRIPE CONNECT</div>
+      </div>
+
+      <!-- Terms -->
+      <div class="trust-section">
+        <div style="font-size:11px;color:#999;line-height:16px;letter-spacing:0.2px;text-align:center;max-width:480px;margin:0 auto;">
+          Instant Payouts • Real-Time Dashboard • No Hidden Fees<br><br>
+          This is a legitimate business partnership — not a hustle.<br>
+          Every dollar is accounted for. Every sale is tracked. Every partner gets paid.<br><br>
+          <strong style="color:#F0F0F0;">TERMS & REQUIREMENTS:</strong><br>
+          Must be 21+ and approved by Sound Factory NYC. Valid Stripe account required for commissions. All activity must comply with venue and local laws. Sound Factory reserves the right to review or suspend non-compliant accounts. All personal and payment data secured by Stripe's enterprise-level encryption.
+        </div>
+      </div>
+
+      <!-- Footer Links -->
+      <div class="footer-links">
+        <a href="promoter-login.html">Existing team member? Sign in</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Complete Transparency Tracking Flow -->
+<div style="background:#000;border-top:1px solid rgba(255,255,255,0.08);padding:40px 20px;margin-top:40px;">
+  <div style="max-width:900px;margin:0 auto;">
+    <h3 style="text-align:center;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#fff;margin-bottom:30px;">Complete Transparency</h3>
+    <div class="mermaid" style="background:#000;min-height:600px;display:flex;justify-content:center;align-items:center;">
+flowchart TD
+    A["Unique Link Issued"]
+    B["Page Loads with Tracking"]
+    C1["Ticket Clicked"]
+    C2["Table Clicked"]
+    D["Stripe Checkout Opens"]
+    E["Stripe Processes Payment"]
+    E2["💳 Stripe Connect Auto-Splits<br/>Your 20% Goes to Your Account<br/>Sound Factory Never Touches Funds"]
+    F["Webhook Receives Event"]
+    G["Database Records Sale"]
+    H["Your Dashboard Updates"]
+    I["Admin View"]
+
+    A --> B
+    B --> C1
+    B --> C2
+    C1 --> D
+    C2 --> D
+    D --> E
+    E --> E2
+    E2 --> F
+    F --> G
+    G --> H
+    G --> I
+
+    style A fill:#0a0a0a,stroke:#6772e5,stroke-width:2px,color:#fff
+    style B fill:#0a0a0a,stroke:#6772e5,stroke-width:2px,color:#fff
+    style C1 fill:#0a0a0a,stroke:#4caf50,stroke-width:2px,color:#fff
+    style C2 fill:#0a0a0a,stroke:#4caf50,stroke-width:2px,color:#fff
+    style D fill:#0a0a0a,stroke:#6772e5,stroke-width:2px,color:#fff
+    style E fill:#0a0a0a,stroke:#6772e5,stroke-width:2px,color:#fff
+    style E2 fill:#1a3a1a,stroke:#4caf50,stroke-width:3px,color:#fff
+    style F fill:#0a0a0a,stroke:#ff9800,stroke-width:2px,color:#fff
+    style G fill:#0a0a0a,stroke:#ff9800,stroke-width:2px,color:#fff
+    style H fill:#0a0a0a,stroke:#4caf50,stroke-width:2px,color:#fff
+    style I fill:#0a0a0a,stroke:#9c27b0,stroke-width:2px,color:#fff
+    </div>
+    <div style="text-align:center;margin-top:16px;padding:10px 12px;background:rgba(76,175,80,0.08);border:0.5px solid rgba(76,175,80,0.25);border-radius:3px;max-width:480px;margin-left:auto;margin-right:auto;">
+      <div style="font-size:10px;color:#4caf50;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;margin-bottom:3px;">🔒 Direct Payment Guarantee</div>
+      <div style="font-size:10px;color:#999;line-height:1.4;letter-spacing:0.2px;">Stripe Connect auto-splits payments. Your 20% goes directly to your account — SF never holds or processes your funds.</div>
+    </div>
+  </div>
+</div>
+
+<!-- Bottom Trust Indicators -->
+<div style="background:rgba(10,10,10,0.8);border-top:1px solid rgba(255,255,255,0.06);padding:20px 0;text-align:center;">
+  <div style="display:flex;justify-content:center;gap:32px;margin-bottom:12px;font-size:12px;text-transform:uppercase;letter-spacing:1px;color:#666;">
+    <div>Instant Payouts</div>
+    <div>•</div>
+    <div>Real-Time Dash</div>
+    <div>•</div>
+    <div>No Hidden Fees</div>
+  </div>
+  <div style="font-size:11px;color:#444;">Professional team partnership program powered by Stripe Connect</div>
+</div>
+
+<!-- Professional Footer -->
+<footer class="professional-footer">
+  <div class="footer-content">
+    <img src="sf-logo.png" alt="Sound Factory" class="footer-logo" />
+    <div class="footer-company">JONATHAN PETERS PRODUCTIONS</div>
+    <div class="footer-copyright">© 2025 Sound Factory NYC. All rights reserved.</div>
+    <div class="footer-links-row">
+      <a href="#" onclick="showTerms(); return false;">Terms & Conditions</a>
+      <a href="#" onclick="showPrivacy(); return false;">Privacy Policy</a>
+      <a href="#" onclick="showCompliance(); return false;">Compliance</a>
+      <a href="mailto:team@soundfactorynyc.com">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<!-- Success Modal -->
+<div class="success-modal" id="successModal">
+  <div class="success-content">
+    <div class="success-icon">✓</div>
+    <h2 class="success-title">Perfect! Account Created</h2>
+    
+    <div style="background:rgba(76,175,80,0.1);border:1px solid rgba(76,175,80,0.2);border-radius:8px;padding:16px;margin-bottom:24px;">
+      <div style="font-size:13px;color:#888;margin-bottom:4px;">Your Promo Code:</div>
+      <div id="modalPromoCode" style="font-size:20px;font-weight:600;color:#4CAF50;font-family:monospace;">Loading...</div>
+    </div>
+    
+    <p class="success-message">
+      <strong style="color:#fff;">Next Step: Quick Payment Setup</strong><br>
+      We're about to redirect you to Stripe to set up instant commission payments.
+    </p>
+    
+    <div style="text-align:left;background:rgba(0,0,0,0.5);border-radius:6px;padding:16px;margin-bottom:24px;">
+      <div style="font-size:12px;color:#999;margin-bottom:12px;">
+        <strong style="color:#fff;">If you HAVE a Stripe account:</strong><br>
+        → Just click "Connect" and you're done (30 seconds)
+      </div>
+      <div style="font-size:12px;color:#999;">
+        <strong style="color:#fff;">If you DON'T have Stripe:</strong><br>
+        → Create one in 3-5 minutes (they'll ask for basic info)
+      </div>
+    </div>
+    
+    <p style="font-size:13px;color:#666;margin-bottom:20px;">
+      <strong>Note:</strong> Stripe handles billions in payments. Your financial information is secure and private.
+    </p>
+    
+    <button class="btn" id="continueBtn">
+      Continue to Stripe Setup →
+    </button>
+    
+    <p style="font-size:11px;color:#555;margin-top:16px;">
+      Redirecting automatically in <span id="countdown">5</span> seconds...
+    </p>
+  </div>
+</div>
+
+<script>
+let stripeRedirectUrl = '';
+
+// Show info
+function showInfo() {
+  alert('The Sound Factory Team Program is an exclusive partnership opportunity for professional event team members. Partners receive guaranteed commissions, comprehensive marketing support, and VIP privileges at all events. For more information, contact team@soundfactorynyc.com');
+}
+
+function showTerms() {
+  alert('Terms & Conditions: Team member agreement subject to venue approval. Commission rates and benefits subject to terms of partnership agreement. Must maintain professional standards and comply with all venue policies.');
+}
+
+function showPrivacy() {
+  alert('Privacy Policy: Your information is protected with enterprise-grade encryption. We do not share personal data with third parties except as required for payment processing through Stripe.');
+}
+
+function showCompliance() {
+  alert('Compliance: All team members must be 21+ and comply with NYC nightlife regulations. Background verification required. Must maintain appropriate licenses for sales activities.');
+}
+
+// Form submission
+document.getElementById('signupForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const submitBtn = document.getElementById('submitBtn');
+  const originalText = submitBtn.innerHTML;
+  
+  // Get form data
+  const formData = {
+    name: document.getElementById('name').value.trim(),
+    email: document.getElementById('email').value.trim(),
+    phone: document.getElementById('phone').value.trim()
+  };
+  
+  // Validation
+  if (!formData.name || !formData.email || !formData.phone) {
+    showError('All fields are required');
+    return;
+  }
+  
+  // Phone validation
+  const phoneRegex = /^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/;
+  if (!phoneRegex.test(formData.phone.replace(/\s/g, ''))) {
+    showError('Please enter a valid phone number');
+    return;
+  }
+  
+  // Show loading
+  submitBtn.disabled = true;
+  submitBtn.innerHTML = '<span class="loading"></span>Processing...';
+  
+  try {
+    // Call create-promoter function
+    const response = await fetch('/.netlify/functions/create-promoter', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData)
+    });
+    
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Signup failed');
     }
     
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
+    const data = await response.json();
     
-    .signup-container {
-      background: white;
-      border-radius: 20px;
-      padding: 40px;
-      max-width: 500px;
-      width: 100%;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-    }
+    // Store promo code
+    localStorage.setItem('team_temp', JSON.stringify({
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+      promo_code: data.promo_code
+    }));
     
-    .logo {
-      text-align: center;
-      margin-bottom: 30px;
-    }
+    // Redirect directly to Stripe Connect with pre-filled email
+    // Return URL brings them back to dashboard after Stripe verification
+    const encodedEmail = encodeURIComponent(formData.email);
+    const returnUrl = encodeURIComponent(`${window.location.origin}/promoter-dashboard.html`);
     
-    .logo h1 {
-      font-size: 32px;
-      color: #667eea;
-      margin-bottom: 10px;
-    }
+    // In production, use the actual Stripe Connect URL from your API response
+    const stripeUrl = data.stripe_url || `https://connect.stripe.com/setup/s/${data.account_id}?email=${encodedEmail}&return_url=${returnUrl}`;
     
-    .logo p {
-      color: #666;
-      font-size: 16px;
-    }
+    // Go directly to Stripe (no success page)
+    window.location.href = stripeUrl;
     
-    .form-group {
-      margin-bottom: 20px;
+  } catch (error) {
+    console.error('Signup error:', error);
+    showError(error.message || 'An error occurred. Please try again.');
+    submitBtn.disabled = false;
+    submitBtn.innerHTML = originalText;
+  }
+});
+
+// Continue button
+document.getElementById('continueBtn').addEventListener('click', () => {
+  // In production, redirect to actual Stripe Connect URL with pre-filled email
+  const tempData = JSON.parse(localStorage.getItem('team_temp') || '{}');
+  if (tempData.email && stripeRedirectUrl) {
+    window.location.href = stripeRedirectUrl;
+  } else {
+    window.location.href = 'success-improved.html';
+  }
+});
+
+function showError(message) {
+  const existing = document.querySelector('.error');
+  if (existing) existing.remove();
+  
+  const error = document.createElement('div');
+  error.className = 'error';
+  error.textContent = message;
+  document.querySelector('.form-section').appendChild(error);
+  
+  setTimeout(() => error.remove(), 5000);
+}
+
+// Format phone
+document.getElementById('phone').addEventListener('input', (e) => {
+  let value = e.target.value.replace(/\D/g, '');
+  if (value.length > 0) {
+    if (value.length <= 3) {
+      value = `(${value}`;
+    } else if (value.length <= 6) {
+      value = `(${value.slice(0, 3)}) ${value.slice(3)}`;
+    } else if (value.length <= 10) {
+      value = `(${value.slice(0, 3)}) ${value.slice(3, 6)}-${value.slice(6)}`;
     }
-    
-    label {
-      display: block;
-      margin-bottom: 8px;
-      color: #333;
-      font-weight: 500;
-      font-size: 14px;
-    }
-    
-    input, textarea {
-      width: 100%;
+  }
+  e.target.value = value;
+});
+</script>
+
+});
+</script>
+
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<script>
+mermaid.initialize({ 
+  startOnLoad: true,
+  theme: 'dark',
+  themeVariables: {
+    primaryColor: '#0a0a0a',
+    primaryTextColor: '#fff',
+    primaryBorderColor: '#6772e5',
+    lineColor: '#6772e5',
+    secondaryColor: '#000',
+    tertiaryColor: '#000',
+    background: '#000',
+    mainBkg: '#0a0a0a',
+    secondBkg: '#000',
+    textColor: '#fff',
+    fontSize: '16px',
+    fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+  },
+  flowchart: {
+    nodeSpacing: 60,
+    rankSpacing: 100,
+    curve: 'basis',
+    padding: 20
+  }
+});
+</script>
+</html></body>
+</html>
+```
+</div>
+
+</body>
+</html>

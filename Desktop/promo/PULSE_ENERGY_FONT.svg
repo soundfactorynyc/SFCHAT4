@@ -1,0 +1,76 @@
+  <!-- G - SONIC SWIRL -->
+  <g transform="translate(1520, 200)">
+    <path class="wave" d="M 200 150 A 100 100 0 0 0 200 500 L 120 500" transform="translate(18, 0)"/>
+    <path class="wave" d="M 185 170 A 88 88 0 0 0 185 480 L 110 480" transform="translate(15, 0)"/>
+    <path class="wave" d="M 170 190 A 76 76 0 0 0 170 460 L 100 460" transform="translate(12, 0)"/>
+    <path class="solid-alt" d="M 200 150 A 100 100 0 0 0 200 500 L 170 490 A 75 75 0 0 1 170 160 Z"/>
+    <rect class="solid" x="120" y="300" width="80" height="40" rx="12"/>
+    <circle class="core" cx="200" cy="150" r="15"/>
+    <circle class="core" cx="200" cy="500" r="15"/>
+    <circle class="core" cx="210" cy="320" r="10"/>
+  </g>
+  
+  <!-- H - PARALLEL VIBRATION -->
+  <g transform="translate(1780, 200)">
+    <line class="wave" x1="40" y1="150" x2="40" y2="500" transform="translate(-15, 0)"/>
+    <line class="wave" x1="40" y1="150" x2="40" y2="500" transform="translate(-8, 0)"/>
+    <line class="wave" x1="200" y1="150" x2="200" y2="500" transform="translate(15, 0)"/>
+    <line class="wave" x1="200" y1="150" x2="200" y2="500" transform="translate(8, 0)"/>
+    <rect class="solid" x="40" y="150" width="35" height="350" rx="17"/>
+    <rect class="solid-yellow" x="165" y="150" width="35" height="350" rx="17"/>
+    <rect class="solid-alt" x="75" y="300" width="90" height="45" rx="15"/>
+    <circle class="core" cx="120" cy="322" r="18"/>
+  </g>
+  
+  <!-- I - VERTICAL PULSE -->
+  <g transform="translate(2020, 200)">
+    <line class="wave" x1="70" y1="150" x2="70" y2="500" transform="translate(-18, 0)"/>
+    <line class="wave" x1="70" y1="150" x2="70" y2="500" transform="translate(-10, 0)"/>
+    <line class="wave" x1="70" y1="150" x2="70" y2="500" transform="translate(10, 0)"/>
+    <line class="wave" x1="70" y1="150" x2="70" y2="500" transform="translate(18, 0)"/>
+    <rect class="solid-yellow" x="52" y="150" width="36" height="350" rx="18"/>
+    <circle class="core" cx="70" cy="150" r="22"/>
+    <circle class="core" cx="70" cy="500" r="22"/>
+    <line class="wave-thick" x1="70" y1="130" x2="70" y2="80"/>
+    <circle class="core" cx="70" cy="75" r="15"/>
+  </g>
+  
+  <!-- J - HOOK ENERGY -->
+  <g transform="translate(2200, 200)">
+    <path class="wave" d="M 110 150 L 110 450 Q 110 520 50 500" transform="translate(15, 0)"/>
+    <path class="wave" d="M 110 150 L 110 450 Q 110 505 55 490" transform="translate(8, 0)"/>
+    <rect class="solid" x="92" y="150" width="36" height="320" rx="18"/>
+    <path class="solid-alt" d="M 92 470 L 128 470 L 128 450 Q 128 530 40 500 Q 100 490 100 450 L 92 450 Z"/>
+    <circle class="core" cx="110" cy="150" r="20"/>
+    <circle class="core" cx="40" cy="500" r="15"/>
+    <line class="wave-thick" x1="110" y1="130" x2="110" y2="85"/>
+    <circle class="core" cx="110" cy="80" r="13"/>
+  </g>
+  
+  <!-- K - SPLIT ENERGY -->
+  <g transform="translate(2420, 200)">
+    <line class="wave" x1="40" y1="150" x2="40" y2="500" transform="translate(-12, 0)"/>
+    <line class="wave" x1="40" y1="150" x2="40" y2="500" transform="translate(-6, 0)"/>
+    <line class="wave" x1="75" y1="280" x2="200" y2="150" transform="translate(15, -15)"/>
+    <line class="wave" x1="75" y1="280" x2="200" y2="150" transform="translate(8, -8)"/>
+    <line class="wave" x1="75" y1="280" x2="200" y2="500" transform="translate(15, 15)"/>
+    <line class="wave" x1="75" y1="280" x2="200" y2="500" transform="translate(8, 8)"/>
+    <rect class="solid-alt" x="40" y="150" width="35" height="350" rx="17"/>
+    <polygon class="solid" points="75,250 200,150 200,185 95,265"/>
+    <polygon class="solid-yellow" points="75,310 200,465 200,500 95,365"/>
+    <circle class="core" cx="200" cy="167" r="15"/>
+    <circle class="core" cx="200" cy="482" r="15"/>
+  </g>
+  
+  <!-- L - GROUNDED BEAM -->
+  <g transform="translate(2680, 200)">
+    <line class="wave" x1="40" y1="150" x2="40" y2="500" transform="translate(-12, 0)"/>
+    <line class="wave" x1="40" y1="150" x2="40" y2="500" transform="translate(-6, 0)"/>
+    <line class="wave" x1="40" y1="500" x2="180" y2="500" transform="translate(0, 12)"/>
+    <line class="wave" x1="40" y1="500" x2="180" y2="500" transform="translate(0, 6)"/>
+    <rect class="solid" x="40" y="150" width="35" height="350" rx="17"/>
+    <rect class="solid-yellow" x="75" y="455" width="105" height="45" rx="15"/>
+    <circle class="core" cx="195" cy="477" r="12"/>
+  </g>
+
+</svg>

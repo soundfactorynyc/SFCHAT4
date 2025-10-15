@@ -25,7 +25,7 @@
       font-size: 28px;
       margin-bottom: 8px;
       text-align: center;
-      color: #fff;
+      color: #ba55d3;
     }
     .subtitle {
       text-align: center;
@@ -60,13 +60,13 @@
     }
     input:focus {
       outline: none;
-      border-color: rgba(255,255,255,0.3);
+      border-color: #ba55d3;
     }
     button {
       width: 100%;
       padding: 14px;
-      background: #fff;
-      color: #000;
+      background: linear-gradient(135deg, #ba55d3, #8a2be2);
+      color: #fff;
       border: none;
       border-radius: 8px;
       font-size: 16px;
@@ -75,8 +75,8 @@
       transition: all 0.2s;
     }
     button:hover {
-      background: rgba(255,255,255,0.9);
       transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(138, 43, 226, 0.4);
     }
     button:disabled {
       opacity: 0.5;
@@ -90,14 +90,14 @@
       font-size: 14px;
     }
     .success {
-      background: rgba(255, 255, 255, 0.08);
-      border: 0.5px solid rgba(255, 255, 255, 0.15);
-      color: #fff;
+      background: rgba(0, 255, 136, 0.1);
+      border: 1px solid rgba(0, 255, 136, 0.3);
+      color: #00ff88;
     }
     .error {
-      background: rgba(255, 255, 255, 0.06);
-      border: 0.5px solid rgba(255, 255, 255, 0.12);
-      color: #fff;
+      background: rgba(255, 0, 102, 0.1);
+      border: 1px solid rgba(255, 0, 102, 0.3);
+      color: #ff0066;
     }
     .dashboard {
       text-align: center;
@@ -115,18 +115,18 @@
       margin-bottom: 4px;
     }
     .stat-value {
-      color: #fff;
+      color: #ba55d3;
       font-size: 24px;
       font-weight: 700;
     }
     .promo-link {
       background: #000;
-      border: 0.5px solid rgba(255,255,255,0.2);
+      border: 1px solid #333;
       border-radius: 8px;
       padding: 12px;
       word-break: break-all;
       font-size: 12px;
-      color: #fff;
+      color: #00ff88;
       margin-top: 16px;
     }
   </style>
@@ -284,7 +284,7 @@
       
       document.getElementById('promoCode').textContent = promoter.promo_code;
       document.getElementById('ticketsSold').textContent = promoter.tickets_sold || 0;
-      document.getElementById('commission').textContent = '$' + (Number(promoter.commission_earned) || 0).toFixed(2);
+      document.getElementById('commission').textContent = '$' + ((promoter.commission_earned || 0) / 100).toFixed(2);
       
       // Use TicketSpice link with promo code
       const promoLink = `https://soundfactory.ticketspice.com/soundfactory-sance?promo=${promoter.promo_code}`;

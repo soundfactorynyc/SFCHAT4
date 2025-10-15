@@ -15,21 +15,7 @@ function getBaseUrl(event) {
 }
 
 exports.handler = async (event) => {
-  const headers = {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Headers': 'Content-Type',
-    'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Content-Type': 'application/json'
-  };
-
-  // Handle preflight
-  if (event.httpMethod === 'OPTIONS') {
-    return { statusCode: 200, headers, body: '' };
-  }
-
-  if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, headers, body: JSON.stringify({ error: 'Method Not Allowed' }) };
-  }
+  if (event.httpMethod !== 'POST') return { statusCode: 405, body: 'Method Not Allowed' };
 
   try {
     const { email, name, phone, flyerRequest } = JSON.parse(event.body || '{}');
@@ -37,56 +23,27 @@ exports.handler = async (event) => {
     if (!email || !name || !phone) {
       return {
         statusCode: 400,
-        headers,
         body: JSON.stringify({ error: 'Name, email, and phone are required' })
       };
     }
 
-    // Normalize phone number (remove all non-digits and add +1 if needed)
-    let normalizedPhone = phone.replace(/\D/g, '');
-    if (normalizedPhone.length === 10) {
-      normalizedPhone = '1' + normalizedPhone;
-    }
-    if (!normalizedPhone.startsWith('+')) {
-      normalizedPhone = '+' + normalizedPhone;
-    }
-
-    console.log('Creating promoter:', { name, email, phone: normalizedPhone });
-
     // Check if already exists
     const { data: existing } = await supabase
       .from('promoters')
-      .select('id, email, phone, status')
-      .or(`email.eq.${email},phone.eq.${normalizedPhone}`)
+      .select('id, email, phone')
+      .or(`email.eq.${email},phone.eq.${phone}`)
       .single();
 
     if (existing) {
-      if (existing.status === 'approved') {
-        return {
-          statusCode: 400,
-          headers,
-          body: JSON.stringify({ 
-            error: 'You already have an account. Please sign in.',
-            hasAccount: true
-          })
-        };
-      }
       return {
         statusCode: 400,
-        headers,
         body: JSON.stringify({ 
           error: existing.email === email 
-            ? 'Email already registered. Please sign in.' 
-            : 'Phone number already registered. Please sign in.',
-          hasAccount: true
+            ? 'Email already registered' 
+            : 'Phone number already registered' 
         })
       };
     }
-
-    // Generate unique promo code
-    const firstName = name.split(' ')[0].toUpperCase();
-    const randomNum = Math.floor(Math.random() * 9000) + 1000;
-    const promoCode = `${firstName.substring(0, 3)}${randomNum}`;
 
     // Create Stripe Connect account
     const account = await stripe.accounts.create({
@@ -97,50 +54,38 @@ exports.handler = async (event) => {
         card_payments: { requested: true },
         transfers: { requested: true } 
       },
-      business_profile: { 
-        name,
-        mcc: '7999', // Entertainment/Recreation Services
-        product_description: 'Event promotion and ticket sales'
-      },
-      metadata: { 
-        name, 
-        email, 
-        phone: normalizedPhone,
-        promo_code: promoCode 
-      }
+      business_profile: { name },
+      metadata: { name, email, phone }
     });
 
-    // Save to database with APPROVED status for streamlined flow
-    const { data: newPromoter, error: dbError } = await supabase
+    const promoCode = `SF${Math.random().toString(36).slice(2,8).toUpperCase()}`;
+
+    // Save to Stripe metadata
+    await stripe.accounts.update(account.id, { 
+      metadata: { promoCode, name, email, phone } 
+    });
+
+    // Save to Supabase database with PENDING status
+    const { error: dbError } = await supabase
       .from('promoters')
       .insert({
         name,
-        first_name: name.split(' ')[0],
-        last_name: name.split(' ').slice(1).join(' ') || '',
         email,
-        phone: normalizedPhone,
+        phone,
         stripe_account_id: account.id,
         promo_code: promoCode,
-        status: 'approved', // Auto-approve for immediate access
-        admin_notes: 'Auto-approved on signup',
-        flyer_request: flyerRequest || null,
-        commission_earned: '0',
-        tickets_sold: 0,
-        created_at: new Date().toISOString()
-      })
-      .select()
-      .single();
+        status: 'pending', // Awaiting admin approval
+        admin_notes: 'New signup - pending review',
+        flyer_request: flyerRequest || null
+      });
 
     if (dbError) {
       console.error('Database insert error:', dbError);
-      // Delete Stripe account if DB insert fails
-      await stripe.accounts.del(account.id).catch(console.error);
-      throw new Error('Failed to create promoter account');
+      // Continue anyway - we have Stripe account
     }
 
-    // Generate Stripe onboarding link
     const base = process.env.PUBLIC_BASE_URL || getBaseUrl(event);
-    const returnUrl = `${base}/promoter-login.html?onboarded=true&promo=${promoCode}`;
+    const returnUrl = `${base}/promoter-dashboard.html?promo=${promoCode}&registered=true`;
     const refreshUrl = `${base}/index.html`;
 
     const accountLink = await stripe.accountLinks.create({
@@ -150,34 +95,23 @@ exports.handler = async (event) => {
       refresh_url: refreshUrl
     });
 
-    console.log('Promoter created successfully:', { 
-      email, 
-      phone: normalizedPhone, 
-      promoCode,
-      status: 'approved'
-    });
+    console.log('Promoter created (pending approval):', { email, phone, promoCode });
 
     return {
       statusCode: 200,
-      headers,
+      headers: { 'content-type': 'application/json' },
       body: JSON.stringify({
         success: true,
-        onboardingUrl: accountLink.url,
-        promoCode,
-        status: 'approved',
-        message: 'Account created successfully! Complete Stripe setup to receive payments.'
+        stripe_url: accountLink.url,  // Frontend expects this
+        account_id: account.id,  // Frontend can use this as backup
+        promo_code: promoCode,  // Frontend expects underscore version
+        promoCode,  // Keep for compatibility
+        status: 'pending',
+        message: 'Account created! Complete Stripe onboarding, then await admin approval before you can log in.'
       })
     };
-
   } catch (err) {
-    console.error('Error creating promoter:', err);
-    return { 
-      statusCode: 500, 
-      headers,
-      body: JSON.stringify({ 
-        success: false, 
-        error: 'Failed to create account. Please try again.' 
-      }) 
-    };
+    console.error(err);
+    return { statusCode: 500, body: JSON.stringify({ success:false, error: err.message }) };
   }
 };

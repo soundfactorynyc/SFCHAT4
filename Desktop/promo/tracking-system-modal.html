@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Promoter Tracking System - How It Works</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: #0a0a0a;
+            color: #ffffff;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        /* Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Modal Container */
+        .modal-container {
+            background: linear-gradient(145deg, #1a1a1a 0%, #0d0d0d 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            max-width: 1200px;
+            width: 95%;
+            max-height: 90vh;
+            overflow: hidden;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+            animation: slideUp 0.4s ease;
+        }
+
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Header */
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 30px 40px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            position: relative;
+        }
+
+        .modal-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 8px;
+        }
+
+        .modal-header p {
+            font-size: 15px;
+            opacity: 0.9;
+            font-weight: 400;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 25px;
+            right: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: rotate(90deg);
+        }
+
+        /* Content */
+        .modal-content {
+            padding: 40px;
+            overflow-y: auto;
+            max-height: calc(90vh - 140px);
+        }
+
+        .modal-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .modal-content::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .modal-content::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+        }
+
+        /* Flow Steps */
+        .flow-step {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .flow-step::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .flow-step h3 {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .step-number {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .flow-content {
+            padding-left: 44px;
+        }
+
+        .flow-content p {
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 12px;
+            font-size: 15px;
+        }
+
+        .data-box {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            font-family: 'SF Mono', Monaco, 'Courier New', monospace;
+            font-size: 13px;
+        }
+
+        .data-box code {
+            color: #a8dadc;
+            display: block;
+            line-height: 1.8;
+        }
+
+        .data-label {
+            color: #f1fa8c;
+            font-weight: 600;
+        }
+
+        .check-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin: 12px 0;
+            padding: 12px;
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 8px;
+        }
+
+        .check-icon {
+            background: #10b981;
+            color: white;
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Arrow Connector */
+        .arrow-connector {
+            text-align: center;
+            margin: 20px 0;
+            color: rgba(255, 255, 255, 0.3);
+            font-size: 24px;
+        }
+
+        /* Key Features Section */
+        .key-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 24px;
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(102, 126, 234, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .feature-icon {
+            font-size: 32px;
+            margin-bottom: 16px;
+        }
+
+        .feature-card h4 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #ffffff;
+        }
+
+        .feature-card p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* Status Badge */
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(16, 185, 129, 0.15);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #10b981;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 16px;
+            margin: 30px auto;
+            display: flex;
+            justify-content: center;
+            width: fit-content;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .modal-container {
+                width: 100%;
+                height: 100vh;
+                max-height: 100vh;
+                border-radius: 0;
+            }
+
+            .modal-header {
+                padding: 20px;
+            }
+
+            .modal-header h1 {
+                font-size: 22px;
+            }
+
+            .modal-content {
+                padding: 20px;
+            }
+
+            .flow-step {
+                padding: 20px;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Demo Button */
+        .demo-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 25px -5px rgba(102, 126, 234, 0.3);
+        }
+
+        .demo-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 30px -5px rgba(102, 126, 234, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h1>🎯 Promoter Tracking System</h1>
+                <p>Enterprise-grade commission tracking with end-to-end verification</p>
+                <button class="close-btn" onclick="closeModal()">&times;</button>
+            </div>
+            
+            <div class="modal-content">
+                <!-- Step 1: Unique Link -->
+                <div class="flow-step">
+                    <h3><span class="step-number">1</span> Unique Tracking Link</h3>
+                    <div class="flow-content">
+                        <p>Each promoter receives a personalized tracking URL with embedded promo code</p>
+                        <div class="data-box">
+                            <code><span class="data-label">Promoter:</span> DJ Sarah</code>
+                            <code><span class="data-label">Code:</span> DJ_SARAH_456</code>
+                            <code><span class="data-label">Link:</span> soundfactorynyc.com/halloween?promo=DJ_SARAH_456</code>
+                        </div>
+                        <p style="margin-top: 15px;">Share across: Instagram • TikTok • Twitter • WhatsApp</p>
+                    </div>
+                </div>
+
+                <div class="arrow-connector">↓</div>
+
+                <!-- Step 2: Page Load Tracking -->
+                <div class="flow-step">
+                    <h3><span class="step-number">2</span> Intelligent Page Load</h3>
+                    <div class="flow-content">
+                        <p>Advanced JavaScript detects promo code and personalizes entire experience</p>
+                        <div class="check-item">
+                            <span class="check-icon">✓</span>
+                            <span>Promo code detected and validated in real-time</span>
+                        </div>
+                        <div class="check-item">
+                            <span class="check-icon">✓</span>
+                            <span>Promoter's Stripe payment links fetched from secure API</span>
+                        </div>
+                        <div class="check-item">
+                            <span class="check-icon">✓</span>
+                            <span>All purchase buttons updated with tracking parameters</span>
+                        </div>
+                        <div class="check-item">
+                            <span class="check-icon">✓</span>
+                            <span>Page view recorded with timestamp and referrer data</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="arrow-connector">↓</div>
+
+                <!-- Step 3: Click Tracking -->
+                <div class="flow-step">
+                    <h3><span class="step-number">3</span> Purchase Intent Captured</h3>
+                    <div class="flow-content">
+                        <p>Every button click is tracked before payment processing begins</p>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-value">🎫</div>
+                                <div class="stat-label">Ticket Click</div>
+                                <div style="margin-top: 12px; color: rgba(255, 255, 255, 0.7); font-size: 13px;">
+                                    Commission: $10
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">🪑</div>
+                                <div class="stat-label">Table Click</div>
+                                <div style="margin-top: 12px; color: rgba(255, 255, 255, 0.7); font-size: 13px;">
+                                    Commission: 20%
+                                </div>
+                            </div>
+                        </div>
+                        <div class="data-box">
+                            <code><span class="data-label">Tracked Data:</span></code>
+                            <code>• Product Type (ticket/table)</code>
+                            <code>• Commission Amount</code>
+                            <code>• Button Text & Location</code>
+                            <code>• Promo Code (DJ_SARAH_456)</code>
+                            <code>• Timestamp & User Agent</code>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="arrow-connector">↓</div>
+
+                <!-- Step 4: Stripe Checkout -->
+                <div class="flow-step">
+                    <h3><span class="step-number">4</span> Secure Payment Processing</h3>
+                    <div class="flow-content">
+                        <p>Stripe Checkout opens with embedded tracking reference</p>
+                        <div class="data-box">
+                            <code><span class="data-label">URL Parameter:</span> ?client_reference_id=DJ_SARAH_456</code>
+                            <code></code>
+                            <code><span class="data-label">Test Card:</span> 4242 4242 4242 4242</code>
+                            <code><span class="data-label">Expiry:</span> 12/26 | <span class="data-label">CVC:</span> 123</code>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="arrow-connector">↓</div>
+
+                <!-- Step 5: Payment Confirmation -->
+                <div class="flow-step">
+                    <h3><span class="step-number">5</span> Payment Verification</h3>
+                    <div class="flow-content">
+                        <p>Stripe processes payment and captures all transaction metadata</p>
+                        <div class="check-item">
+                            <span class="check-icon">✓</span>
+                            <span>Card charged successfully</span>
+                        </div>
+                        <div class="check-item">
+                            <span class="check-icon">✓</span>
+                            <span>Payment Intent created with unique ID</span>
+                        </div>
+                        <div class="check-item">
+                            <span class="check-icon">✓</span>
+                            <span>Checkout Session completed</span>
+                        </div>
+                        <div class="check-item">
+                            <span class="check-icon">✓</span>
+                            <span>client_reference_id captured: DJ_SARAH_456</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="arrow-connector">↓</div>
+
+                <!-- Step 6: Webhook Processing -->
+                <div class="flow-step">
+                    <h3><span class="step-number">6</span> Webhook Event Processing</h3>
+                    <div class="flow-content">
+                        <p>Secure webhook receives and validates payment event</p>
+                        <div class="data-box">
+                            <code><span class="data-label">Event:</span> checkout.session.completed</code>
+                            <code></code>
+                            <code>"id": "cs_xyz789"</code>
+                            <code>"client_reference_id": "DJ_SARAH_456"</code>
+                            <code>"amount_total": 5000 <span style="opacity: 0.6;">// $50.00</span></code>
+                            <code>"currency": "usd"</code>
+                            <code>"payment_status": "paid"</code>
+                        </div>
+                        <div style="margin-top: 20px;">
+                            <div class="check-item">
+                                <span class="check-icon">✓</span>
+                                <span>Stripe signature verified (authentic webhook)</span>
+                            </div>
+                            <div class="check-item">
+                                <span class="check-icon">✓</span>
+                                <span>Promo code extracted and validated</span>
+                            </div>
+                            <div class="check-item">
+                                <span class="check-icon">✓</span>
+                                <span>Commission automatically calculated</span>
+                            </div>
+                            <div class="check-item">
+                                <span class="check-icon">✓</span>
+                                <span>Duplicate payment check passed</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="arrow-connector">↓</div>
+
+                <!-- Step 7: Database Record -->
+                <div class="flow-step">
+                    <h3><span class="step-number">7</span> Commission Recorded</h3>
+                    <div class="flow-content">
+                        <p>Sale permanently recorded in database with full audit trail</p>
+                        <div class="data-box">
+                            <code><span class="data-label">INSERT INTO sales</span></code>
+                            <code>promo_code: "DJ_SARAH_456"</code>
+                            <code>payment_intent: "pi_abc123"</code>
+                            <code>product_type: "ticket"</code>
+                            <code>amount: $50.00</code>
+                            <code>commission: $10.00</code>
+                            <code>status: "completed"</code>
+                            <code>timestamp: "2025-10-31T23:45:00Z"</code>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="arrow-connector">↓</div>
+
+                <!-- Step 8: Dashboard Update -->
+                <div class="flow-step">
+                    <h3><span class="step-number">8</span> Real-Time Dashboard Update</h3>
+                    <div class="flow-content">
+                        <p>Promoter sees earnings update instantly</p>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <div class="stat-value">$250</div>
+                                <div class="stat-label">Total Earnings</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">25</div>
+                                <div class="stat-label">Tickets Sold</div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-value">0</div>
+                                <div class="stat-label">Tables Booked</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Key Features -->
+                <h2 style="font-size: 24px; margin: 60px 0 30px 0; text-align: center;">Enterprise Security & Reliability</h2>
+                
+                <div class="key-features">
+                    <div class="feature-card">
+                        <div class="feature-icon">🔒</div>
+                        <h4>Fraud Prevention</h4>
+                        <p>Webhook signature verification, duplicate detection, rate limiting, and amount validation</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📊</div>
+                        <h4>Complete Transparency</h4>
+                        <p>Real-time dashboards for promoters and admin with full audit trails</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">⚡</div>
+                        <h4>Instant Updates</h4>
+                        <p>Earnings appear in dashboard within seconds of payment confirmation</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🎯</div>
+                        <h4>Triple Verification</h4>
+                        <p>Page view tracking, click recording, and payment confirmation</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🚀</div>
+                        <h4>Infinitely Scalable</h4>
+                        <p>Handles 1 promoter or 10,000 promoters with identical reliability</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🤖</div>
+                        <h4>Zero Manual Work</h4>
+                        <p>Fully automated tracking, calculation, and reporting</p>
+                    </div>
+                </div>
+
+                <!-- Status Badge -->
+                <div class="status-badge">
+                    <span class="pulse-dot"></span>
+                    SYSTEM STATUS: PRODUCTION READY
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function closeModal() {
+            document.querySelector('.modal-overlay').style.animation = 'fadeOut 0.3s ease';
+            setTimeout(() => {
+                window.close();
+            }, 300);
+        }
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+        });
+
+        // Close on overlay click (but not modal content)
+        document.querySelector('.modal-overlay').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) closeModal();
+        });
+    </script>
+</body>
+</html>

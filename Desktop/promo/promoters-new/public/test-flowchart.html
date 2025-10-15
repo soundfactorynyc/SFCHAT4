@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Promoter Flow Diagram</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 40px 20px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0a0a0a;
+      color: #e0e0e0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1200px;
+      width: 100%;
+      background: #000;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 8px;
+      padding: 40px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 24px;
+      margin-bottom: 30px;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .mermaid {
+      background: #000;
+      border-radius: 4px;
+      padding: 20px;
+    }
+
+    /* Custom Mermaid styling */
+    .mermaid .node rect,
+    .mermaid .node circle,
+    .mermaid .node polygon {
+      fill: #1a1a1a !important;
+      stroke: #6772e5 !important;
+      stroke-width: 2px !important;
+    }
+
+    .mermaid .node .label {
+      color: #ffffff !important;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+    }
+
+    .mermaid .edgePath .path {
+      stroke: #6772e5 !important;
+      stroke-width: 2px !important;
+    }
+
+    .mermaid .arrowheadPath {
+      fill: #6772e5 !important;
+      stroke: #6772e5 !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Complete Transparency — Your Tracking Flow</h1>
+    <div class="mermaid">
+flowchart TD
+    A["Unique Link Issued"]
+    B["Page Loads with Tracking"]
+    C1["Ticket Clicked"]
+    C2["Table Clicked"]
+    D["Stripe Checkout Opens"]
+    E["Stripe Processes Payment"]
+    F["Webhook Receives Event"]
+    G["Database Records Sale"]
+    H["Dashboard Updates"]
+    I["Admin View"]
+
+    A --> B
+    B --> C1
+    B --> C2
+    C1 --> D
+    C2 --> D
+    D --> E
+    E --> F
+    F --> G
+    G --> H
+    G --> I
+
+    style A fill:#1a1a1a,stroke:#6772e5,stroke-width:2px,color:#fff
+    style B fill:#1a1a1a,stroke:#6772e5,stroke-width:2px,color:#fff
+    style C1 fill:#1a1a1a,stroke:#4caf50,stroke-width:2px,color:#fff
+    style C2 fill:#1a1a1a,stroke:#4caf50,stroke-width:2px,color:#fff
+    style D fill:#1a1a1a,stroke:#6772e5,stroke-width:2px,color:#fff
+    style E fill:#1a1a1a,stroke:#6772e5,stroke-width:2px,color:#fff
+    style F fill:#1a1a1a,stroke:#ff9800,stroke-width:2px,color:#fff
+    style G fill:#1a1a1a,stroke:#ff9800,stroke-width:2px,color:#fff
+    style H fill:#1a1a1a,stroke:#4caf50,stroke-width:2px,color:#fff
+    style I fill:#1a1a1a,stroke:#9c27b0,stroke-width:2px,color:#fff
+    </div>
+  </div>
+
+  <script>
+    mermaid.initialize({ 
+      startOnLoad: true,
+      theme: 'dark',
+      themeVariables: {
+        primaryColor: '#1a1a1a',
+        primaryTextColor: '#fff',
+        primaryBorderColor: '#6772e5',
+        lineColor: '#6772e5',
+        secondaryColor: '#0a0a0a',
+        tertiaryColor: '#000',
+        background: '#000',
+        mainBkg: '#1a1a1a',
+        secondBkg: '#0a0a0a',
+        textColor: '#fff',
+        fontSize: '14px',
+        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+      },
+      flowchart: {
+        nodeSpacing: 50,
+        rankSpacing: 80,
+        curve: 'basis',
+        padding: 15
+      }
+    });
+  </script>
+</body>
+</html>

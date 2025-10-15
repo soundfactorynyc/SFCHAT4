@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Complete Tracking Flow - Sound Factory</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: 'SF Mono', Menlo, Monaco, 'Courier New', monospace;
+      background: #0a0a0a;
+      color: #e0e0e0;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: #000;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%);
+      padding: 30px;
+      text-align: center;
+      border-bottom: 2px solid #6772e5;
+    }
+
+    .header h1 {
+      margin: 0 0 10px 0;
+      font-size: 20px;
+      color: #fff;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+    }
+
+    .header p {
+      margin: 0;
+      font-size: 12px;
+      color: #999;
+      letter-spacing: 1px;
+    }
+
+    .flow-section {
+      padding: 40px 30px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .flow-section:last-child {
+      border-bottom: none;
+    }
+
+    .box {
+      background: #0d0d0d;
+      border: 1px solid #333;
+      border-radius: 4px;
+      padding: 20px;
+      margin: 20px 0;
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .box-title {
+      background: #1a1a1a;
+      color: #6772e5;
+      padding: 12px 20px;
+      margin: -20px -20px 20px -20px;
+      border-bottom: 1px solid #333;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .box-content {
+      color: #bbb;
+    }
+
+    .box-content strong {
+      color: #fff;
+    }
+
+    .arrow-down {
+      text-align: center;
+      font-size: 24px;
+      color: #6772e5;
+      margin: 10px 0;
+    }
+
+    .split-flow {
+      display: flex;
+      gap: 20px;
+      margin: 20px 0;
+    }
+
+    .split-flow .box {
+      flex: 1;
+    }
+
+    .checkmark {
+      color: #4caf50;
+      margin-right: 5px;
+    }
+
+    .key-point {
+      background: rgba(103, 114, 229, 0.1);
+      border-left: 3px solid #6772e5;
+      padding: 15px;
+      margin: 15px 0;
+      font-size: 12px;
+    }
+
+    .parallel-tracking {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin: 20px 0;
+    }
+
+    .parallel-box {
+      background: #0d0d0d;
+      border: 1px solid #333;
+      padding: 15px;
+      border-radius: 4px;
+      font-size: 11px;
+    }
+
+    .parallel-box h4 {
+      margin: 0 0 10px 0;
+      color: #6772e5;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .parallel-box ul {
+      margin: 0;
+      padding-left: 18px;
+      color: #999;
+    }
+
+    .parallel-box li {
+      margin-bottom: 5px;
+    }
+
+    .section-header {
+      background: #1a1a1a;
+      padding: 15px 20px;
+      margin: 30px 0 20px 0;
+      border-left: 4px solid #6772e5;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 13px;
+      color: #fff;
+    }
+
+    .status-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #4caf50 0%, #45a049 100%);
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin: 20px 0;
+    }
+
+    .guarantee-list {
+      background: #0d0d0d;
+      border: 1px solid #4caf50;
+      border-radius: 4px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+
+    .guarantee-list li {
+      color: #bbb;
+      margin-bottom: 10px;
+      padding-left: 10px;
+    }
+
+    .code {
+      background: rgba(255,255,255,0.05);
+      padding: 2px 6px;
+      border-radius: 3px;
+      color: #6772e5;
+      font-size: 12px;
+    }
+
+    @media (max-width: 768px) {
+      .split-flow {
+        flex-direction: column;
+      }
+      
+      .parallel-tracking {
+        grid-template-columns: 1fr;
+      }
+
+      body {
+        padding: 10px;
+      }
+
+      .flow-section {
+        padding: 20px 15px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🎯 Complete Tracking Flow</h1>
+      <p>Sound Factory Promoter System — End-to-End Documentation</p>
+    </div>
+
+    <div class="flow-section">
+      <div class="box">
+        <div class="box-title">1. Promoter Gets Unique Link</div>
+        <div class="box-content">
+          <strong>Promoter:</strong> DJ Sarah<br>
+          <strong>Promo Code:</strong> <span class="code">DJ_SARAH_456</span><br>
+          <strong>Link:</strong> <span class="code">soundfactorynyc.com/halloween?promo=DJ_SARAH_456</span><br><br>
+          <strong>Shares on:</strong> Instagram | TikTok | Twitter | WhatsApp
+        </div>
+      </div>
+
+      <div class="arrow-down">↓</div>
+      <div style="text-align: center; color: #999; font-size: 12px; margin: 10px 0;">Customer clicks link</div>
+      <div class="arrow-down">↓</div>
+
+      <div class="box">
+        <div class="box-title">2. Page Loads with Tracking</div>
+        <div class="box-content">
+          <strong>URL:</strong> <span class="code">?promo=DJ_SARAH_456</span><br><br>
+          <span class="checkmark">✅</span> Script detects promo code<br>
+          <span class="checkmark">✅</span> Fetches DJ Sarah's Stripe links from API<br>
+          <span class="checkmark">✅</span> Updates ALL buttons with tracking<br>
+          <span class="checkmark">✅</span> Tracks page view in database<br>
+          <span class="checkmark">✅</span> Shows green indicator: "Team: DJ_SARAH_456"
+        </div>
+      </div>
+
+      <div class="arrow-down">↓</div>
+
+      <div class="split-flow">
+        <div class="box">
+          <div class="box-title">Ticket Clicked</div>
+          <div class="box-content">
+            <strong>Original:</strong> ticketspice.com<br><br>
+            <strong>Updated to:</strong><br>
+            <span class="checkmark">✅</span> DJ Sarah's unique Stripe ticket link<br><br>
+            <strong>Includes:</strong><br>
+            • <span class="code">client_reference_id = DJ_SARAH_456</span><br><br>
+            <strong>Data tracked:</strong><br>
+            • Product: ticket<br>
+            • Commission: $10
+          </div>
+        </div>
+
+        <div class="box">
+          <div class="box-title">Table Clicked</div>
+          <div class="box-content">
+            <strong>Original:</strong> table link<br><br>
+            <strong>Updated to:</strong><br>
+            <span class="checkmark">✅</span> Same link + promo code<br><br>
+            <strong>Includes:</strong><br>
+            • <span class="code">client_reference_id = DJ_SARAH_456</span><br><br>
+            <strong>Data tracked:</strong><br>
+            • Table size<br>
+            • Deposit/Full<br>
+            • Price<br>
+            • Commission: 20%
+          </div>
+        </div>
+      </div>
+
+      <div style="text-align: center; color: #999; font-size: 12px; margin: 20px 0;">Click tracked in database</div>
+      <div class="arrow-down">↓</div>
+
+      <div class="box">
+        <div class="box-title">3. Stripe Checkout Opens</div>
+        <div class="box-content">
+          <strong>URL contains:</strong> <span class="code">?client_reference_id=DJ_SARAH_456</span><br><br>
+          <strong>Customer enters:</strong><br>
+          • Card number: 4242 4242 4242 4242<br>
+          • Expiry: 12/26<br>
+          • CVC: 123<br>
+          • ZIP: 10001
+        </div>
+      </div>
+
+      <div class="arrow-down">↓</div>
+      <div style="text-align: center; color: #999; font-size: 12px; margin: 10px 0;">Payment submitted</div>
+      <div class="arrow-down">↓</div>
+
+      <div class="box">
+        <div class="box-title">4. Stripe Processes Payment</div>
+        <div class="box-content">
+          <span class="checkmark">✅</span> Card charged successfully<br>
+          <span class="checkmark">✅</span> Payment Intent created: <span class="code">pi_abc123</span><br>
+          <span class="checkmark">✅</span> Checkout Session completed: <span class="code">cs_xyz789</span><br>
+          <span class="checkmark">✅</span> client_reference_id captured: <span class="code">DJ_SARAH_456</span>
+        </div>
+      </div>
+
+      <div class="arrow-down">↓</div>
+      <div style="text-align: center; color: #999; font-size: 12px; margin: 10px 0;">Webhook fires</div>
+      <div class="arrow-down">↓</div>
+
+      <div class="box">
+        <div class="box-title">5. Webhook Receives Event</div>
+        <div class="box-content">
+          <strong>Event:</strong> <span class="code">checkout.session.completed</span><br><br>
+          <strong>Data received:</strong><br>
+          <pre style="background: rgba(0,0,0,0.5); padding: 10px; border-radius: 3px; font-size: 11px; overflow-x: auto;">{
+  "id": "cs_xyz789",
+  "client_reference_id": "DJ_SARAH_456",
+  "amount_total": 5000,  // $50.00 in cents
+  "currency": "usd",
+  "payment_status": "paid",
+  "customer_email": "customer@example.com"
+}</pre>
+          <span class="checkmark">✅</span> Signature verified (authentic Stripe webhook)<br>
+          <span class="checkmark">✅</span> Promo code extracted: DJ_SARAH_456<br>
+          <span class="checkmark">✅</span> Amount identified: $50 = Ticket<br>
+          <span class="checkmark">✅</span> Commission calculated: $10
+        </div>
+      </div>
+
+      <div class="arrow-down">↓</div>
+      <div style="text-align: center; color: #999; font-size: 12px; margin: 10px 0;">Save to database</div>
+      <div class="arrow-down">↓</div>
+
+      <div class="box">
+        <div class="box-title">6. Database Records Sale</div>
+        <div class="box-content">
+          <pre style="background: rgba(0,0,0,0.5); padding: 10px; border-radius: 3px; font-size: 11px; overflow-x: auto;">INSERT INTO sales (
+  promo_code: "DJ_SARAH_456",
+  payment_intent_id: "pi_abc123",
+  product_type: "ticket",
+  amount: 50.00,
+  commission: 10.00,
+  customer_email: "customer@example.com",
+  timestamp: "2025-10-31T23:45:00Z",
+  status: "completed"
+)
+
+UPDATE promoters
+SET total_earnings = total_earnings + 10.00,
+    total_sales = total_sales + 1
+WHERE promo_code = "DJ_SARAH_456"</pre>
+        </div>
+      </div>
+
+      <div class="arrow-down">↓</div>
+      <div style="text-align: center; color: #999; font-size: 12px; margin: 10px 0;">Dashboard updates</div>
+      <div class="arrow-down">↓</div>
+
+      <div class="box">
+        <div class="box-title">7. Promoter Sees Earnings</div>
+        <div class="box-content">
+          <strong>Dashboard for DJ Sarah:</strong><br><br>
+          💰 <strong>TOTAL EARNINGS:</strong> $250<br>
+          🎫 <strong>Tickets Sold:</strong> 25<br>
+          🪑 <strong>Tables Booked:</strong> 0<br><br>
+          <strong>📈 RECENT SALES:</strong><br>
+          • 10/31 11:45 PM - Ticket - $10 ✅<br>
+          • 10/31 10:30 PM - Ticket - $10 ✅<br>
+          • 10/31 09:15 PM - Ticket - $10 ✅<br><br>
+          🎯 <strong>NEXT BONUS:</strong> Sell 25 tickets = +$150<br>
+          <strong>Progress:</strong> ████████████████████ 25/25<br>
+          <span class="checkmark">✅</span> BONUS UNLOCKED!
+        </div>
+      </div>
+    </div>
+
+    <div class="section-header">⚡ Parallel Tracking</div>
+    <div class="flow-section">
+      <p style="color: #999; font-size: 12px; text-align: center; margin-bottom: 20px;">While the payment is processing, these happen simultaneously:</p>
+      
+      <div class="parallel-tracking">
+        <div class="parallel-box">
+          <h4>📊 Page View Recorded</h4>
+          <ul>
+            <li>Timestamp</li>
+            <li>Referrer</li>
+            <li>User agent</li>
+            <li>Promo code</li>
+          </ul>
+          <br>
+          <strong style="color: #6772e5;">Used for:</strong>
+          <ul>
+            <li>Traffic stats</li>
+            <li>Conversion tracking</li>
+          </ul>
+        </div>
+
+        <div class="parallel-box">
+          <h4>🖱️ Click Tracking Recorded</h4>
+          <ul>
+            <li>Product type</li>
+            <li>Commission preview</li>
+            <li>Button text</li>
+            <li>Promo code</li>
+          </ul>
+          <br>
+          <strong style="color: #6772e5;">Used for:</strong>
+          <ul>
+            <li>Interest analysis</li>
+            <li>Optimization</li>
+          </ul>
+        </div>
+
+        <div class="parallel-box">
+          <h4>💳 Payment Confirmed</h4>
+          <ul>
+            <li>Final amount</li>
+            <li>Commission</li>
+            <li>Customer info</li>
+            <li>Promo code</li>
+          </ul>
+          <br>
+          <strong style="color: #6772e5;">Used for:</strong>
+          <ul>
+            <li>Final payout</li>
+            <li>Commission calc</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-header">🪑 Table Purchase Example</div>
+    <div class="flow-section">
+      <div class="box">
+        <div class="box-title">Deposit Payment ($500)</div>
+        <div class="box-content">
+          <strong>Customer clicks:</strong> "Table 8-10 - 20% Deposit"<br><br>
+          <strong>Click tracked:</strong><br>
+          • product_type: "table-deposit"<br>
+          • table_size: "8-10"<br>
+          • table_price: 2500<br>
+          • payment_type: "deposit"<br>
+          • commission: 100 (20% of $500 deposit)<br><br>
+          <strong>Stripe payment:</strong> $500<br>
+          <strong>client_reference_id:</strong> DJ_SARAH_456<br><br>
+          <span class="checkmark">✅</span> Commission recorded: $100<br>
+          <span class="checkmark">✅</span> DJ Sarah's balance: +$100
+        </div>
+      </div>
+
+      <div style="text-align: center; color: #999; font-size: 12px; margin: 20px 0;">Later, customer pays remaining amount</div>
+      <div class="arrow-down">↓</div>
+
+      <div class="box">
+        <div class="box-title">Full Payment ($2,000)</div>
+        <div class="box-content">
+          <strong>Same tracking process:</strong><br>
+          • product_type: "table-full"<br>
+          • table_size: "8-10"<br>
+          • payment_type: "full"<br>
+          • commission: 400 (20% of $2,000 remaining)<br><br>
+          <span class="checkmark">✅</span> Total commission for table: $500 (20% of $2,500)<br>
+          <span class="checkmark">✅</span> DJ Sarah's balance: +$400 more
+        </div>
+      </div>
+    </div>
+
+    <div class="section-header">🛡️ Fraud Prevention Checks</div>
+    <div class="flow-section">
+      <div class="key-point">
+        <span class="checkmark">✅</span> <strong>1. PROMO CODE VALIDATION</strong><br>
+        └─ Is DJ_SARAH_456 a valid, active promoter?
+      </div>
+      <div class="key-point">
+        <span class="checkmark">✅</span> <strong>2. DUPLICATE DETECTION</strong><br>
+        └─ Has payment_intent pi_abc123 been processed already?
+      </div>
+      <div class="key-point">
+        <span class="checkmark">✅</span> <strong>3. WEBHOOK SIGNATURE</strong><br>
+        └─ Is this really from Stripe or a fake request?
+      </div>
+      <div class="key-point">
+        <span class="checkmark">✅</span> <strong>4. AMOUNT VERIFICATION</strong><br>
+        └─ Does $50 match expected ticket price?
+      </div>
+      <div class="key-point">
+        <span class="checkmark">✅</span> <strong>5. RATE LIMITING</strong><br>
+        └─ Is this promoter generating suspicious activity?
+      </div>
+      <p style="color: #4caf50; text-align: center; margin-top: 20px; font-weight: 700;">All checks must pass before commission is recorded.</p>
+    </div>
+
+    <div class="section-header">👨‍💼 Admin View (Your Dashboard)</div>
+    <div class="flow-section">
+      <div class="box">
+        <div class="box-title">Halloween 2025 - Promoter Tracking Dashboard</div>
+        <div class="box-content">
+          📊 <strong>TOTAL SALES:</strong> $125,000<br>
+          💰 <strong>TOTAL COMMISSIONS:</strong> $15,000<br>
+          👥 <strong>ACTIVE PROMOTERS:</strong> 45<br><br>
+          
+          <strong>TOP PERFORMERS:</strong><br>
+          1. DJ_SARAH_456 → $2,150 (8 tickets, 1 table)<br>
+          2. DJ_MIKE_123 → $1,800 (30 tickets, 1 table)<br>
+          3. DJ_ALEX_789 → $1,500 (2 tables)<br><br>
+          
+          <strong>📈 CONVERSION RATES:</strong><br>
+          • Page views: 10,000<br>
+          • Ticket clicks: 2,500 (25%)<br>
+          • Table clicks: 500 (5%)<br>
+          • Purchases: 300 (3% overall, 12% of clicks)<br><br>
+          
+          🏆 <strong>BONUS PAYOUTS PENDING:</strong> $5,000
+        </div>
+      </div>
+    </div>
+
+    <div class="section-header">🎯 Key Points</div>
+    <div class="flow-section">
+      <div class="key-point">
+        <strong>1. EVERY STEP IS TRACKED</strong> — From page view to final payment
+      </div>
+      <div class="key-point">
+        <strong>2. MULTIPLE VERIFICATION POINTS</strong> — Page view, click, payment
+      </div>
+      <div class="key-point">
+        <strong>3. FRAUD PREVENTION</strong> — Signature verification, duplicate detection
+      </div>
+      <div class="key-point">
+        <strong>4. REAL-TIME UPDATES</strong> — Promoter sees earnings immediately
+      </div>
+      <div class="key-point">
+        <strong>5. COMPLETE TRANSPARENCY</strong> — Everyone can verify their sales
+      </div>
+      <div class="key-point">
+        <strong>6. SCALABLE</strong> — Works with 1 promoter or 1,000 promoters
+      </div>
+      <div class="key-point">
+        <strong>7. AUTOMATED</strong> — Zero manual tracking needed
+      </div>
+    </div>
+
+    <div class="section-header">✅ Triple-Checked Guarantee</div>
+    <div class="flow-section">
+      <div class="guarantee-list">
+        <ul style="list-style: none; padding: 0; margin: 0;">
+          <li><span class="checkmark">✅</span> <strong>Every product is trackable</strong> (tickets + all 4 table sizes + deposits + full payments)</li>
+          <li><span class="checkmark">✅</span> <strong>Every click is recorded</strong> (with promo code, product type, commission)</li>
+          <li><span class="checkmark">✅</span> <strong>Every payment is confirmed</strong> (via Stripe webhook with signature verification)</li>
+          <li><span class="checkmark">✅</span> <strong>Every commission is calculated</strong> (automatically based on product and amount)</li>
+          <li><span class="checkmark">✅</span> <strong>Every promoter is paid fairly</strong> (real-time tracking, transparent dashboard)</li>
+        </ul>
+      </div>
+
+      <div style="text-align: center; margin-top: 30px;">
+        <div class="status-badge">🚀 SYSTEM STATUS: PRODUCTION READY 🚀</div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

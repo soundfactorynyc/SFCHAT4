@@ -1,0 +1,410 @@
+<!-- SOUND FACTORY PROMOTER INFO MODAL -->
+<!-- Paste this entire block right before </body> tag -->
+
+<div id="sfInfoModal" class="sf-info-modal-overlay" style="display: none;">
+    <style>
+        /* Modal Overlay */
+        .sf-info-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.97);
+            backdrop-filter: blur(5px);
+            z-index: 999999;
+            overflow-y: auto;
+            animation: sfInfoFadeIn 0.3s ease;
+        }
+        
+        @keyframes sfInfoFadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* Modal Wrapper */
+        .sf-info-modal-wrapper {
+            min-height: 100vh;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+        
+        /* Modal Container */
+        .sf-info-modal-container {
+            max-width: 480px;
+            width: 100%;
+            animation: sfInfoSlideUp 0.4s ease;
+        }
+        
+        @keyframes sfInfoSlideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Close Button */
+        .sf-info-modal-close {
+            position: sticky;
+            top: 20px;
+            text-align: right;
+            margin-bottom: 16px;
+            z-index: 10;
+        }
+        
+        .sf-info-close-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 0.5px solid rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            width: 32px;
+            height: 32px;
+            border-radius: 2px;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 300;
+        }
+        
+        .sf-info-close-btn:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        /* Sections - Match your exact style */
+        .sf-info-section {
+            background: rgba(255, 255, 255, 0.02);
+            border: 0.5px solid rgba(255, 255, 255, 0.15);
+            border-radius: 2px;
+            padding: 16px;
+            margin-bottom: 16px;
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        .sf-info-section h3 {
+            font-size: 12px;
+            font-weight: 700;
+            margin: 0 0 12px 0;
+            color: #F0F0F0;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            line-height: 1;
+        }
+        
+        .sf-info-section p {
+            font-size: 12px;
+            line-height: 16px;
+            letter-spacing: 0.2px;
+            color: #F0F0F0;
+            margin: 0 0 12px 0;
+        }
+        
+        .sf-info-section p:last-child {
+            margin-bottom: 0;
+        }
+        
+        .sf-info-section ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .sf-info-section li {
+            font-size: 12px;
+            line-height: 16px;
+            letter-spacing: 0.2px;
+            color: #F0F0F0;
+            margin-bottom: 8px;
+        }
+        
+        .sf-info-section li:last-child {
+            margin-bottom: 0;
+        }
+        
+        /* Nested Box Style */
+        .sf-info-nested {
+            background: rgba(0, 0, 0, 0.3);
+            border: 0.5px solid rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            padding: 12px;
+            margin-top: 12px;
+        }
+        
+        /* Steps Style */
+        .sf-info-step {
+            margin-bottom: 8px;
+            font-size: 12px;
+            line-height: 16px;
+            letter-spacing: 0.2px;
+            color: #F0F0F0;
+        }
+        
+        .sf-info-step:last-child {
+            margin-bottom: 0;
+        }
+        
+        .sf-info-step strong {
+            font-weight: 700;
+            color: #F0F0F0;
+        }
+        
+        /* Note Text */
+        .sf-info-note {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 0.5px solid rgba(255, 255, 255, 0.1);
+            font-size: 12px;
+            line-height: 16px;
+            letter-spacing: 0.2px;
+            color: #999;
+        }
+        
+        /* Table Grid - Match your exact table */
+        .sf-info-table-wrapper {
+            background: rgba(0, 0, 0, 0.3);
+            border: 0.5px solid rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        
+        .sf-info-table-header {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 12px;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom: 0.5px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .sf-info-table-header div {
+            font-size: 11px;
+            font-weight: 700;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .sf-info-table-header div:nth-child(2),
+        .sf-info-table-header div:nth-child(3) {
+            text-align: right;
+        }
+        
+        .sf-info-table-body {
+            font-family: Menlo, Monaco, monospace;
+            font-size: 11px;
+            color: #F0F0F0;
+        }
+        
+        .sf-info-table-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 12px;
+            padding: 8px 12px;
+            border-bottom: 0.5px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        .sf-info-table-row:last-child {
+            border-bottom: none;
+        }
+        
+        .sf-info-table-row div:nth-child(2),
+        .sf-info-table-row div:nth-child(3) {
+            text-align: right;
+        }
+        
+        .sf-info-table-row div:nth-child(3) {
+            font-weight: 700;
+        }
+        
+        /* Responsive */
+        @media (max-width: 480px) {
+            .sf-info-modal-wrapper {
+                padding: 20px 15px;
+            }
+            
+            .sf-info-section {
+                padding: 14px;
+            }
+            
+            .sf-info-table-header,
+            .sf-info-table-row {
+                gap: 8px;
+                padding: 8px;
+            }
+        }
+    </style>
+    
+    <div class="sf-info-modal-wrapper">
+        <div class="sf-info-modal-container">
+            
+            <!-- Close Button -->
+            <div class="sf-info-modal-close">
+                <button class="sf-info-close-btn" onclick="closeSFInfoModal()">&times;</button>
+            </div>
+            
+            <!-- Why We're Launching -->
+            <div class="sf-info-section">
+                <h3>Why We're Launching This Program</h3>
+                <p>The nightlife scene changed after 2020. Sound Factory is building a real network of professional partners — people who move right, earn right, and keep the brand strong.</p>
+                <p>This program gives verified team members a direct line to sell official Sound Factory tickets and tables through Stripe Connect, with full payment transparency and instant payouts.</p>
+            </div>
+            
+            <!-- 3-Step Setup -->
+            <div class="sf-info-section">
+                <h3>3-Step Setup Process</h3>
+                <div class="sf-info-step"><strong>Step 1:</strong> Enter your information below</div>
+                <div class="sf-info-step"><strong>Step 2:</strong> Complete quick Stripe setup (2–5 minutes)</div>
+                <div class="sf-info-step"><strong>Step 3:</strong> Get instant access to your dashboard and start earning</div>
+                <div class="sf-info-note">
+                    Already have a Stripe account? You're halfway there.<br>
+                    All payments go straight through Stripe — we don't touch a dollar.
+                </div>
+            </div>
+            
+            <!-- Payment & Transparency -->
+            <div class="sf-info-section">
+                <h3>Payment & Transparency</h3>
+                <ul>
+                    <li>• All transactions handled by Stripe — we never process payments directly</li>
+                    <li>• Stripe monitors every sale — 100% transparency</li>
+                    <li>• Licensed venue sales only — legit event tickets and tables</li>
+                    <li>• Your business, your Stripe account — Sound Factory stays out of your money</li>
+                    <li>• No hidden fees. No middlemen. No games.</li>
+                </ul>
+            </div>
+            
+            <!-- Commission Structure -->
+            <div class="sf-info-section">
+                <h3>Commission Structure (20%)</h3>
+                
+                <!-- Table -->
+                <div class="sf-info-table-wrapper">
+                    <div class="sf-info-table-header">
+                        <div>Service</div>
+                        <div>Price</div>
+                        <div>Your Cut</div>
+                    </div>
+                    <div class="sf-info-table-body">
+                        <div class="sf-info-table-row">
+                            <div>General Admission</div>
+                            <div>$100</div>
+                            <div>$20</div>
+                        </div>
+                        <div class="sf-info-table-row">
+                            <div>Table (4 Seats)</div>
+                            <div>$160</div>
+                            <div>$32</div>
+                        </div>
+                        <div class="sf-info-table-row">
+                            <div>Table (6 Seats)</div>
+                            <div>$240</div>
+                            <div>$48</div>
+                        </div>
+                        <div class="sf-info-table-row">
+                            <div>Table (10 Seats)</div>
+                            <div>$480</div>
+                            <div>$96</div>
+                        </div>
+                        <div class="sf-info-table-row">
+                            <div>VIP (6 Seats)</div>
+                            <div>$1,200</div>
+                            <div>$240</div>
+                        </div>
+                        <div class="sf-info-table-row">
+                            <div>VIP (10 Seats)</div>
+                            <div>$2,400</div>
+                            <div>$480</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- How It Works -->
+                <div class="sf-info-nested">
+                    <div class="sf-info-step"><strong>1</strong> Customer buys through your link</div>
+                    <div class="sf-info-step"><strong>2</strong> Stripe processes and splits instantly</div>
+                    <div class="sf-info-step"><strong>3</strong> Your 20% transfers to your Stripe account</div>
+                    <div class="sf-info-note" style="border-top: 0.5px solid rgba(255,255,255,0.1); margin-top: 8px; padding-top: 8px;">
+                        Example: VIP Package $1,200 → $240 to you → straight to your account
+                    </div>
+                </div>
+            </div>
+            
+            <!-- What You Get -->
+            <div class="sf-info-section">
+                <h3>What You Get</h3>
+                <ul>
+                    <li>• Daily payouts via Stripe Connect</li>
+                    <li>• Real-time dashboard with analytics</li>
+                    <li>• Complimentary entry + guest list control</li>
+                    <li>• Official marketing assets & promo codes</li>
+                </ul>
+            </div>
+            
+            <!-- After You Apply -->
+            <div class="sf-info-section">
+                <h3>After You Apply</h3>
+                <div class="sf-info-step">1. You'll get an instant email with your promo code</div>
+                <div class="sf-info-step">2. You'll go through Stripe's secure setup portal (2–5 min)</div>
+                <div class="sf-info-step">3. You'll land in your dashboard</div>
+                <div class="sf-info-step">4. Start earning immediately</div>
+                <p style="margin-top: 12px;">We verify every applicant. Professional partners only.</p>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+<script>
+// Open modal function
+function openSFInfoModal() {
+    document.getElementById('sfInfoModal').style.display = 'block';
+    document.body.style.overflow = 'hidden';
+}
+
+// Close modal function
+function closeSFInfoModal() {
+    const modal = document.getElementById('sfInfoModal');
+    modal.style.opacity = '0';
+    modal.style.transition = 'opacity 0.3s ease';
+    
+    setTimeout(() => {
+        modal.style.display = 'none';
+        modal.style.opacity = '1';
+        document.body.style.overflow = '';
+    }, 300);
+}
+
+// Close on Escape key
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        const modal = document.getElementById('sfInfoModal');
+        if (modal && modal.style.display === 'block') {
+            closeSFInfoModal();
+        }
+    }
+});
+
+// Close on overlay click
+document.getElementById('sfInfoModal')?.addEventListener('click', (e) => {
+    if (e.target.id === 'sfInfoModal') {
+        closeSFInfoModal();
+    }
+});
+</script>
+
+<!-- TRIGGER: Replace your existing "showInfo()" button with this -->
+<!--
+<button type="button" class="btn btn-secondary" onclick="openSFInfoModal()">
+    PROGRAM DETAILS
+</button>
+-->

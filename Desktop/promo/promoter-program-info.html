@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sound Factory Promoter Program</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            background: #000000;
+            color: #ffffff;
+            line-height: 1.6;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Section Boxes */
+        .section {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 0;
+            padding: 40px 35px;
+            margin-bottom: 20px;
+        }
+
+        /* Headings */
+        h1 {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+
+        h2 {
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        /* Paragraph Text */
+        p {
+            font-size: 15px;
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 16px;
+        }
+
+        /* Lists */
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            font-size: 15px;
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 12px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        li::before {
+            content: '•';
+            position: absolute;
+            left: 0;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Steps */
+        .step {
+            margin-bottom: 14px;
+        }
+
+        .step-label {
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        /* Note Text */
+        .note {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 20px;
+            line-height: 1.6;
+        }
+
+        /* Table */
+        .commission-table {
+            width: 100%;
+            margin: 25px 0;
+            border-collapse: collapse;
+        }
+
+        .commission-table thead {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .commission-table th {
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 12px 8px;
+            text-align: left;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .commission-table th:last-child {
+            text-align: right;
+        }
+
+        .commission-table td {
+            font-size: 15px;
+            padding: 16px 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .commission-table td:last-child {
+            text-align: right;
+            font-weight: 700;
+        }
+
+        .commission-table tbody tr:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* Process Steps */
+        .process-steps {
+            margin: 20px 0;
+        }
+
+        .process-step {
+            margin-bottom: 12px;
+            font-size: 15px;
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .process-number {
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        /* Example Box */
+        .example {
+            background: rgba(255, 255, 255, 0.03);
+            border-left: 2px solid rgba(255, 255, 255, 0.2);
+            padding: 15px 20px;
+            margin: 20px 0;
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Benefits List */
+        .benefits {
+            margin: 20px 0;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            body {
+                padding: 20px 15px;
+            }
+
+            .section {
+                padding: 30px 25px;
+            }
+
+            h1 {
+                font-size: 16px;
+            }
+
+            p, li, .commission-table td {
+                font-size: 14px;
+            }
+
+            .commission-table th,
+            .commission-table td {
+                padding: 12px 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        
+        <!-- Why We're Launching -->
+        <div class="section">
+            <h1>WHY WE'RE LAUNCHING THIS PROGRAM</h1>
+            <p>The nightlife scene changed after 2020. Sound Factory is building a real network of professional partners — people who move right, earn right, and keep the brand strong.</p>
+            <p>This program gives verified team members a direct line to sell official Sound Factory tickets and tables through Stripe Connect, with full payment transparency and instant payouts.</p>
+        </div>
+
+        <!-- 3-Step Setup -->
+        <div class="section">
+            <h1>3-STEP SETUP PROCESS</h1>
+            <div class="step">
+                <span class="step-label">Step 1:</span> Enter your information below
+            </div>
+            <div class="step">
+                <span class="step-label">Step 2:</span> Complete quick Stripe setup (2–5 minutes)
+            </div>
+            <div class="step">
+                <span class="step-label">Step 3:</span> Get instant access to your dashboard and start earning
+            </div>
+            <p class="note">Already have a Stripe account? You're halfway there.<br>All payments go straight through Stripe — we don't touch a dollar.</p>
+        </div>
+
+        <!-- Payment & Transparency -->
+        <div class="section">
+            <h1>PAYMENT & TRANSPARENCY</h1>
+            <ul>
+                <li>All transactions handled by Stripe — we never process payments directly</li>
+                <li>Stripe monitors every sale — 100% transparency</li>
+                <li>Licensed venue sales only — legit event tickets and tables</li>
+                <li>Your business, your Stripe account — Sound Factory stays out of your money</li>
+                <li>No hidden fees. No middlemen. No games.</li>
+            </ul>
+        </div>
+
+        <!-- Commission Structure -->
+        <div class="section">
+            <h1>COMMISSION STRUCTURE (20%)</h1>
+            
+            <table class="commission-table">
+                <thead>
+                    <tr>
+                        <th>SERVICE</th>
+                        <th>PRICE</th>
+                        <th>YOUR CUT</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>General Admission</td>
+                        <td>$100</td>
+                        <td>$20</td>
+                    </tr>
+                    <tr>
+                        <td>Table (4 Seats)</td>
+                        <td>$160</td>
+                        <td>$32</td>
+                    </tr>
+                    <tr>
+                        <td>Table (6 Seats)</td>
+                        <td>$240</td>
+                        <td>$48</td>
+                    </tr>
+                    <tr>
+                        <td>Table (10 Seats)</td>
+                        <td>$480</td>
+                        <td>$96</td>
+                    </tr>
+                    <tr>
+                        <td>VIP (6 Seats)</td>
+                        <td>$1,200</td>
+                        <td>$240</td>
+                    </tr>
+                    <tr>
+                        <td>VIP (10 Seats)</td>
+                        <td>$2,400</td>
+                        <td>$480</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="process-steps">
+                <div class="process-step">
+                    <span class="process-number">1</span> Customer buys through your link
+                </div>
+                <div class="process-step">
+                    <span class="process-number">2</span> Stripe processes and splits instantly
+                </div>
+                <div class="process-step">
+                    <span class="process-number">3</span> Your 20% hits your bank — automatic transfer
+                </div>
+            </div>
+
+            <div class="example">
+                Example: VIP Package $1,200 → $240 to you → straight to your account
+            </div>
+        </div>
+
+        <!-- What You Get -->
+        <div class="section">
+            <h1>WHAT YOU GET</h1>
+            <ul class="benefits">
+                <li>Daily payouts via Stripe Connect</li>
+                <li>Real-time dashboard with analytics</li>
+                <li>Complimentary entry + guest list control</li>
+                <li>Official marketing assets & promo codes</li>
+            </ul>
+        </div>
+
+        <!-- After You Apply -->
+        <div class="section">
+            <h1>AFTER YOU APPLY</h1>
+            <p>You'll get instant email with your promo code and dashboard link. Connect your Stripe account in under 5 minutes. Start sharing your link immediately.</p>
+            <p>We verify every applicant. Professional partners only.</p>
+        </div>
+
+    </div>
+</body>
+</html>
