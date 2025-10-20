@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Sound Factory Séance — AI Animation Studio</title>
+  
+  <!-- Premium Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Bebas+Neue&family=DM+Serif+Display:ital@0;1&family=Oswald:wght@500;600&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <!-- Notifications root (z=100000) -->
+  <div class="ui-toasts ui-notify-root" aria-live="polite" role="status"></div>
+
+  <div id="ui-root" class="ui-root">
+    <header class="topbar z-ui">
+      <div class="brand">Sound Factory <span class="mark">Séance</span></div>
+      <div class="spacer"></div>
+      <div class="actions">
+        <input id="flyer-input" type="file" accept="image/*" hidden>
+        <input id="file-flyer" type="file" accept="image/*,video/*" style="display:none">
+        <input id="ai-file-audio" type="file" accept="audio/*" hidden>
+        <button id="btn-import" class="btn z-ui" style="z-index:20000">Import</button>
+        <button id="btn-mic">🎙️ Voice</button>
+        <button id="btn-audio">🎵 Reactive</button>
+
+        <button id="btn-preset-pulse">Pulse</button>
+        <button id="btn-preset-zoom">Zoom</button>
+        <button id="btn-preset-sweep">Sweep</button>
+
+        <button id="btn-enhance">Enhance</button>
+        <button id="btn-bg-remove">Remove BG</button>
+        <button id="btn-add-text">Add Text</button>
+        <input id="block-image-input" type="file" accept="image/*" hidden>
+        <button id="btn-add-image">Add Image Block</button>
+        <button id="btn-chop">Chop Mode</button>
+
+        <button id="btn-effect-spin">Spin</button>
+        <button id="btn-effect-orbit">Orbit</button>
+        <button id="btn-effect-float">Float</button>
+
+        <input id="wm-media-input" type="file" accept="image/*,video/*" hidden>
+        <button id="btn-wm-add">Add 3D Windmill</button>
+        <button id="btn-wm-media">Windmill Media</button>
+        <button id="btn-wm-theme">Theme</button>
+        <button id="btn-wm-speed-down">Speed -</button>
+        <button id="btn-wm-speed-up">Speed +</button>
+
+        <button id="btn-size-916">9:16</button>
+        <button id="btn-size-11">1:1</button>
+        <button id="btn-size-169">16:9</button>
+
+        <button id="btn-export-png">PNG</button>
+        <button id="btn-export-jpg">JPG</button>
+        <button id="btn-export-webm">WebM</button>
+        <button id="btn-export-mp4">MP4</button>
+
+        <button id="btn-make-sick">🔥 Make It Sick</button>
+        <button id="btn-make-12">🗓️ Make 12</button>
+
+        <button id="btn-help">Help</button>
+        <button id="btn-save">Save</button>
+      </div>
+    </header>
+
+    <main class="main">
+      <aside class="sidebar z-panels">
+        <div class="panel">
+          <h3>Effects</h3>
+          <label class="effect-toggle"><input type="checkbox" id="glow-effect" checked /> Neon Glow</label><br/>
+          <label class="effect-toggle"><input type="checkbox" id="blur-effect" /> Motion Blur</label><br/>
+          <label class="effect-toggle"><input type="checkbox" id="particles-effect" /> Particles</label>
+        </div>
+
+        <div class="panel">
+          <h3>Commands</h3>
+          <input id="nl-input" placeholder='e.g. "make it faster, add sweep, 9:16"' />
+          <button id="btn-apply">Apply</button>
+          <p style="opacity:.7;font-size:12px;margin-top:8px">Try: <code>faster</code>, <code>slower</code>, <code>9:16</code>, <code>add sweep</code>, <code>zoom</code>, <code>more glow</code></p>
+        </div>
+
+        <!-- Motion Automation Controls -->
+        <div id="automation-panel" class="panel glass" style="padding:10px; backdrop-filter:blur(20px); border:1px solid rgba(255,255,255,0.1); border-radius:10px;">
+          <h3 style="margin-bottom:8px;">Automation Controls</h3>
+
+          <label>Speed <input id="auto-speed" type="range" min="0" max="5" step="0.1" value="1.0"></label><br>
+          <label>Amplitude <input id="auto-amp" type="range" min="0" max="10" step="0.1" value="2.0"></label><br>
+          <label>Glow <input id="auto-glow" type="range" min="0" max="1" step="0.01" value="0.4"></label><br>
+          <label>Zoom <input id="auto-zoom" type="range" min="0.8" max="1.2" step="0.01" value="1.0"></label><br>
+
+          <div style="margin-top:10px;">
+            <button id="btn-auto-toggle">🏛️ Automation</button>
+            <button id="btn-record">🎥 Record</button>
+          </div>
+
+          <div style="margin-top:10px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.1);">
+            <h4 style="margin:0 0 6px 0; font-size:11px; opacity:0.7;">Effects</h4>
+            <button id="btn-fx-lightning">⚡ Lightning</button>
+            <button id="btn-fx-split">💥 Split</button>
+            <button id="btn-fx-smoke">🔮 Smoke</button>
+            <button id="btn-fx-flash">✨ Flash</button>
+          </div>
+
+          <div style="margin-top:10px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.1);">
+            <h4 style="margin:0 0 6px 0; font-size:11px; opacity:0.7;">Speakers</h4>
+            <button id="btn-speaker-2d">🔊 2D Woofer</button>
+            <button id="btn-speaker-3d-single">🔈 3D Single</button>
+            <button id="btn-speaker-3d-dual">🔉 3D Dual</button>
+            <button id="btn-speaker-3d-wall">🔊 3D Wall</button>
+          </div>
+
+          <div style="margin-top:10px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.1);">
+            <h4 style="margin:0 0 6px 0; font-size:11px; opacity:0.7;">Nostalgia</h4>
+            <button id="btn-memories-one">🎞️ One Reel</button>
+            <button id="btn-memories-12">📹 12 Reels</button>
+          </div>
+
+          <!-- Color Grading Panel -->
+          <div style="margin-top:10px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.1);">
+            <h4 style="margin:0 0 6px 0; font-size:11px; opacity:0.7;">Color Grading</h4>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:4px; margin-bottom:8px;">
+              <button class="color-preset-btn" onclick="ColorGrade.preset('neon')">Neon</button>
+              <button class="color-preset-btn" onclick="ColorGrade.preset('chrome')">Chrome</button>
+              <button class="color-preset-btn" onclick="ColorGrade.preset('vintage')">Vintage</button>
+              <button class="color-preset-btn" onclick="ColorGrade.preset('bw')">B&W</button>
+              <button class="color-preset-btn" onclick="ColorGrade.preset('pop')">POP</button>
+              <button class="color-preset-btn" onclick="ColorGrade.brandSnap()">🎯 Brand</button>
+            </div>
+            
+            <div class="slider-row">
+              <label>Hue</label>
+              <input id="hue-slider" type="range" min="0" max="360" value="0" oninput="ColorGrade.setHue(this.value)">
+            </div>
+            <div class="slider-row">
+              <label>Saturate</label>
+              <input id="sat-slider" type="range" min="0" max="200" value="100" oninput="ColorGrade.setSaturate(this.value)">
+            </div>
+            <div class="slider-row">
+              <label>Bright</label>
+              <input id="bright-slider" type="range" min="50" max="150" value="100" oninput="ColorGrade.setBrightness(this.value)">
+            </div>
+            <div class="slider-row">
+              <label>Contrast</label>
+              <input id="contrast-slider" type="range" min="50" max="200" value="100" oninput="ColorGrade.setContrast(this.value)">
+            </div>
+            
+            <button id="btn-hue-beat" onclick="ColorGrade.toggleHueBeat()" style="width:100%; margin-top:8px;">🎵 Hue-on-Beat</button>
+          </div>
+
+          <!-- Lighting Panel -->
+          <div style="margin-top:10px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.1);">
+            <h4 style="margin:0 0 6px 0; font-size:11px; opacity:0.7;">Lighting</h4>
+            <button id="btn-light-up" onclick="LightItUp.toggle()">💡 Light It Up</button>
+          </div>
+
+          <!-- Spot Selector Panel -->
+          <div style="margin-top:10px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.1);">
+            <h4 style="margin:0 0 6px 0; font-size:11px; opacity:0.7;">Spot Selector</h4>
+            <button id="btn-spot-enable" onclick="SpotSelector.enable()">🎯 Enable Spot</button>
+            <button id="btn-spot-disable" onclick="SpotSelector.disable()">❌ Disable</button>
+          </div>
+
+          <!-- AI Image-to-Video -->
+          <div style="margin-top:10px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.1);">
+            <h4 style="margin:0 0 6px 0; font-size:11px; opacity:0.7;">AI Video</h4>
+            <input id="ai-video-prompt" type="text" placeholder="Animation prompt..." style="width:100%; padding:6px; margin-bottom:6px; background:rgba(0,0,0,0.3); border:1px solid rgba(255,255,255,0.1); color:#fff; border-radius:4px;">
+            <button id="btn-ai-video" onclick="demoAIVideo()">🎬 Generate Video</button>
+          </div>
+        </div>
+      </aside>
+
+      <!-- UI Panels (Left Sidebar) -->
+      <div id="ui-panels">
+        <!-- Move sidebar content here later -->
+      </div>
+
+      <!-- Viewport (Right Canvas Area) -->
+      <section id="viewport" class="viewport">
+        <canvas id="gl" class="stage z-flyer-bg" width="1080" height="1920"></canvas>
+        <!-- <div class="grade-layer" id="grade-layer"></div> -->
+        <!-- <div class="lighting-overlay z-lighting" aria-hidden="true"></div> -->
+        <!-- <canvas id="preview" class="stage overlay z-box" width="1080" height="1920"></canvas> -->
+        <!-- <canvas id="stage3d" class="stage overlay z-box" width="1080" height="1920" style="pointer-events:none"></canvas> -->
+        <!-- <div id="spot-ring" class="spot-ring" style="display:none;"></div> -->
+      </section>
+    </main>
+
+    <div id="modal-container" class="modal-container z-modal" hidden>
+      <div class="modal-backdrop"></div>
+      <div class="modal-content glass">
+        <h3>Help</h3>
+        <p>Import your static flyer, pick a preset (Pulse/Zoom/Sweep), tweak with commands, and export PNG/JPG/WebM/MP4.</p>
+        <button id="modal-close" class="btn">Close</button>
+      </div>
+    </div>
+
+    <!-- Command Bar -->
+    <div id="cmdbar" class="command-bar">
+      <input id="cmdinput" placeholder="type a command… e.g. add neon text 'LEGENDARY', add lightning, pop color, record 8s">
+      <button id="cmdbtn" class="cmd-execute">▶︎</button>
+      <button id="mikebtn" class="cmd-voice" title="voice">🎤</button>
+    </div>
+  </div>
+
+    <!-- Crash Doctor (load FIRST for error handling) -->
+  <script src="js/crash-doctor.js"></script>
+
+    <!-- Three.js from CDN -->
+  <script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
+  
+  <!-- Core Engines (MUST load first) -->
+  <script src="js/ui-manager.js"></script>
+  <script src="js/stage-fit.js"></script>   <!-- ← must be here -->
+  <script src="js/color-grade.js"></script>
+  <script src="js/light-it-up.js"></script>
+  
+  <!-- Core Scripts -->
+  <script src="js/animation-engine.js"></script>
+  <script src="js/layer-manager.js"></script>
+  <script src="js/effect-manager.js"></script>
+  <script src="js/layering-test.js"></script>
+  <script src="js/natural-language.js"></script>
+  <script src="js/background-tools.js"></script>
+  <script src="js/blocks.js"></script>
+  <script src="js/ai-bridge.js"></script>
+  <script src="js/command-router.js"></script>
+  <script src="js/three-layer.js"></script>
+  <script src="js/audio-reactor.js"></script>
+  <script src="js/automation.js"></script>
+  <script src="js/assets-loader.js"></script>
+  <script src="js/flyer-analyzer.js"></script>
+  <script src="js/style-fitter.js"></script>
+  <script src="js/importer.js"></script>
+  <script src="js/voice-recognition.js"></script>
+  
+  <!-- Effects -->
+  <script src="js/effect-lightning.js"></script>
+  <script src="js/effect-player.js"></script>
+  <script src="js/effect-split.js"></script>
+  <script src="js/speaker2d.js"></script>
+  <script src="js/speakers3d.js"></script>
+  
+  <!-- Nostalgia & AI -->
+  <script src="js/memories.js"></script>
+  <script src="js/auto-dj.js"></script>
+  <script src="js/ai-orchestrator.js"></script>
+  
+  <!-- NEW: Spot Selector System -->
+  <script src="js/curator.js"></script>
+  <script src="js/spot-selector.js"></script>
+  <script src="js/radial-controls.js"></script>
+  <script src="js/spot-randomizer.js"></script>
+  
+  <!-- NEW: Premium Features -->
+  <script src="js/text-creator.js"></script>
+  <script src="js/cutter-3d.js"></script>
+  <script src="js/color-grade.js"></script>
+  <script src="js/light-it-up.js"></script>
+  <script src="js/stage-fit.js"></script>
+  <script src="js/ai-vendor.js"></script>
+  
+  <!-- Export & Boot -->
+  <script type="module" src="js/exporter.js"></script>
+  <script src="js/nl-wireup.js"></script>
+  <script src="js/app.js"></script>
+  
+  <script>
+    // Initialize premium features on load
+    window.addEventListener('DOMContentLoaded', () => {
+      if (window.ColorGrade) ColorGrade.init();
+      if (window.LightItUp) LightItUp.init();
+      if (window.StageFit) StageFit.init();
+      console.log('✨ Premium features initialized');
+    });
+    
+    // Initialize command bar
+    document.addEventListener('DOMContentLoaded', ()=>{
+      NL.initUI(); // command bar ready
+    });
+    
+    // Demo: AI Video Generation
+    async function demoAIVideo() {
+      const prompt = document.getElementById('ai-video-prompt')?.value || 'Animate with pulsing lights';
+      const flyerUrl = document.querySelector('#gl')?.toDataURL();
+      
+      if (!flyerUrl || !window.AIVendor) {
+        if (window.UI) UI.toast('Load a flyer first', 'error');
+        return;
+      }
+      
+      await AIVendor.generate(flyerUrl, prompt, { 
+        duration: 4, 
+        motionStrength: 0.7,
+        x: '50%',
+        y: '50%',
+        scale: 0.5
+      });
+    }
+  </script>
+
+</body>
+</html>
