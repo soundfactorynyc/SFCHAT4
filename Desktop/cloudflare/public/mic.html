@@ -1,0 +1,161 @@
+<!doctype html>
+<meta charset="utf-8" />
+<title>Always-On Mic → Claude (Live)</title>
+<style>
+  :root { color-scheme: dark; }
+  body { margin: 0; font: 16px/1.5 system-ui, -apple-system, Segoe UI, Roboto; background:#000; color:#fff; }
+  .wrap { max-width: 900px; margin: 32px auto; padding: 24px; }
+  h1 { font-size: 20px; margin: 0 0 12px; }
+  .row { display:flex; gap:12px; align-items:center; margin: 8px 0 16px; }
+  button { background:#0f0; color:#000; border:0; padding:10px 14px; border-radius:10px; font-weight:700; cursor:pointer; }
+  button.mute { background:#222; color:#fff; border:1px solid #444; }
+  .pill { padding:6px 10px; border-radius:999px; background:#111; border:1px solid #333; }
+  .log { white-space: pre-wrap; background:#0a0a0a; border:1px solid #222; border-radius:12px; padding:16px; min-height:180px; }
+  .small { opacity:.7; font-size: 13px; }
+</style>
+<div class="wrap">
+  <h1>🎙️ Always-On Mic → Claude (<span id="status">idle</span>)</h1>
+  <div class="row">
+    <span class="pill">Lang: <select id="lang"><option>en-US</option><option>en-GB</option></select></span>
+    <button id="toggle">Start Mic</button>
+    <button id="mute" class="mute">Mute</button>
+    <span class="small">Sends only <b>final phrases</b> after short pauses.</span>
+  </div>
+  <div class="row small">
+    <span id="lastFinal" class="pill" title="Last phrase sent"></span>
+  </div>
+  <div class="log" id="out" aria-live="polite"></div>
+</div>
+
+<script>
+const out = document.getElementById('out');
+const statusEl = document.getElementById('status');
+const lastFinal = document.getElementById('lastFinal');
+const btn = document.getElementById('toggle');
+const muteBtn = document.getElementById('mute');
+const langSel = document.getElementById('lang');
+
+const SR = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+SR.continuous = true;
+SR.interimResults = true;
+
+let active = false;
+let muted = false;
+let buffer = "";
+let debounceTimer = null;
+let inflightController = null; // cancels previous stream if new phrase arrives
+
+const clean = (s) =>
+  s.replace(/\b(uh|um+|er+|like)\b/gi,"")
+   .replace(/\s{2,}/g," ")
+   .trim();
+
+function startMic() {
+  if (active) return;
+  SR.lang = langSel.value || "en-US";
+  active = true;
+  statusEl.textContent = "listening…";
+  SR.start();
+}
+
+function stopMic() {
+  if (!active) return;
+  active = false;
+  statusEl.textContent = "stopped";
+  SR.stop();
+}
+
+btn.onclick = () => active ? stopMic() : startMic();
+muteBtn.onclick = () => { muted = !muted; muteBtn.textContent = muted ? "Unmute" : "Mute"; };
+
+SR.onend = () => { // keep always-on
+  if (active) { try { SR.start(); } catch {} }
+};
+
+SR.onresult = (e) => {
+  const res = e.results[e.resultIndex];
+  const txt = res[0]?.transcript || "";
+  if (!txt) return;
+
+  if (res.isFinal) {
+    const phrase = clean(txt);
+    if (!phrase) return;
+
+    buffer += (buffer ? " " : "") + phrase;
+    lastFinal.textContent = phrase;
+
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+      const toSend = clean(buffer);
+      buffer = "";
+      if (!muted && toSend) sendToClaude(toSend);
+    }, 600); // send after a short natural pause
+  } else {
+    statusEl.textContent = "listening… (" + txt + ")";
+  }
+};
+
+async function sendToClaude(text) {
+  // cancel any previous in-flight read
+  inflightController?.abort();
+  inflightController = new AbortController();
+
+  // show prompt
+  out.textContent += `\n\n> ${text}\n`;
+  // stream reply
+  const res = await fetch("/api/claude-chat", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ text, max_tokens: 600, temperature: 0.3 }),
+    signal: inflightController.signal
+  });
+
+  const reader = res.body?.getReader();
+  const decoder = new TextDecoder();
+  if (!reader) return;
+
+  // line buffer to assemble SSE
+  let carry = "";
+  while (true) {
+    const { done, value } = await reader.read().catch(() => ({ done: true }));
+    if (done) break;
+    const chunk = decoder.decode(value, { stream: true });
+    carry += chunk;
+    let idx;
+    // parse lines
+    while ((idx = carry.indexOf("\n")) >= 0) {
+      const line = carry.slice(0, idx).trim();
+      carry = carry.slice(idx + 1);
+      if (!line) continue;
+      if (line.startsWith("data:")) {
+        const payload = line.slice(5).trim();
+        try {
+          // Anthropic NDJSON events often look like JSON; when not, just append text
+          const maybe = JSON.parse(payload);
+          const content = extractText(maybe);
+          if (content) out.textContent += content;
+        } catch {
+          // fallback: append raw
+          out.textContent += payload + "\n";
+        }
+      }
+    }
+  }
+  out.scrollTop = out.scrollHeight;
+}
+
+// Pull text tokens out of Anthropic event shapes
+function extractText(evt) {
+  // Look for content delta
+  if (evt?.type === "content_block_delta" && evt.delta?.text) return evt.delta.text;
+  if (evt?.type === "message_delta" && evt.delta?.stop_reason) return ""; // ignore stops
+  if (evt?.type === "message_stop") return "\n";
+  // Fallback if some SDK proxies different shapes
+  if (evt?.content && Array.isArray(evt.content) && evt.content[0]?.text) return evt.content[0].text;
+  if (evt?.text) return evt.text;
+  return "";
+}
+
+// auto-start mic on load
+startMic();
+</script>
