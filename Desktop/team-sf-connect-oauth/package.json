@@ -1,0 +1,15 @@
+{
+  "name": "team-sf-connect-oauth",
+  "version": "1.0.0",
+  "description": "This package gives you: - **OAuth sign-up** for promoters using **Stripe Connect Express** - **SMS login** for promoters via the **Stripe Express Dashboard login link** - All-black minimal UI with SF logo + two buttons",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "stripe": "^19.1.0"
+  }
+}
