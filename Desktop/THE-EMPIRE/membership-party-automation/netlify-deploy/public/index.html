@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sound Factory - Approval Dashboard</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0a0a0a;
+      color: #fff;
+      padding: 20px;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1600px;
+      margin: 0 auto;
+    }
+
+    header {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 16px;
+      padding: 30px;
+      margin-bottom: 30px;
+    }
+
+    h1 {
+      font-size: 2.8em;
+      color: #ff0066;
+      margin-bottom: 10px;
+    }
+
+    .subtitle {
+      color: #888;
+      font-size: 1.2em;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 12px;
+      padding: 25px;
+      text-align: center;
+    }
+
+    .stat-label {
+      color: #888;
+      font-size: 0.9em;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-weight: 600;
+    }
+
+    .stat-value {
+      font-size: 3em;
+      font-weight: bold;
+      color: #ff0066;
+      margin-top: 10px;
+    }
+
+    .deliverables {
+      display: grid;
+      gap: 25px;
+    }
+
+    .deliverable {
+      background: #fff;
+      color: #333;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+      transition: all 0.3s;
+    }
+
+    .deliverable:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 48px rgba(0,0,0,0.3);
+    }
+
+    .deliverable-top {
+      background: #1a1a1a;
+      padding: 25px 30px;
+      color: #fff;
+      border-bottom: 2px solid #ff0066;
+    }
+
+    .category-badge {
+      display: inline-block;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.75em;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 15px;
+    }
+
+    .badge-sponsors { background: #FF6B35; }
+    .badge-venues { background: #00D9FF; }
+    .badge-marketing { background: #9D4EDD; }
+    .badge-artwork { background: #06FFA5; color: #000; }
+    .badge-memberships { background: #FFD60A; color: #000; }
+    .badge-legal { background: #EF476F; }
+    .badge-budget { background: #118AB2; }
+    .badge-timeline { background: #073B4C; }
+    .badge-strategy { background: #FF9F1C; }
+
+    .deliverable-title {
+      font-size: 1.8em;
+      font-weight: bold;
+      margin-bottom: 10px;
+      line-height: 1.3;
+    }
+
+    .deliverable-subtitle {
+      font-size: 1.1em;
+      opacity: 0.9;
+      margin-bottom: 15px;
+    }
+
+    .quick-info {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-top: 15px;
+    }
+
+    .quick-info-item {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 0.9em;
+    }
+
+    .quick-info-label {
+      opacity: 0.7;
+      font-size: 0.85em;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .quick-info-value {
+      font-weight: bold;
+      margin-top: 3px;
+    }
+
+    .deliverable-body {
+      padding: 30px;
+    }
+
+    .preview-section {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .preview-label {
+      color: #666;
+      font-size: 0.85em;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .preview-content {
+      color: #333;
+      line-height: 1.7;
+      font-size: 0.95em;
+    }
+
+    .key-details {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .detail-box {
+      background: #f8f9fa;
+      border-left: 4px solid #2a5298;
+      padding: 15px;
+      border-radius: 8px;
+    }
+
+    .detail-label {
+      color: #666;
+      font-size: 0.8em;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 5px;
+    }
+
+    .detail-value {
+      color: #333;
+      font-size: 1.1em;
+      font-weight: 600;
+    }
+
+    .full-content {
+      background: #f8f9fa;
+      border-radius: 12px;
+      padding: 20px;
+      max-height: 400px;
+      overflow-y: auto;
+      margin-bottom: 20px;
+    }
+
+    .full-content pre {
+      white-space: pre-wrap;
+      word-wrap: break-word;
+      color: #333;
+      line-height: 1.6;
+      font-size: 0.9em;
+    }
+
+    .actions {
+      display: flex;
+      gap: 15px;
+      padding: 25px 30px;
+      background: #f8f9fa;
+      border-top: 2px solid #e9ecef;
+    }
+
+    button {
+      flex: 1;
+      padding: 18px 30px;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.1em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .btn-next {
+      background: #00ff88;
+      color: #000;
+    }
+
+    .btn-next:hover {
+      background: #00cc6a;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+    }
+
+    .btn-reject {
+      background: #dc3545;
+      color: #fff;
+    }
+
+    .btn-reject:hover {
+      background: #c82333;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 80px 20px;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 16px;
+    }
+
+    .empty-state h2 {
+      font-size: 2.5em;
+      margin-bottom: 15px;
+      color: #ff0066;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 60px;
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 16px;
+      font-size: 1.4em;
+      color: #ff0066;
+    }
+
+    .help-text {
+      background: #1a1a1a;
+      border: 1px solid #333;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 30px;
+      border-left: 4px solid #ff0066;
+    }
+
+    .help-text h3 {
+      margin-bottom: 10px;
+      font-size: 1.1em;
+    }
+
+    .help-text p {
+      opacity: 0.9;
+      line-height: 1.6;
+    }
+
+    /* Chat Widget */
+    .chat-widget {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 400px;
+      max-height: 600px;
+      background: #1a1a1a;
+      border: 2px solid #ff0066;
+      border-radius: 16px;
+      display: none;
+      flex-direction: column;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      z-index: 10000;
+    }
+
+    .chat-widget.open {
+      display: flex;
+    }
+
+    .chat-header {
+      background: #ff0066;
+      padding: 15px 20px;
+      border-radius: 14px 14px 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .chat-header h3 {
+      margin: 0;
+      font-size: 1.1em;
+    }
+
+    .chat-close {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 1.5em;
+      cursor: pointer;
+      padding: 0;
+      width: 30px;
+      height: 30px;
+      line-height: 1;
+    }
+
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+      max-height: 400px;
+    }
+
+    .chat-message {
+      padding: 12px 16px;
+      border-radius: 12px;
+      max-width: 80%;
+      line-height: 1.5;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    .chat-message-user {
+      align-self: flex-end;
+      background: #ff0066;
+      color: #fff;
+    }
+
+    .chat-message-assistant {
+      align-self: flex-start;
+      background: #2a2a2a;
+      color: #fff;
+    }
+
+    .chat-typing {
+      align-self: flex-start;
+      padding: 12px 16px;
+      background: #2a2a2a;
+      border-radius: 12px;
+      color: #888;
+      font-style: italic;
+    }
+
+    .chat-input-container {
+      padding: 15px;
+      border-top: 1px solid #333;
+      display: flex;
+      gap: 10px;
+    }
+
+    .chat-input {
+      flex: 1;
+      padding: 12px 16px;
+      border: 1px solid #333;
+      border-radius: 8px;
+      background: #0f0f0f;
+      color: #fff;
+      font-size: 0.95em;
+    }
+
+    .chat-input:focus {
+      outline: none;
+      border-color: #ff0066;
+    }
+
+    .chat-send {
+      padding: 12px 20px;
+      background: #ff0066;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .chat-send:hover {
+      background: #cc0052;
+    }
+
+    .chat-send:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .chat-mic {
+      padding: 12px 20px;
+      background: #333;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.2em;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .chat-mic:hover {
+      background: #444;
+    }
+
+    .chat-mic.recording {
+      background: #ff0066;
+      animation: pulse-mic 1s infinite;
+    }
+
+    @keyframes pulse-mic {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+
+    .chat-toggle {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 70px;
+      height: 70px;
+      background: #ff0066;
+      border: none;
+      border-radius: 50%;
+      font-size: 2em;
+      cursor: pointer;
+      box-shadow: 0 4px 16px rgba(255,0,102,0.5);
+      transition: all 0.3s;
+      z-index: 9999;
+    }
+
+    .chat-toggle:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 24px rgba(255,0,102,0.7);
+    }
+
+    .chat-toggle.hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>🎵 Sound Factory - Approval Dashboard</h1>
+      <div class="subtitle">Review AI-generated deliverables for membership launch</div>
+    </header>
+
+    <div class="help-text">
+      <h3>📋 How This Works</h3>
+      <p><strong>NEXT STEP</strong> = Review this item and move forward (NOT final approval yet) • <strong>REJECT</strong> = Wrong direction, don't want this • <strong>💬 YOUR ASSISTANT</strong> = Click the pink button (bottom right) to chat - stays on this page</p>
+    </div>
+
+    <div class="stats" id="stats">
+      <div class="stat-card">
+        <div class="stat-label">Pending Review</div>
+        <div class="stat-value" id="stat-pending">-</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Moved Forward</div>
+        <div class="stat-value" id="stat-approved">-</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Rejected</div>
+        <div class="stat-value" id="stat-rejected">-</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Total Items</div>
+        <div class="stat-value" id="stat-total">-</div>
+      </div>
+    </div>
+
+    <div id="deliverables" class="deliverables">
+      <div class="loading">Loading deliverables...</div>
+    </div>
+  </div>
+
+  <!-- Chat Toggle Button -->
+  <button class="chat-toggle" id="chat-toggle" onclick="toggleChat()">💬</button>
+
+  <!-- Chat Widget -->
+  <div class="chat-widget" id="chat-widget">
+    <div class="chat-header">
+      <h3>💬 Your Assistant</h3>
+      <button class="chat-close" onclick="toggleChat()">×</button>
+    </div>
+    <div class="chat-messages" id="chat-messages">
+      <div class="chat-message chat-message-assistant">
+        👋 Hi! I'm your assistant for the Sound Factory party. Ask me anything or request new deliverables!
+      </div>
+    </div>
+    <div class="chat-input-container">
+      <button class="chat-mic" id="chat-mic" onclick="toggleVoice()" title="Click to talk">🎤</button>
+      <input
+        type="text"
+        class="chat-input"
+        id="chat-input"
+        placeholder="Type or click 🎤 to talk..."
+        onkeypress="handleChatKeyPress(event)"
+      >
+      <button class="chat-send" id="chat-send" onclick="sendChatMessage()">Send</button>
+    </div>
+  </div>
+  
+  <script>
+    // Load stats
+    async function loadStats() {
+      const res = await fetch('/api/stats');
+      const data = await res.json();
+
+      if (data.success) {
+        document.getElementById('stat-pending').textContent = data.stats.pending;
+        document.getElementById('stat-approved').textContent = data.stats.approved;
+        document.getElementById('stat-rejected').textContent = data.stats.rejected;
+        document.getElementById('stat-total').textContent = data.stats.total;
+      }
+    }
+
+    // Extract smart title and subtitle from deliverable
+    function getSmartTitle(d) {
+      const cat = d.category || '';
+      const content = d.content || {};
+
+      // SPONSORS - Show company name and amount
+      if (cat === 'sponsors') {
+        const company = content.sponsor_name || 'Unknown Sponsor';
+        const amount = content.goal?.what_we_want || content.metadata?.target_amount || '';
+        const amountMatch = amount.match(/\$[\d,]+/);
+        const amountStr = amountMatch ? amountMatch[0] : '';
+        return {
+          title: company,
+          subtitle: amountStr ? `${amountStr} Sponsorship Opportunity` : 'Sponsorship Opportunity',
+          preview: content.email_ready_to_send?.subject || content.status?.next_action || ''
+        };
+      }
+
+      // VENUES - Show venue name and capacity
+      if (cat === 'venues') {
+        const venue = content.venue_name || content.name || 'Venue Option';
+        const capacity = content.capacity || content.max_capacity || '';
+        const price = content.monthly_rent || content.estimated_cost || '';
+        return {
+          title: venue,
+          subtitle: capacity ? `Capacity: ${capacity} people` : 'Venue Option',
+          preview: price ? `Estimated: ${price}` : ''
+        };
+      }
+
+      // MARKETING - Show platform and campaign
+      if (cat === 'marketing') {
+        const platform = content.platform || content.channel || 'Marketing';
+        const campaign = content.campaign_name || content.subject_line || content.hook || '';
+        return {
+          title: platform.toUpperCase() + ' Campaign',
+          subtitle: campaign || 'Marketing Content',
+          preview: content.copy || content.caption || ''
+        };
+      }
+
+      // ARTWORK - Show design type
+      if (cat === 'artwork') {
+        const type = d.type || 'Design';
+        const specs = content.flyer || content.instagram_posts || content;
+        return {
+          title: 'Design Specifications',
+          subtitle: type.replace(/_/g, ' ').toUpperCase(),
+          preview: specs?.dimensions || ''
+        };
+      }
+
+      // MEMBERSHIPS - Show tier info
+      if (cat === 'memberships') {
+        const tier = content.tier_name || content.name || 'Membership Tier';
+        const price = content.price || content.annual_price || '';
+        return {
+          title: tier,
+          subtitle: price ? `${price}/year` : 'Membership Tier',
+          preview: content.tagline || content.description || ''
+        };
+      }
+
+      // LEGAL - Show document type
+      if (cat === 'legal') {
+        const docType = content.document_type || d.type || 'Legal Document';
+        return {
+          title: docType.replace(/_/g, ' ').toUpperCase(),
+          subtitle: 'Legal Document',
+          preview: content.summary || ''
+        };
+      }
+
+      // DEFAULT - Use type
+      return {
+        title: (d.type || 'Deliverable').replace(/_/g, ' ').toUpperCase(),
+        subtitle: cat ? cat.toUpperCase() : 'Review Item',
+        preview: ''
+      };
+    }
+
+    // Extract quick info badges
+    function getQuickInfo(d) {
+      const cat = d.category || '';
+      const content = d.content || {};
+      const info = [];
+
+      if (cat === 'sponsors') {
+        if (content.priority_score) info.push({ label: 'Priority', value: content.priority_score + '/100' });
+        if (content.status?.current_stage) info.push({ label: 'Stage', value: content.status.current_stage });
+        if (content.contact?.primary_contact) info.push({ label: 'Contact', value: content.contact.primary_contact });
+      }
+
+      if (cat === 'venues') {
+        if (content.neighborhood || content.location) info.push({ label: 'Location', value: content.neighborhood || content.location });
+        if (content.capacity) info.push({ label: 'Capacity', value: content.capacity + ' people' });
+        if (content.monthly_rent) info.push({ label: 'Monthly Rent', value: content.monthly_rent });
+      }
+
+      if (cat === 'marketing') {
+        if (content.platform) info.push({ label: 'Platform', value: content.platform });
+        if (content.target_audience) info.push({ label: 'Audience', value: content.target_audience });
+      }
+
+      if (cat === 'memberships') {
+        if (content.price) info.push({ label: 'Price', value: content.price });
+        if (content.max_members) info.push({ label: 'Max Members', value: content.max_members });
+      }
+
+      // Add review score if available
+      if (d.review?.score) {
+        info.push({ label: 'QA Score', value: d.review.score + '/100' });
+      }
+
+      return info;
+    }
+
+    // Get preview content
+    function getPreviewContent(d) {
+      const cat = d.category || '';
+      const content = d.content || {};
+
+      if (cat === 'sponsors' && content.email_ready_to_send?.body) {
+        return content.email_ready_to_send.body.substring(0, 300) + '...';
+      }
+
+      if (cat === 'marketing' && (content.copy || content.caption)) {
+        return (content.copy || content.caption).substring(0, 300) + '...';
+      }
+
+      if (d.review?.summary) {
+        return d.review.summary;
+      }
+
+      return '';
+    }
+
+    // Load pending deliverables
+    async function loadDeliverables() {
+      const res = await fetch('/api/pending');
+      const data = await res.json();
+
+      const container = document.getElementById('deliverables');
+
+      if (!data.success || data.deliverables.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <h2>✅ All Caught Up!</h2>
+            <p>No pending approvals. The AI will create new deliverables on schedule.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = data.deliverables.map(d => {
+        const smartInfo = getSmartTitle(d);
+        const quickInfo = getQuickInfo(d);
+        const preview = getPreviewContent(d);
+        const category = (d.category || 'other').toLowerCase();
+
+        return `
+          <div class="deliverable">
+            <div class="deliverable-top">
+              <div class="category-badge badge-${category}">${category.toUpperCase()}</div>
+              <div class="deliverable-title">${smartInfo.title}</div>
+              <div class="deliverable-subtitle">${smartInfo.subtitle}</div>
+              ${quickInfo.length > 0 ? `
+                <div class="quick-info">
+                  ${quickInfo.map(info => `
+                    <div class="quick-info-item">
+                      <div class="quick-info-label">${info.label}</div>
+                      <div class="quick-info-value">${info.value}</div>
+                    </div>
+                  `).join('')}
+                </div>
+              ` : ''}
+            </div>
+
+            <div class="deliverable-body">
+              ${preview ? `
+                <div class="preview-section">
+                  <div class="preview-label">Preview</div>
+                  <div class="preview-content">${preview}</div>
+                </div>
+              ` : ''}
+
+              <div class="full-content">
+                <pre>${JSON.stringify(d.content, null, 2)}</pre>
+              </div>
+            </div>
+
+            <div class="actions">
+              <button class="btn-next" onclick="nextStep('${d.id}')">
+                → Next Step
+              </button>
+              <button class="btn-reject" onclick="reject('${d.id}')">
+                ✗ Reject
+              </button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function formatDate(dateStr) {
+      const date = new Date(dateStr);
+      return date.toLocaleString();
+    }
+
+    async function nextStep(id) {
+      if (!confirm('Move this item to next step? (This is NOT final approval yet)')) return;
+
+      const res = await fetch(`/api/approve/${id}`, { method: 'POST' });
+      const data = await res.json();
+
+      if (data.success) {
+        alert('✅ Moved forward!');
+        loadDeliverables();
+        loadStats();
+      } else {
+        alert('❌ Error: ' + data.error);
+      }
+    }
+
+    async function reject(id) {
+      const reason = prompt('Why are you rejecting this? This helps the AI learn what you want.');
+      if (reason === null) return; // Cancelled
+
+      const res = await fetch(`/api/reject/${id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reason })
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        alert('❌ Rejected - AI will learn from your feedback');
+        loadDeliverables();
+        loadStats();
+      } else {
+        alert('❌ Error: ' + data.error);
+      }
+    }
+
+    // Auto-refresh every 30 seconds
+    setInterval(() => {
+      loadDeliverables();
+      loadStats();
+    }, 30000);
+
+    // Initial load
+    loadStats();
+    loadDeliverables();
+
+    // CHAT FUNCTIONALITY
+    let chatOpen = false;
+    let chatIsTyping = false;
+    let recognition = null;
+    let isRecording = false;
+
+    // Initialize speech recognition
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognition = new SpeechRecognition();
+      recognition.continuous = false;
+      recognition.interimResults = false;
+      recognition.lang = 'en-US';
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        const input = document.getElementById('chat-input');
+        input.value = transcript;
+
+        // Auto-send after speech
+        setTimeout(() => {
+          sendChatMessage();
+        }, 500);
+      };
+
+      recognition.onerror = (event) => {
+        console.error('Speech recognition error:', event.error);
+        stopRecording();
+      };
+
+      recognition.onend = () => {
+        stopRecording();
+      };
+    }
+
+    function toggleChat() {
+      chatOpen = !chatOpen;
+      const widget = document.getElementById('chat-widget');
+      const toggle = document.getElementById('chat-toggle');
+
+      if (chatOpen) {
+        widget.classList.add('open');
+        toggle.classList.add('hidden');
+        document.getElementById('chat-input').focus();
+      } else {
+        widget.classList.remove('open');
+        toggle.classList.remove('hidden');
+      }
+    }
+
+    function addChatMessage(text, isUser) {
+      const messages = document.getElementById('chat-messages');
+      const message = document.createElement('div');
+      message.className = isUser ? 'chat-message chat-message-user' : 'chat-message chat-message-assistant';
+      message.textContent = text;
+      messages.appendChild(message);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function showChatTyping() {
+      const messages = document.getElementById('chat-messages');
+      const typing = document.createElement('div');
+      typing.id = 'chat-typing';
+      typing.className = 'chat-typing';
+      typing.textContent = 'AI is thinking...';
+      messages.appendChild(typing);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    function hideChatTyping() {
+      const typing = document.getElementById('chat-typing');
+      if (typing) typing.remove();
+    }
+
+    async function sendChatMessage() {
+      const input = document.getElementById('chat-input');
+      const message = input.value.trim();
+
+      if (!message || chatIsTyping) return;
+
+      addChatMessage(message, true);
+      input.value = '';
+
+      chatIsTyping = true;
+      showChatTyping();
+      document.getElementById('chat-send').disabled = true;
+
+      try {
+        const res = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message,
+            user: 'Ron'
+          })
+        });
+
+        const data = await res.json();
+
+        hideChatTyping();
+
+        if (data.success) {
+          addChatMessage(data.response, false);
+        } else {
+          addChatMessage('Sorry, I encountered an error: ' + data.error, false);
+        }
+
+      } catch (error) {
+        hideChatTyping();
+        addChatMessage('Sorry, I encountered an error. Please try again.', false);
+      } finally {
+        chatIsTyping = false;
+        document.getElementById('chat-send').disabled = false;
+        input.focus();
+      }
+    }
+
+    function handleChatKeyPress(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendChatMessage();
+      }
+    }
+
+    function toggleVoice() {
+      if (!recognition) {
+        alert('Voice input not supported in this browser. Please use Chrome or Edge.');
+        return;
+      }
+
+      if (isRecording) {
+        stopRecording();
+      } else {
+        startRecording();
+      }
+    }
+
+    function startRecording() {
+      isRecording = true;
+      const micBtn = document.getElementById('chat-mic');
+      const input = document.getElementById('chat-input');
+
+      micBtn.classList.add('recording');
+      input.placeholder = 'Listening...';
+
+      try {
+        recognition.start();
+      } catch (e) {
+        console.error('Recognition start error:', e);
+        stopRecording();
+      }
+    }
+
+    function stopRecording() {
+      isRecording = false;
+      const micBtn = document.getElementById('chat-mic');
+      const input = document.getElementById('chat-input');
+
+      micBtn.classList.remove('recording');
+      input.placeholder = 'Type or click 🎤 to talk...';
+
+      if (recognition) {
+        try {
+          recognition.stop();
+        } catch (e) {}
+      }
+    }
+  </script>
+</body>
+</html>
