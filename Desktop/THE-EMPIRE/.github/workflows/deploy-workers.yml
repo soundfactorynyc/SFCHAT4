@@ -1,0 +1,52 @@
+name: Deploy Cloudflare Workers
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'sponsorship-api/**'
+      - 'membership-party-automation/**'
+      - 'US/**'
+      - '.github/workflows/deploy-workers.yml'
+  workflow_dispatch:
+
+jobs:
+  deploy-sponsorship-api:
+    runs-on: ubuntu-latest
+    name: Deploy Sponsorship API
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to Cloudflare Workers
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          workingDirectory: 'sponsorship-api'
+          command: deploy
+
+  deploy-membership-automation:
+    runs-on: ubuntu-latest
+    name: Deploy Membership Party Automation
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to Cloudflare Workers
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          workingDirectory: 'membership-party-automation'
+          command: deploy
+
+  deploy-us-nucleus:
+    runs-on: ubuntu-latest
+    name: Deploy US Nucleus
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Deploy to Cloudflare Workers
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          workingDirectory: 'US'
+          command: deploy
